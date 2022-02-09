@@ -181,7 +181,7 @@ max_eta[0]=L_inf
 PETSc.Sys.Print(t,L_inf,E1)    
 
 """ ________________ Saving data ________________ """
-output1 = File('data/data_3lines12344/output.pvd')
+output1 = File('data/output.pvd')
 output1.write(phi2, eta0,phi0,  time=t)
 
 
@@ -219,8 +219,8 @@ while t < t1+T:
         phi0.assign(phi2+U1)
       
         output1.write(phi2, eta0, phi0, time=t)
-        np.savetxt('data/data_3lines12344/energy1.csv', E_data1)
-        np.savetxt('data/data_3lines12344/energy1.csv', max_eta)
+        np.savetxt('data/energy.csv', E_data1)
+        np.savetxt('data/energy.csv', max_eta)
         PETSc.Sys.Print(t,L_inf,E1)
       
         
