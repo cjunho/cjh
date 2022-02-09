@@ -3,7 +3,7 @@ Program solving Benney-Luke equations(BLE) on a 2d periodic domain
 with Stoermer-Verlet scheme derived by variational approach.
 This simulation shows three-line-soliton interaction to produce a 8 times higher splash than an initial height of each soliton. 
 For more information, please refer to the paper "Numerical experiments on extreme waves through
-oblique-soliton interactions" written by J. Choi1, O. Bokhove, A. Kalogirou, and M. A. Kelmanson.
+oblique-soliton interactions" written by J. Choi, O. Bokhove, A. Kalogirou, and M. A. Kelmanson.
 
 USAGE
 
