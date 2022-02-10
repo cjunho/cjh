@@ -18,7 +18,7 @@ The code consists of three files:
 
 Before running the simulation, we set the initial condition, and define the computational domain. To modify the initial condition, the user can change the values of the variables in sections “Parameters”, and “Parameters for k_i” in BL_periodic.py.
 For specific details on the calculation of the parameters, please refer to the paper. After setting the variables, 
-the periodic domain corresponding to the chosen parameters is created insection “Mesh”.  
+the periodic domain corresponding to the chosen parameters is created in section “Mesh”.  
 
 After the computation is finished, three sets of data are produced:
 
