@@ -1,3 +1,9 @@
+"This file computes some valuses to design a computaional domain."
+"• Function 'bd_x1' computes the value of the left boundary of the domain."
+"• Function 'bd_x2' computes the value of the right boundary of the domain."
+"• Function 'yast' computes yast such that eta is symmetric about y=yast"
+"  so as to provide the value of the bottom boundary."
+
 import numpy as np
 
 def bd_x1(yy,x_shift,k1,k2,k3,k4,k5,k6,t,ep,mu):
@@ -19,5 +25,3 @@ def bd_x2(yy,x_shift,k1,k2,k3,k4,k5,k6,t,ep,mu):
 def yast(k1,k2,k3,k4,k5,k6):    
     yast=(2/9)**(1/3)*.5*np.log(k5*(k5**2-k4**2)/(k6*(k6**2-k4**2)))/(k6**2-k5**2)
     return yast
-    
-
