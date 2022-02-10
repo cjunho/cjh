@@ -1,4 +1,13 @@
+"This file defines the initial conditions eta_0(x,y), and Phi_0(x,y)"
+"to provide BL_periodic.py the initial conditions"
+"• Function 'initial_eta' defines eta_0."
+"• Function 'initial_phi' defines Phi_0."
+"  Functions initial_phib and initial_phiby are to modify Phi_0 to be periodic at the left boundary, say x=x1, and the right boundary, say x=x2;"
+"• Functions initial_phib provides values of Phi_0 on x=x1 or x=x2."
+"• Functions initial_phiby provides values of (Phi_0)_y on x=x1 or x=x2."
+
 from firedrake import *
+from boundary_point import *
 import numpy as np
 def initial_eta(xx,yy,eta,k1,k2,k3,k4,k5,k6,t,ep,mu):   
     K135 = (k1+k3+k5)  
@@ -83,7 +92,7 @@ def initial_eta(xx,yy,eta,k1,k2,k3,k4,k5,k6,t,ep,mu):
  
     return (eta);
 
-def initial_phi(xx,yy,phi,k1,k2,k3,k4,k5,k6,t,ep,mu):
+def initial_phi(xx,yy,x11,x22,phi,k1,k2,k3,k4,k5,k6,t,ep,mu):
     K135 = (k1+k3+k5)  
     K235 = (k2+k3+k5)
     K136 = (k1+k3+k6)
@@ -137,7 +146,10 @@ def initial_phi(xx,yy,phi,k1,k2,k3,k4,k5,k6,t,ep,mu):
                   +T5*K145*exp( K145*(xx) + KK145*yy-KKK145*t ) \
                   +T6*K245*exp( K245*(xx) + KK245*yy-KKK245*t ) \
                   +T7*K146*exp( K146*(xx) + KK146*yy-KKK146*t ) \
-                  +T8*K246*exp( K246*(xx) + KK246*yy-KKK246*t )))    
+                  +T8*K246*exp( K246*(xx) + KK246*yy-KKK246*t )))
+        
+    
+    
     phi.interpolate((32/81)**(1/6)*(mu/ep)**(.5)*(2*u1/d1+1))
 
 
