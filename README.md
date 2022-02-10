@@ -9,10 +9,8 @@ oblique-soliton interactions" written by J. Choi, O. Bokhove, A. Kalogirou, and 
 USAGE
 
 The code consists of three files:
-
-BL_periodic.py, initial_data.py, and boundary_point.py. 
 • BL_periodic.py is the main file that solves BLE;
-• initial_data.py defines the initial conditions eta_0(x,y), and Phi_0(x,y).
+• initial_data.py defines the initial conditions eta_0(x,y), and Phi_0(x,y);
 • boundary_point.py computes points to design a computational domain.
 
 Before running the simulation, we set the initial condition, and define the computational domain. To modify the initial condition, the user can change the values of the variables in sections “Parameters”, and “Parameters for k_i” in BL_periodic.py.
@@ -20,6 +18,6 @@ For specific details on the calculation of the parameters, please refer to the p
 the periodic domain corresponding to the chosen parameters is created insection “Mesh”.  
 
 After the computation is finished, three sets of data are produced:
-• solutions eta and Phi in "data/output.pvd"(these are later used for visualisation in Paraview)
-• evolution of energy against time in "data/energy.csv",
+• solutions eta and Phi in "data/output.pvd"(these are later used for visualisation in Paraview);
+• evolution of energy against time in "data/energy.csv";
 • evolution of maximum of eta against time in "data/max.csv"
