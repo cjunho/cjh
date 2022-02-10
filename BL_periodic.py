@@ -1,3 +1,14 @@
+"This file implements a simulation of Benney-Luke equations on a 2d periodic domain."
+"The simulation shows three-line-soliton interaction to produce a 8 times higher splash than an initial height of each soliton."
+"The code consits of three files:"
+"• BL_periodic.py is the main file that solves BLE;"
+"• initial_data.py defines the initial conditions eta_0(x,y), and Phi_0(x,y);"
+"• boundary_point.py computes points to design a computational domain."
+
+"In order to modify the initial conditions, the user can change values of variables in sections 'Parameters' and Parameters for k_i"
+"For specific details on the calculation of the parameters, please refer to the paper 'Numerical experiments on extreme waves through"
+"oblique-soliton interactions' written by J. Choi, O. Bokhove, A. Kalogirou, and M. A. Kelmanson."
+
 from firedrake import *
 from initial_data import *
 from boundary_point import *
@@ -44,6 +55,8 @@ y_ast=yast(k1,k2,k3,k4,k5,k6) #y_\ast
 y2=y_ast+Ly               
 xb1=bd_x1(y2,x_shift,k1,k2,k3,k4,k5,k6,t,ep,mu) #left wall
 xb2=bd_x2(y2,x_shift,k1,k2,k3,k4,k5,k6,t,ep,mu) #right wall 
+
+
 Lx=xb2-xb1
 
 Nx=int(12*np.ceil(Lx)+1)
@@ -58,7 +71,7 @@ mesh = PeriodicRectangleMesh(Nx, Ny, Lx, Ly, direction="x",
 coords = mesh.coordinates    # access to coordinate
 
 coords.dat.data[:,0] = coords.dat.data[:,0]+xb1
-coords.dat.data[:,1] = coords.dat.data[:,1]-Ly+y_ast
+coords.dat.data[:,1] = coords.dat.data[:,1]+y_ast
 """ ______________ Function Space ______________ """
 V = FunctionSpace(mesh, "CG", 2)   
 
@@ -81,12 +94,6 @@ Uy=Function(V)
 
 q = TrialFunction(V)
 v = TestFunction(V)
-
-
-
-
-
-
 
 """ _____________ Initial condition _____________ """
 x = SpatialCoordinate(mesh)
@@ -214,21 +221,14 @@ while t < t1+T:
       max_eta=np.r_[max_eta,[L_inf]]
       step +=int(1)
       
-      #Saving data every 100 steps
+      #Saving data every 2 steps
       if step % 2 == 0:  
         phi0.assign(phi2+U1)
       
         output1.write(phi2, eta0, phi0, time=t)
         np.savetxt('data/energy.csv', E_data1)
-        np.savetxt('data/energy.csv', max_eta)
+        np.savetxt('data/max.csv', max_eta)
         PETSc.Sys.Print(t,L_inf,E1)
-      
-        
-
-       
-
-    
-
 
 print(time.time() - t00)     # Print computational time (s)
 
