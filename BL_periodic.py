@@ -1,10 +1,12 @@
 "This file implements a simulation of Benney-Luke equations on a 2d periodic domain."
-"The simulation shows three-line-soliton interaction to produce a 8 times higher splash than an initial height of each soliton."
+"The simulation shows two or three-line-soliton interaction to produce a four or eight times higher splash than an initial height of each soliton."
 "The code consits of three files:"
 "• BL_periodic.py is the main file that solves BLE;"
 "• initial_data.py defines the initial conditions eta_0(x,y), and Phi_0(x,y);"
 "• boundary_point.py computes points to design a computational domain."
 
+"The users can choose in section Opsions"
+"soltion_type (two or three), doamin_type (both periodc, single periodic), and basis type (CG1, CG2, CG3)." 
 "In order to modify the initial conditions, the user can change values of variables in sections 'Parameters' and Parameters for k_i"
 "For specific details on the calculation of the parameters, please refer to the paper 'Numerical experiments on extreme waves through"
 "oblique-soliton interactions' written by J. Choi, O. Bokhove, A. Kalogirou, and M. A. Kelmanson."
@@ -25,44 +27,83 @@ parameters["coffee"]["O2"] = False
 # Timing
 t00 = time.time()
 
+""" ________________ Options ________________ """
+soliton_number="SP3" # choices=["SP2", "SP3"]
+#SP2: Two solitons interaction;
+#SP3: Three solitons interaction 
+domain_type="single"  # choices=["both","sigle"] 
+#both: x and y directional periodic domain;
+#single:  the upper half of the both domain about y=y_ast, and x directional periodic.
+basis_type=int(1)   # choices=["1","2", "3"] 1:CG1, 2:CG2, 3:CG3
 
 
 """ ________________ Parameters ________________ """
 ep=0.05               # Small amplitude parameter 
 mu = 0.0025           # Small dispersion parameter
-t=-200                # initial time  
 dt = 0.005            # Time step
-
+""" ________________ Initial time ________________ """
+if soliton_number=="SP3":
+    t=-200
+elif soliton_number=="SP2":
+    t=0
 """ ________________ Parameters for k_i ________________ """
 tan0=.25                          #tan(theta) for BL
 tan=(2/9)**(1/6)*tan0/np.sqrt(ep) #tan(theta) for KP 
 
 lam=1                             #lambda  
 
-tildeA=0.094454039365117
-k1=-.5*tan-np.sqrt(tildeA*.5/lam)
-k2=-.5*tan+np.sqrt(tildeA*.5/lam)
-k3=-np.sqrt(tildeA*.5)
-k4=-k3
-k5=-k2
-k6=-k1
-
+if soliton_number=="SP3":
+    tildeA=0.094454039365117
+    k1=-.5*tan-np.sqrt(tildeA*.5/lam)
+    k2=-.5*tan+np.sqrt(tildeA*.5/lam)
+    k3=-np.sqrt(tildeA*.5)
+    k4=-k3
+    k5=-k2
+    k6=-k1
+    x_shift=5           #shifting in x for convenience
+elif soliton_number=="SP2":
+    tildeA=0.7571335803467248
+    k1 = -np.sqrt(tildeA)
+    k2 = 0
+    k3 = 0
+    k4 = -k1
+    x_shift=0           #shifting in x for convenience
 """ ___________________ Mesh ___________________ """
-x_shift=5                     #shifting in x for convenience
-Ly=47 
-y_ast=yast(k1,k2,k3,k4,k5,k6) #y_\ast
-# print(y_ast)
-y2=y_ast+Ly               
-xb1=bd_x1(y2,x_shift,k1,k2,k3,k4,k5,k6,t,ep,mu) #left wall
-xb2=bd_x2(y2,x_shift,k1,k2,k3,k4,k5,k6,t,ep,mu) #right wall 
-
-
-Lx=xb2-xb1
+                     
+if soliton_number=="SP3":
+    if domain_type=="single":
+        Ly=47
+        direction="x"
+        y_shift=0
+    else:
+        Ly=47*2
+        direction="both"
+        y_shift=Ly*.5
+    y_ast=yast(k1,k2,k3,k4,k5,k6) #y_\ast
+    y2=y_ast+(Ly-y_shift)         #upper boundary y=y2
+    xb1=bd_x1(y2,x_shift,k1,k2,k3,k4,k5,k6,t,ep,mu) #left wall
+    xb2=bd_x2(y2,x_shift,k1,k2,k3,k4,k5,k6,t,ep,mu) #right wall 
+    Lx=xb2-xb1
+    
+elif soliton_number=="SP2":
+    if domain_type=="single":
+        Ly=40
+        direction="x"
+        y_shift=0
+    else:
+        Ly=40*2
+        direction="both"
+        y_shift=Ly*.5
+    y_ast=-20                        #y_ast
+    y2=y_ast+(Ly-y_shift)            #upper boundary y=y2
+    xb1=bd_x21(y2,x_shift,k1,k2,k3,k4,t,ep,mu) #left wall
+    xb2=bd_x22(y2,x_shift,k1,k2,k3,k4,t,ep,mu) #right wall 
+    Lx=xb2-xb1
 
 Nx=int(12*np.ceil(Lx)+1)
 Ny=int(12*np.ceil(Ly)+1)
 
-mesh = PeriodicRectangleMesh(Nx, Ny, Lx, Ly, direction="x",
+mesh = PeriodicRectangleMesh(Nx, Ny, Lx, Ly, direction=direction,
                           quadrilateral=True, reorder=None,
                           distribution_parameters=None,
                           diagonal=None,
@@ -71,9 +112,9 @@ mesh = PeriodicRectangleMesh(Nx, Ny, Lx, Ly, direction="x",
 coords = mesh.coordinates    # access to coordinate
 
 coords.dat.data[:,0] = coords.dat.data[:,0]+xb1
-coords.dat.data[:,1] = coords.dat.data[:,1]+y_ast
+coords.dat.data[:,1] = coords.dat.data[:,1]+y_ast-y_shift
 """ ______________ Function Space ______________ """
-V = FunctionSpace(mesh, "CG", 2)   
+V = FunctionSpace(mesh, "CG", basis_type)   
 
 """ ___________ Define the functions ___________ """
 
@@ -98,34 +139,62 @@ v = TestFunction(V)
 """ _____________ Initial condition _____________ """
 x = SpatialCoordinate(mesh)
 xx= (x[0]-x_shift)*(4.5)**(1/6)*(ep/mu)**(1/2)   #scaling x into X
-yy= x[1]*(4.5)**(1/3)*ep*(1/mu)**(1/2)           #scaling y into Y  
+ 
 
 ## Initialization
-eta0=initial_eta(xx,yy,eta0,k1,k2,k3,k4,k5,k6,t,ep,mu)
-phi0=initial_phi(xx,yy,phi0,k1,k2,k3,k4,k5,k6,t,ep,mu)
+if soliton_number=="SP3":
+    yy= x[1]*(4.5)**(1/3)*ep*(1/mu)**(1/2)           #scaling y into Y 
+    eta0=initial_eta(xx,yy,eta0,k1,k2,k3,k4,k5,k6,t,ep,mu)
+    phi0=initial_phi(xx,yy,phi0,k1,k2,k3,k4,k5,k6,t,ep,mu)
+elif soliton_number=="SP2":
+    yy= (abs(x[1]-y_ast)+y_ast)*(4.5)**(1/3)*ep*(1/mu)**(1/2)           #scaling y into Y 
+    eta0=initial_eta2(xx,yy,eta0,k1,k2,k3,k4,t,ep,mu)
+    phi0=initial_phi2(xx,yy,phi0,k1,k2,k3,k4,t,ep,mu)
 
 
 """ _____________ corrector plane _____________ """
-#U1 is a corrector plane connecting (x11, phib1) and (x22, phib2).
-x11=(xb1-x_shift)*(4.5)**(1/6)*(ep/mu)**(1/2)
-x22=(xb2-x_shift)*(4.5)**(1/6)*(ep/mu)**(1/2)
-
-phib1=initial_phib(x11,yy,k1,k2,k3,k4,k5,k6,t,ep,mu)
-phib2=initial_phib(x22,yy,k1,k2,k3,k4,k5,k6,t,ep,mu)
-
-U=(phib2-phib1)/(x22-x11)
-U1.interpolate((U*(xx-x11)+phib1))  #corrector plane
-
-#Uy is partial_y U1
-Uy1=initial_phiby(x11,yy,k1,k2,k3,k4,k5,k6,t,ep,mu)
-Uy2=initial_phiby(x22,yy,k1,k2,k3,k4,k5,k6,t,ep,mu)
-Uy.interpolate(((Uy2-Uy1)*(xx-x11)/(x22-x11)+Uy1))  
-
-#Ux is partial_x U1
-Ux.interpolate(Ux+U*(4.5)**(1/6)*(ep/mu)**(1/2))
-
-#correct phi0 to make phi0 periodic, phi2(xb1)=phi2(xb2)
-phi2.interpolate(phi0-U1)
+if soliton_number=="SP3":
+    #U1 is a corrector plane connecting (x11, phib1) and (x22, phib2).
+    x11=(xb1-x_shift)*(4.5)**(1/6)*(ep/mu)**(1/2)
+    x22=(xb2-x_shift)*(4.5)**(1/6)*(ep/mu)**(1/2)
+    
+    phib1=initial_phib(x11,yy,k1,k2,k3,k4,k5,k6,t,ep,mu)
+    phib2=initial_phib(x22,yy,k1,k2,k3,k4,k5,k6,t,ep,mu)
+    
+    U=(phib2-phib1)/(x22-x11)
+    U1.interpolate((U*(xx-x11)+phib1))  #corrector plane
+    
+    #Uy is partial_y U1
+    Uy1=initial_phiby(x11,yy,k1,k2,k3,k4,k5,k6,t,ep,mu)
+    Uy2=initial_phiby(x22,yy,k1,k2,k3,k4,k5,k6,t,ep,mu)
+    Uy.interpolate(((Uy2-Uy1)*(xx-x11)/(x22-x11)+Uy1))  
+    
+    #Ux is partial_x U1
+    Ux.interpolate(Ux+U*(4.5)**(1/6)*(ep/mu)**(1/2))
+    
+    #correct phi0 to make phi0 periodic, phi2(xb1)=phi2(xb2)
+    phi2.interpolate(phi0-U1)
+elif soliton_number=="SP2":
+    #U1 is a corrector plane connecting (x11, phib1) and (x22, phib2).
+    x11=(xb1-x_shift)*(4.5)**(1/6)*(ep/mu)**(1/2)
+    x22=(xb2-x_shift)*(4.5)**(1/6)*(ep/mu)**(1/2)
+    
+    phib1=initial_phib2(x11,yy,k1,k2,k3,k4,t,ep,mu)
+    phib2=initial_phib2(x22,yy,k1,k2,k3,k4,t,ep,mu)
+    
+    U=(phib2-phib1)/(x22-x11)
+    U1.interpolate((U*(xx-x11)+phib1))  #corrector plane
+    
+    #Uy is partial_y U1
+    Uy1=initial_phiby2(x11,yy,k1,k2,k3,k4,t,ep,mu)
+    Uy2=initial_phiby2(x22,yy,k1,k2,k3,k4,t,ep,mu)
+    Uy.interpolate(((Uy2-Uy1)*(xx-x11)/(x22-x11)+Uy1))  
+    
+    #Ux is partial_x U1
+    Ux.interpolate(Ux+U*(4.5)**(1/6)*(ep/mu)**(1/2))
+    
+    #correct phi0 to make phi0 periodic, phi2(xb1)=phi2(xb2)
+    phi2.interpolate(phi0-U1)
 
 
 """ _____________ Weak formulations _____________ """#,time=t
@@ -188,7 +257,7 @@ max_eta[0]=L_inf
 PETSc.Sys.Print(t,L_inf,E1)    
 
 """ ________________ Saving data ________________ """
-output1 = File('data/output.pvd')
+output1 = File('data123/output.pvd')
 output1.write(phi2, eta0,phi0,  time=t)
 
 
@@ -221,13 +290,13 @@ while t < t1+T:
       max_eta=np.r_[max_eta,[L_inf]]
       step +=int(1)
       
-      #Saving data every 2 steps
+      #Saving data every 100 steps
       if step % 2 == 0:  
         phi0.assign(phi2+U1)
       
         output1.write(phi2, eta0, phi0, time=t)
-        np.savetxt('data/energy.csv', E_data1)
-        np.savetxt('data/max.csv', max_eta)
+        np.savetxt('data123/energy.csv', E_data1)
+        np.savetxt('data123/max.csv', max_eta)
         PETSc.Sys.Print(t,L_inf,E1)
 
 print(time.time() - t00)     # Print computational time (s)
