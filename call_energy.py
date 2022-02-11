@@ -1,4 +1,4 @@
-"Energy evolution against time"
+"Energy evolution of BLE against time"
 
 
 import pandas as pd
