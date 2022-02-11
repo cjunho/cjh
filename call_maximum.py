@@ -1,4 +1,4 @@
-"Energy evolution against time"
+"Maximum evolution of eta against time"
 
 
 import pandas as pd
