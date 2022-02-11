@@ -22,8 +22,14 @@ the periodic domain corresponding to the chosen parameters is created in section
 
 After the computation is finished, three sets of data are produced:
 
-• solutions eta and Phi in "data/output.pvd"(these are later used for visualisation in Paraview);
+• solutions eta and Phi in "data/output.pvd";
 
 • evolution of energy against time in "data/energy.csv";
 
 • evolution of maximum of eta against time in "data/max.csv"
+
+Reading the computation is as follows.
+• Solutions eta and Phi in pvd files are read with Paraview.
+• Evolution of energy against time are plotted by call_energy.py.
+• Evolution of maximum of eta against time are plotted by call_maximum.py.
+
