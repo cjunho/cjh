@@ -1,10 +1,15 @@
 "This file defines the initial conditions eta_0(x,y), and Phi_0(x,y)"
 "to provide BL_periodic.py the initial conditions"
-"• Function 'initial_eta' defines eta_0."
-"• Function 'initial_phi' defines Phi_0."
+"• Function 'initial_eta' defines eta_0 for SP3."
+"• Function 'initial_phi' defines Phi_0 for SP3."
+"• Function 'initial_eta2' defines eta_0 for SP2."
+"• Function 'initial_phi2' defines Phi_0 for SP2."
+
 "  Functions initial_phib and initial_phiby are to modify Phi_0 to be periodic at the left boundary, say x=x1, and the right boundary, say x=x2;"
-"• Functions initial_phib provides values of Phi_0 on x=x1 or x=x2."
-"• Functions initial_phiby provides values of (Phi_0)_y on x=x1 or x=x2."
+"• Functions initial_phib provides values of Phi_0 on x=x1 or x=x2 for SP3."
+"• Functions initial_phiby provides values of (Phi_0)_y on x=x1 or x=x2 for SP3."
+"• Functions initial_phib2 provides values of Phi_0 on x=x1 or x=x2 for SP2."
+"• Functions initial_phiby2 provides values of (Phi_0)_y on x=x1 or x=x2 for SP2."
 
 from firedrake import *
 from boundary_point import *
@@ -92,7 +97,7 @@ def initial_eta(xx,yy,eta,k1,k2,k3,k4,k5,k6,t,ep,mu):
  
     return (eta);
 
-def initial_phi(xx,yy,x11,x22,phi,k1,k2,k3,k4,k5,k6,t,ep,mu):
+def initial_phi(xx,yy,phi,k1,k2,k3,k4,k5,k6,t,ep,mu):
     K135 = (k1+k3+k5)  
     K235 = (k2+k3+k5)
     K136 = (k1+k3+k6)
@@ -293,4 +298,180 @@ def initial_phiby(xx,yy,k1,k2,k3,k4,k5,k6,t,ep,mu):
     phi=((8)**(1/6)*(ep)**(.5)*(2*(uxy/d1-(u1/d1)*(uy/d1))))
 
 
-    return (phi);
+    return (phi)
+
+def initial_eta2(xx,yy,eta,k1,k2,k3,k4,t,ep,mu):
+    
+    K13 = (k1+k3)  
+    K23 = (k2+k3)    
+    K14 = (k1+k4)
+    K24 = (k2+k4)
+
+    KK13 = (k1*k1 + k3*k3)
+    KK23 = (k2*k2 + k3*k3)   
+    KK14 = (k1*k1 + k4*k4)
+    KK24 = (k2*k2 + k4*k4)
+    
+    KKK13 = (k1*k1*k1 + k3*k3*k3)*ep*(2*ep/mu)**(1/2)
+    KKK23 = (k2*k2*k2 + k3*k3*k3)*ep*(2*ep/mu)**(1/2)
+    KKK14 = (k1*k1*k1 + k4*k4*k4)*ep*(2*ep/mu)**(1/2)
+    KKK24 = (k2*k2*k2 + k4*k4*k4)*ep*(2*ep/mu)**(1/2)   
+    
+    
+    T13 = k3-k1
+    T23 = k3-k2
+    T14 = k4-k1
+    T24 = k4-k2
+    
+    
+    d1=(T13*exp( K13*(xx) + KK13*yy-KKK13*t) \
+                    +T23*exp( K23*(xx) + KK23*yy-KKK23*t)\
+                    +T14*exp( K14*(xx) + KK14*yy-KKK14*t) \
+                    +T24*exp( K24*(xx) + KK24*yy-KKK24*t))
+    
+    u1=(T13*K13*exp( K13*(xx) + KK13*yy-KKK13*t) \
+                    +T23*K23*exp( K23*(xx) + KK23*yy-KKK23*t)\
+                    +T14*K14*exp( K14*(xx) + KK14*yy-KKK14*t) \
+                    +T24*K24*exp( K24*(xx) + KK24*yy-KKK24*t))
+    u2=(T13*K13*K13*exp( K13*(xx) + KK13*yy-KKK13*t) \
+                    +T23*K23*K23*exp( K23*(xx) + KK23*yy-KKK23*t)\
+                    +T14*K14*K14*exp( K14*(xx) + KK14*yy-KKK14*t) \
+                    +T24*K24*K24*exp( K24*(xx) + KK24*yy-KKK24*t))
+
+    eta.interpolate(((4/3)**(1/3)*2*(u2/d1-(u1/d1)**2)))
+
+    return (eta)
+
+def initial_phi2(xx,yy,phi,k1,k2,k3,k4,t,ep,mu):
+    
+    K13 = (k1+k3)  
+    K23 = (k2+k3)    
+    K14 = (k1+k4)
+    K24 = (k2+k4)    
+    
+    
+    KK13 = (k1*k1 + k3*k3)
+    KK23 = (k2*k2 + k3*k3)   
+    KK14 = (k1*k1 + k4*k4)
+    KK24 = (k2*k2 + k4*k4)
+    
+    KKK13 = (k1*k1*k1 + k3*k3*k3)*ep*(2*ep/mu)**(1/2)
+    KKK23 = (k2*k2*k2 + k3*k3*k3)*ep*(2*ep/mu)**(1/2)
+    KKK14 = (k1*k1*k1 + k4*k4*k4)*ep*(2*ep/mu)**(1/2)
+    KKK24 = (k2*k2*k2 + k4*k4*k4)*ep*(2*ep/mu)**(1/2)   
+    
+    
+    T13 = k3-k1
+    T23 = k3-k2
+    T14 = k4-k1
+    T24 = k4-k2
+    
+    
+    d1=(T13*exp( K13*(xx) + KK13*yy-KKK13*t) \
+                    +T23*exp( K23*(xx) + KK23*yy-KKK23*t)\
+                    +T14*exp( K14*(xx) + KK14*yy-KKK14*t) \
+                    +T24*exp( K24*(xx) + KK24*yy-KKK24*t))
+    
+    u1=(T13*K13*exp( K13*(xx) + KK13*yy-KKK13*t) \
+                    +T23*K23*exp( K23*(xx) + KK23*yy-KKK23*t)\
+                    +T14*K14*exp( K14*(xx) + KK14*yy-KKK14*t) \
+                    +T24*K24*exp( K24*(xx) + KK24*yy-KKK24*t))
+    
+    phi.interpolate((32/81)**(1/6)*(mu/ep)**(.5)*(2*u1/d1+1))
+
+
+    return (phi)
+
+def initial_phib2(xx,yy,k1,k2,k3,k4,t,ep,mu):
+    
+    K13 = (k1+k3)  
+    K23 = (k2+k3)    
+    K14 = (k1+k4)
+    K24 = (k2+k4)    
+    
+    
+    KK13 = (k1*k1 + k3*k3)
+    KK23 = (k2*k2 + k3*k3)   
+    KK14 = (k1*k1 + k4*k4)
+    KK24 = (k2*k2 + k4*k4)
+    
+    KKK13 = (k1*k1*k1 + k3*k3*k3)*ep*(2*ep/mu)**(1/2)
+    KKK23 = (k2*k2*k2 + k3*k3*k3)*ep*(2*ep/mu)**(1/2)
+    KKK14 = (k1*k1*k1 + k4*k4*k4)*ep*(2*ep/mu)**(1/2)
+    KKK24 = (k2*k2*k2 + k4*k4*k4)*ep*(2*ep/mu)**(1/2)   
+    
+    
+    T13 = k3-k1
+    T23 = k3-k2
+    T14 = k4-k1
+    T24 = k4-k2
+    
+    
+    d1=(T13*exp( K13*(xx) + KK13*yy-KKK13*t) \
+                    +T23*exp( K23*(xx) + KK23*yy-KKK23*t)\
+                    +T14*exp( K14*(xx) + KK14*yy-KKK14*t) \
+                    +T24*exp( K24*(xx) + KK24*yy-KKK24*t))
+    
+    u1=(T13*K13*exp( K13*(xx) + KK13*yy-KKK13*t) \
+                    +T23*K23*exp( K23*(xx) + KK23*yy-KKK23*t)\
+                    +T14*K14*exp( K14*(xx) + KK14*yy-KKK14*t) \
+                    +T24*K24*exp( K24*(xx) + KK24*yy-KKK24*t))
+    uxy=(T13*KK13*K13*exp( K13*(xx) + KK13*yy-KKK13*t) \
+                    +T23*KK23*K23*exp( K23*(xx) + KK23*yy-KKK23*t)\
+                    +T14*KK14*K14*exp( K14*(xx) + KK14*yy-KKK14*t) \
+                    +T24*KK24*K24*exp( K24*(xx) + KK24*yy-KKK24*t)) 
+    uy=(T13*KK13*exp( K13*(xx) + KK13*yy-KKK13*t) \
+                    +T23*KK23*exp( K23*(xx) + KK23*yy-KKK23*t)\
+                    +T14*KK14*exp( K14*(xx) + KK14*yy-KKK14*t) \
+                    +T24*KK24*exp( K24*(xx) + KK24*yy-KKK24*t)) 
+    phi=((32/81)**(1/6)*(mu/ep)**(.5)*(2*u1/d1+1))
+
+
+    return (phi)
+
+def initial_phiby2(xx,yy,k1,k2,k3,k4,t,ep,mu):
+    
+    K13 = (k1+k3)  
+    K23 = (k2+k3)    
+    K14 = (k1+k4)
+    K24 = (k2+k4)    
+    
+    # (abs(coords[1]+20)-20)
+    KK13 = (k1*k1 + k3*k3)
+    KK23 = (k2*k2 + k3*k3)   
+    KK14 = (k1*k1 + k4*k4)
+    KK24 = (k2*k2 + k4*k4)
+    
+    KKK13 = (k1*k1*k1 + k3*k3*k3)*ep*(2*ep/mu)**(1/2)
+    KKK23 = (k2*k2*k2 + k3*k3*k3)*ep*(2*ep/mu)**(1/2)
+    KKK14 = (k1*k1*k1 + k4*k4*k4)*ep*(2*ep/mu)**(1/2)
+    KKK24 = (k2*k2*k2 + k4*k4*k4)*ep*(2*ep/mu)**(1/2)   
+    
+    
+    T13 = k3-k1
+    T23 = k3-k2
+    T14 = k4-k1
+    T24 = k4-k2
+    
+    
+    d1=(T13*exp( K13*(xx) + KK13*yy-KKK13*t) \
+                    +T23*exp( K23*(xx) + KK23*yy-KKK23*t)\
+                    +T14*exp( K14*(xx) + KK14*yy-KKK14*t) \
+                    +T24*exp( K24*(xx) + KK24*yy-KKK24*t))
+    
+    u1=(T13*K13*exp( K13*(xx) + KK13*yy-KKK13*t) \
+                    +T23*K23*exp( K23*(xx) + KK23*yy-KKK23*t)\
+                    +T14*K14*exp( K14*(xx) + KK14*yy-KKK14*t) \
+                    +T24*K24*exp( K24*(xx) + KK24*yy-KKK24*t))
+    uxy=(T13*KK13*K13*exp( K13*(xx) + KK13*yy-KKK13*t) \
+                    +T23*KK23*K23*exp( K23*(xx) + KK23*yy-KKK23*t)\
+                    +T14*KK14*K14*exp( K14*(xx) + KK14*yy-KKK14*t) \
+                    +T24*KK24*K24*exp( K24*(xx) + KK24*yy-KKK24*t)) 
+    uy=(T13*KK13*exp( K13*(xx) + KK13*yy-KKK13*t) \
+                    +T23*KK23*exp( K23*(xx) + KK23*yy-KKK23*t)\
+                    +T14*KK14*exp( K14*(xx) + KK14*yy-KKK14*t) \
+                    +T24*KK24*exp( K24*(xx) + KK24*yy-KKK24*t)) 
+    phi=((8)**(1/6)*(ep)**(.5)*(2*(uxy/d1-(u1/d1)*(uy/d1))))
+
+
+    return (phi)
