@@ -8,13 +8,15 @@ oblique-soliton interactions" written by J. Choi, O. Bokhove, A. Kalogirou, and 
 
 USAGE
 
-The code consists of three files:
+The code consists of five files:
 
 • BL_periodic.py is the main file that solves BLE;
 
 • initial_data.py defines the initial conditions eta_0(x,y), and Phi_0(x,y);
 
 • boundary_point.py computes points to design a computational domain.
+
+• call_energy.py and call_maximum.py are for plotting energy evolution and maximum evolution, respectively.
 
 The users can choose at section Options in BL_periodic.py: soltion_type (two or three), doamin_type (both periodc, single periodic), and basis type (CG1, CG2, CG3). Before running the simulation, we set the initial condition, and define the computational domain. To modify the initial condition, the user can change the values of the variables at sections “Parameters”, and “Parameters for k_i” in BL_periodic.py.
 For specific details on the calculation of the parameters, please refer to the paper. After setting the variables, 
