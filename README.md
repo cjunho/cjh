@@ -28,7 +28,7 @@ After the computation is finished, three sets of data are produced:
 
 • evolution of maximum of eta against time in "data/max.csv"
 
-How to read the computational results is as follows.
+How to read the computational data is as follows.
 
 • Solutions eta and Phi in pvd files are read with Paraview.
 
