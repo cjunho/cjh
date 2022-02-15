@@ -14,9 +14,9 @@ else:
     t0 = 0    
     
 """ ________________ Time variable ________________ """
-dt = 0.005                  # time step
-T = 0.1                     # duration time
-tt=np.arange(t0,t0+.1,dt)   # time variable
+dt = 0.005                      # time step
+T = 0.1                         # duration time
+tt = np.arange(t0,t0+0.1,dt)    # time variable
 
 """ ________________ Recall energy ________________ """
 df = pd.read_csv(r"data/energy.csv")
