@@ -1,10 +1,10 @@
-"This file demonstrates a numerical solution of Benney-Luke equations with dimensional variables."
+"This file scales a numerical solution of Benney-Luke equations into dimensional variables."
 "The solution is two or three-line-soliton interaction."
 "The code consits of three files:"
 "• BL_dimension.py is the main file that solves BLE;"
 "• initial_data.py defines the initial conditions eta_0(x,y), and Phi_0(x,y);"
 "• boundary_point.py computes points to design a computational domain."
-"For the demesional varible, please refer to the attached paper."
+"For how to scale the varibles, please refer to scaling.pdf ."
 
 "The users can choose in section Opsions"
 "soltion_type (two or three), doamin_type (both periodc, single periodic), and basis type (CG1, CG2, CG3)." 
