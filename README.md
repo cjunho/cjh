@@ -52,7 +52,7 @@ To modify the initial condition, the user can change the values of the variables
 For specific details on the calculation of the parameters, please refer to the paper. 
 
 How to obtain the figures in the paper.
-Attempt | #1 | #2 | #3 | #4 | #5 | #6 | #7 | #8 | #9 | #10 | #11
---- | --- | --- | --- |--- |--- |--- |--- |--- |--- |--- |---
-Seconds | 301 | 283 | 290 | 286 | 289 | 285 | 287 | 287 | 272 | 276 | 269
+  | soliton number | domain type | basis type | dimensional variable or not
+--- | --- | --- | --- |--- 
+Fig 8 | 301 | 283 | 290 | 286 
 
