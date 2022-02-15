@@ -40,7 +40,7 @@ The computational data are visualised as follows:
 
 USAGE
 
-There are three 'Switches' in the code which the user can modify:
+There are three 'Switches' in BL_periodic.py which the user can modify:
 
 • soliton number: SP2 or SP3, corresponding to simulations of two- or three-soliton interations;
 
@@ -48,7 +48,7 @@ There are three 'Switches' in the code which the user can modify:
 
 • basis type: 1, 2 or 3, corresponding to continuous Galerkin basis of the respective order.
 
-In order to obtain results as the figures in the paper, choose the Sitches as follows. 
+In order to obtain the results as the figures in the paper, please choose the Sitches as follows. 
 -- | soliton number | domain type | basis type | dimensional variable or non-dimensional
 --- | ---           | ---         | ---        |--- 
 Fig 8 | SP3       | single and both         | CG2        | x
