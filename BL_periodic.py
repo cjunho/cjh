@@ -1,10 +1,10 @@
-"This file implements a simulation of Benney-Luke equations on a 2D periodic domain."
-"The simulation tracks the evolution of two or three line solitons as they interact, 
-"to produce a four or eight times higher splash than the initial height of each soliton."
+" This file implements a simulation of Benney-Luke equations on a 2D periodic domain. "
+" The simulation tracks the evolution of two or three line solitons as they interact, "
+" to produce a four or eight times higher splash than the initial height of each soliton. "
 
-"The user can modify the following simulation parameters in section 'Switches' below:"
-"soliton_number (two or three), domain_type (single periodic, both periodc), and basis_type (CG1, CG2, CG3)."
-"In order to modify the initial conditions, the user can change values of variables in sections 'Parameters' and 'Parameters for k_i'."
+" The user can modify the following simulation parameters in section 'Switches' below: "
+" soliton_number (two or three), domain_type (single periodic, both periodc), and basis_type (CG1, CG2, CG3). "
+" In order to modify the initial conditions, the user can change values of variables in sections 'Parameters' and 'Parameters for k_i'. "
 
 from firedrake import *
 from initial_data import *
@@ -23,12 +23,12 @@ t00 = time.time()
 
 """ ________________ Switches ________________ """
 soliton_number = "SP3"      # Choices: ["SP2", "SP3"]
-                            # "SP2": Two-solitons interaction
-                            # "SP3": Three-solitons interaction 
-domain_type = "single"      # Choices: ["both", "sigle"] 
+                            # "SP2": Two-soliton interaction
+                            # "SP3": Three-soliton interaction
+domain_type = "single"      # Choices: ["both", "sigle"]
                             # "both": doubly periodic domain in x- and y-directions
                             # "single": singly periodic domain in x-direction only
-basis_type = int(1)         # Choices: ["1", "2", "3"] 
+basis_type = int(1)         # Choices: ["1", "2", "3"]
                             # "1": CG1
                             # "2": CG2
                             # "3": CG3
