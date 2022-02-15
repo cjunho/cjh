@@ -51,8 +51,9 @@ The user can modify the following simulation parameters by changing the relevant
 To modify the initial condition, the user can change the values of the variables in sections “Parameters”, and “Parameters for k_i” in BL_periodic.py.
 For specific details on the calculation of the parameters, please refer to the paper. 
 
-How to obtain the figures in the paper.
-  | soliton number | domain type | basis type | dimensional variable or not
---- | --- | --- | --- |--- 
-Fig 8 | 301 | 283 | 290 | 286 
+How to produce results as in the figures in the paper, choose options 
+-- | soliton number | domain type | basis type | dimensional variable or non-dimensional
+--- | ---           | ---         | ---        |--- 
+Fig 8 | 301       | 283         | 290        | 286
 
+ 
