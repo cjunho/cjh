@@ -37,6 +37,7 @@ The computational data are visualised as follows:
 
 • Evolution of maximum of eta against time are plotted by running file "call_maximum.py".
 
+\\
 
 USAGE
 
@@ -48,7 +49,7 @@ There are three 'Switches' in BL_periodic.py which the user can modify:
 
 • basis type: 1, 2 or 3, corresponding to continuous Galerkin basis of the respective order.
 
-In order to obtain the results as the figures in the paper, please choose the Sitches as follows. 
+In order to obtain the results as the figures in the paper, please choose the Switches as follows: 
 -- | soliton number | domain type | basis type | dimensional variable
 --- | ---           | ---         | ---        |--- 
 Fig 8 | SP3       | single and both         | CG2        | x
@@ -57,7 +58,3 @@ Fig 12-15 | SP3       | single         | CG1, CG2, and CG3        | x
 
 
 To modify the initial condition, the user can change the values of the variables in sections “Parameters”, and “Parameters for k_i” in BL_periodic.py.
-For specific details on the calculation of the parameters, please refer to the paper. 
-
-
- 
