@@ -40,20 +40,24 @@ The computational data are visualised as follows:
 
 USAGE
 
-The user can modify the following simulation parameters by changing the relevant 'Switches' in the code:
+There are three 'Switches' in the code which the user can modify:
 
 • soliton number: SP2 or SP3, corresponding to simulations of two- or three-soliton interations;
 
 • domain type: single or both, corresponding to singly (x-direction) or doubly (x- and y-directions) periodic domain;
 
-• basis type: 1, 2 or 3, corresponding to continuous Galerkin basis of the respective order. 
+• basis type: 1, 2 or 3, corresponding to continuous Galerkin basis of the respective order.
+
+In order to obtain results as the figures in the paper, choose the Sitches as follows. 
+-- | soliton number | domain type | basis type | dimensional variable or non-dimensional
+--- | ---           | ---         | ---        |--- 
+Fig 8 | SP3       | single and both         | CG2        | x
+Fig 9-11 | SP2       | single         | CG1, CG2, and CG3        | x
+Fig 12-15 | SP3       | single         | CG1, CG2, and CG3        | x
+
 
 To modify the initial condition, the user can change the values of the variables in sections “Parameters”, and “Parameters for k_i” in BL_periodic.py.
 For specific details on the calculation of the parameters, please refer to the paper. 
 
-How to produce results as in the figures in the paper, choose options 
--- | soliton number | domain type | basis type | dimensional variable or non-dimensional
---- | ---           | ---         | ---        |--- 
-Fig 8 | 301       | 283         | 290        | 286
 
  
