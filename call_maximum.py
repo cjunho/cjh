@@ -27,7 +27,7 @@ plt.title(r"Maximum", fontsize=20)
 plt.plot(tt, max1, linewidth=5, color='black')
 plt.xticks(fontsize=13, weight='bold')
 plt.yticks(fontsize=13, weight='bold')
-plt.ticklabel_format( axis='y', style='sci', scilimits=(-3,1))
+plt.ticklabel_format(axis='y', style='sci', scilimits=(-3,1))
 plt.xlabel("time", fontsize=15, weight='bold')
 plt.grid()
 
