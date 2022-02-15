@@ -49,7 +49,7 @@ There are three 'Switches' in BL_periodic.py which the user can modify:
 • basis type: 1, 2 or 3, corresponding to continuous Galerkin basis of the respective order.
 
 In order to obtain the results as the figures in the paper, please choose the Sitches as follows. 
--- | soliton number | domain type | basis type | dimensional variable or non-dimensional
+-- | soliton number | domain type | basis type | dimensional variable
 --- | ---           | ---         | ---        |--- 
 Fig 8 | SP3       | single and both         | CG2        | x
 Fig 9-11 | SP2       | single         | CG1, CG2, and CG3        | x
