@@ -21,7 +21,7 @@ tt = np.arange(t0,t0+0.1,dt)    # time variable
 """ ________________ Recall energy ________________ """
 df = pd.read_csv(r"data/energy.csv")
 energy = df.to_numpy()
-energy = energy - energy[0] # E(t)-E(t_0)
+energy = energy - energy[0]     # E(t)-E(t_0)
 
 """ ________________ Plot evolution ________________ """
 plt.title(r"E(t)-E(%i)" %t0, fontsize=20) 
