@@ -37,7 +37,7 @@ The computational data are visualised as follows:
 
 • Evolution of maximum of eta against time are plotted by running file "call_maximum.py".
 
-\
+
 
 USAGE
 
