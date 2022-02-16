@@ -130,7 +130,7 @@ q1 = Function(V)                        # q(n+1)
 phi_h = Function(V)                     # phi(n+1/2)
 q_h = Function(V)                       # q(n+1/2)
 
-U1 = Function(V,name="corrector")       # corrector
+U1 = Function(V, name="corrector")      # corrector
 Ux = Function(V)
 Uy = Function(V)
 
@@ -293,5 +293,5 @@ while t < t1+T:
         np.savetxt('data/max.csv', max_eta)
         PETSc.Sys.Print(t, L_inf, E1)
 
-# Print computational time (s)
+# Print computational time
 print(time.time() - t00)
