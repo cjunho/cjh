@@ -19,11 +19,11 @@ T = 0.1                         # duration time
 tt = np.arange(t0,t0+0.1,dt)    # time variable
 
 """ ________________ Recall energy ________________ """
-df = pd.read_csv(r"data123/max.csv")
+df = pd.read_csv("data123/max.csv")
 max1 = df.to_numpy()
 
 """ ________________ Plot evolution ________________ """
-plt.title(r"Maximum", fontsize=20) 
+plt.title("Maximum", fontsize=20) 
 plt.plot(tt, max1, linewidth=5, color='black')
 plt.xticks(fontsize=13, weight='bold')
 plt.yticks(fontsize=13, weight='bold')
