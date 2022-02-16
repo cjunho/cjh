@@ -19,12 +19,12 @@ T = 0.1                         # duration time
 tt = np.arange(t0,t0+0.1,dt)    # time variable
 
 """ ________________ Recall energy ________________ """
-df = pd.read_csv(r"data/energy.csv")
+df = pd.read_csv("data/energy.csv")
 energy = df.to_numpy()
 energy = energy - energy[0]     # E(t)-E(t_0)
 
 """ ________________ Plot evolution ________________ """
-plt.title(r"E(t)-E(%i)" %t0, fontsize=20) 
+plt.title("E(t)-E(%i)" %t0, fontsize=20) 
 plt.plot(tt, energy, linewidth=5, color='black')
 plt.xticks(fontsize=13, weight='bold')
 plt.yticks(fontsize=13, weight='bold')
