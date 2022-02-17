@@ -5,7 +5,7 @@ These files are for scaling non-dimensional variables of BLE into dimensional va
 
 FILES
 
-The code consists of five files:
+The code consists of four files:
 
 • BL_dimension.py is the main file that scales non-dimensional variables into dimensional variables;
 
@@ -13,7 +13,9 @@ The code consists of five files:
 
 • boundary_point.py computes points to design a computational domain;
 
-The way to scale is followed by scaling.pdf.
+• scaling.py scales dimensional vatiables to non-dimensionals, and rescales vice versa.
+
+How to scale is written in the paper.
 
 After the computation is finished, three sets of data are produced:
 
