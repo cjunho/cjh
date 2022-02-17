@@ -252,9 +252,13 @@ phi21 = scaling_to_dim(phi21,phi2,H0,ep)
 
 """ ________________ Compute max(eta) ________________ """
 max_eta = np.zeros(1)
+s_data = np.zeros(1)
+
 with eta01.dat.vec_ro as vv:
     L_inf = vv.max()[1]
 max_eta[0] = L_inf
+s_data[0]  = s0
+
 PETSc.Sys.Print(s0, L_inf)    
 
 """ ________________ Saving data ________________ """
@@ -285,6 +289,7 @@ while s < s1+S:
       with eta0.dat.vec_ro as v:
         L_inf = H0*ep*v.max()[1]
       max_eta = np.r_[max_eta,[L_inf]]
+      s_data = np.r_[s_data,[s]]
       step += int(1)
       
       # Save data every 100 steps
@@ -296,6 +301,7 @@ while s < s1+S:
         phi21 = scaling_to_dim(phi21,phi2,H0,ep)  # rescaling phi2
         output1.write(phi21, eta01, phi01, time=s)        
         np.savetxt('data/max.csv', max_eta)
+        np.savetxt('data/time.csv', s_data)
         PETSc.Sys.Print(s, L_inf)
 
 # Print computational time
