@@ -88,7 +88,7 @@ def initial_eta(xx,yy,eta,k1,k2,k3,k4,k5,k6,t,ep,mu):
     
     eta.interpolate(((4/3)**(1/3)*2*(u2/d1-(u1/d1)**2)))
  
-    return (eta);
+    return (eta)
 
 def initial_phi(xx,yy,phi,k1,k2,k3,k4,k5,k6,t,ep,mu):
     K135 = (k1+k3+k5)  
@@ -147,7 +147,7 @@ def initial_phi(xx,yy,phi,k1,k2,k3,k4,k5,k6,t,ep,mu):
     
     phi.interpolate((32/81)**(1/6)*(mu/ep)**(0.5)*(2*u1/d1+1))
 
-    return (phi);
+    return (phi)
 
 def initial_phib(xx,yy,k1,k2,k3,k4,k5,k6,t,ep,mu):
     K135 = (k1+k3+k5)  
@@ -206,7 +206,7 @@ def initial_phib(xx,yy,k1,k2,k3,k4,k5,k6,t,ep,mu):
     
     phi = ((32/81)**(1/6)*(mu/ep)**(0.5)*(2*u1/d1+1))
 
-    return (phi);
+    return (phi)
 
 def initial_phiby(xx,yy,k1,k2,k3,k4,k5,k6,t,ep,mu):
     K135 = (k1+k3+k5)  
