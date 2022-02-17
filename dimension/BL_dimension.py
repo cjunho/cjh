@@ -1,11 +1,7 @@
-"This file scales a numerical solution of Benney-Luke equations into dimensional variables."
-"The solution is two or three-line-soliton interaction."
-"The code consits of four files:"
-"• BL_dimension.py is the main file that solves BLE;"
-"• initial_data.py defines the initial conditions eta_0(x,y), and Phi_0(x,y);"
-"• boundary_point.py computes points to design a computational domain."
-"• scaling.py scales dimensional vatiables to non-dimensionals, and rescale vice versa."
-"For how to scale the varibles, please refer to the paper."
+" This file implements a simulation of Benney-Luke equations on a 2D periodic domain. "
+" The simulation tracks the evolution of two or three line solitons as they interact, "
+" to produce a four or eight times higher splash than the initial height of each soliton. "
+" The numerical solution is scaled into dimensional variables. "
 
 " The user can modify the following simulation parameters in section 'Switches' below: "
 " soliton_number (two or three), domain_type (single periodic, both periodc), and basis_type (CG1, CG2, CG3). "
@@ -46,17 +42,17 @@ ds = 0.031943828249996996   # Time step
 lam = 1                     # lambda parameter
 
 """ ________________ Dimensional vatiables ________________ """
-H0 = 20                            # Depth of water in meter unit
+H0 = 20                            # Depth of water (in meters)
 if soliton_number == "SP3":
-    s0 = -1277.75312999988         # initial time in second
-    tan0 = 0.25                    # angle 
-    tildeA0 = 0.10396012211594852  # initial height of a line soliton in meter unit
-    Ly0 = 4203.807797699605        # height of domain in meter unit 
+    s0 = -1277.75312999988         # Initial time (in seconds)
+    tan0 = 0.25                    # Angle 
+    tildeA0 = 0.10396012211594852  # Initial height of line solitons (in meters)
+    Ly0 = 4203.807797699605        # Domain width (in meters)
 elif soliton_number == "SP2":
-    s0 = 0                         # initial time in second
-    tan0 = 0.25                    # angle
-    tildeA0 = 0.8333333333333334   # initial height of a line soliton in meter unit
-    Ly0 = 3577.7087639996635       # height of domain in meter unit 
+    s0 = 0                         # Initial time (in seconds)
+    tan0 = 0.25                    # Angle
+    tildeA0 = 0.8333333333333334   # Initial height of line solitons (in meters)
+    Ly0 = 3577.7087639996635       # Domain width (in meters)
 
 """ ___ Scaling the dimensional vatiables into non-dimensional ________ """
 t,dt,tan1,tildeA,Ly=scaling_to_nondim(s0,ds,tan0,tildeA0,Ly0,H0,ep)
@@ -64,9 +60,9 @@ tan=(2/9)**(1/6)*tan1/np.sqrt(ep)
 
 """ ________________ Parameters for k_i ________________ """
 if soliton_number == "SP3":    
-    k1 = -0.5*tan-np.sqrt(tildeA*.5/lam)
-    k2 = -0.5*tan+np.sqrt(tildeA*.5/lam)
-    k3 = -np.sqrt(tildeA*.5)
+    k1 = -0.5*tan-np.sqrt(tildeA*0.5/lam)
+    k2 = -0.5*tan+np.sqrt(tildeA*0.5/lam)
+    k3 = -np.sqrt(tildeA*0.5)
     k4 = -k3
     k5 = -k2
     k6 = -k1
@@ -123,8 +119,8 @@ mesh = PeriodicRectangleMesh(Nx, Ny, Lx, Ly, direction=direction,
 
 coords = mesh.coordinates
 
-coords.dat.data[:,0] = H0/ep**.5*(coords.dat.data[:,0] + xb1)
-coords.dat.data[:,1] = H0/ep**.5*(coords.dat.data[:,1] + y_ast - y_shift)
+coords.dat.data[:,0] = H0/ep**0.5*(coords.dat.data[:,0] + xb1)
+coords.dat.data[:,1] = H0/ep**0.5*(coords.dat.data[:,1] + y_ast - y_shift)
 
 """ ______________ Function Space ______________ """
 V = FunctionSpace(mesh, "CG", basis_type)   
@@ -137,9 +133,9 @@ eta1 = Function(V, name="eta_next")     # eta(n+1)
 phi1 = Function(V, name="phi_next")     # phi(n+1)
 phi2 = Function(V, name="phi_periodic") # phi_periodic
 
-phi21 = Function(V, name="save_phi2")   # turn phi2 into demesional variable
-eta01 = Function(V, name="save_eta0")   # turn eta into demesional variable
-phi01 = Function(V, name="save_phi0")   # turn phi into demesional variable
+phi21 = Function(V, name="save_phi2")   # makes phi2 dimesional
+eta01 = Function(V, name="save_eta0")   # makes eta into dimesional
+phi01 = Function(V, name="save_phi0")   # makes phi into dimesional
 
 q0 = Function(V)                        # q(n)    
 q1 = Function(V)                        # q(n+1) 
@@ -154,7 +150,7 @@ q = TrialFunction(V)
 v = TestFunction(V)
 
 """ ____________ Initial conditions _____________ """
-x = SpatialCoordinate(mesh)*ep**.5/H0
+x = SpatialCoordinate(mesh)*ep**0.5/H0
 xx = (x[0]-x_shift)*(4.5)**(1/6)*(ep/mu)**(1/2) # Scaling x into X
 
 # Initialization
@@ -250,9 +246,9 @@ q_problem = LinearVariationalProblem(aq_h,Lq,q1)
 q_solver = LinearVariationalSolver(q_problem)
 
 """ _________ Rescaling BLE into dimensional variables _____________ """
-eta01=scaling_to_dim(eta01,eta0,H0,ep)
-phi01=scaling_to_dim(phi01,phi0,H0,ep)
-phi21=scaling_to_dim(phi21,phi2,H0,ep)
+eta01 = scaling_to_dim(eta01,eta0,H0,ep)
+phi01 = scaling_to_dim(phi01,phi0,H0,ep)
+phi21 = scaling_to_dim(phi21,phi2,H0,ep)
 
 """ ________________ Compute energy and max(eta) ________________ """
 max_eta = np.zeros(1)
@@ -265,16 +261,16 @@ PETSc.Sys.Print(s0, L_inf)
 output1 = File('data/output.pvd')
 output1.write(phi21, eta01, phi01, time=s0)
 
-# """ _____________ Time loop _____________ """
-s1 = s0                    # Initial time
-s=s0		    # time	
-step = int(0)              # Number of steps
-S=0.6388765649999399 # time duration
+""" _____________ Time loop _____________ """
+s1 = s0                   # Initial time
+s = s0                    # Time	
+step = int(0)             # Number of steps
+S = 0.6388765649999399    # Time duration
 
 while s < s1+S:        
       s += ds
       
-      # Solve the weak formulations of BLE
+      # Solve the weak formulations
       phi_solver_h.solve()
       q_solver_h.solve()
       eta_solver.solve()
@@ -286,7 +282,6 @@ while s < s1+S:
       phi2.assign(phi1)
       
       # Compute energy and max(eta)
-     
       with eta0.dat.vec_ro as v:
         L_inf = H0*ep*v.max()[1]
       max_eta = np.r_[max_eta,[L_inf]]
@@ -296,13 +291,12 @@ while s < s1+S:
       if step % 100 == 0:  
         phi0.assign(phi2+U1)
         
-        eta01=scaling_to_dim(eta01,eta0,H0,ep) # rescaling eta0
-        phi01=scaling_to_dim(phi01,phi0,H0,ep) # rescaling phi0
-        phi21=scaling_to_dim(phi21,phi2,H0,ep) # rescaling phi2
+        eta01 = scaling_to_dim(eta01,eta0,H0,ep)  # rescaling eta0
+        phi01 = scaling_to_dim(phi01,phi0,H0,ep)  # rescaling phi0
+        phi21 = scaling_to_dim(phi21,phi2,H0,ep)  # rescaling phi2
         output1.write(phi21, eta01, phi01, time=s)        
         np.savetxt('data/max.csv', max_eta)
         PETSc.Sys.Print(s, L_inf)
 
 # Print computational time
 print(time.time() - t00)
-
