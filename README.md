@@ -15,7 +15,7 @@ The code consists of five files:
 - `BL_periodic.py` is the main file that solves BLE;
 - `initial_data.py` defines the initial conditions eta_0(x,y), and Phi_0(x,y);
 - `boundary_point.py` computes points to design a computational domain;
-- `call_energy.py` and `call_maximum.py` are for plotting energy evolution and maximum evolution, respectively.
+- `call_energy.py` and `call_maximum.py` can be used for plotting the evolution of energy and maximum, respectively.
 
 After the computation is finished, four sets of data are produced:
 - solutions eta and Phi in "*data/output.pvd*";
