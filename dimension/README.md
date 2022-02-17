@@ -18,9 +18,10 @@ The code consists of four files:
 - `boundary_point.py` computes points to design a computational domain;
 - `scaling.py` scales the dimensional variables into non-dimensional form, and vice versa.
 
-After the computation is finished, two sets of data are produced:
+After the computation is finished, three sets of data are produced:
 - solutions eta and Phi in "*data/output.pvd*";
-- evolution of maximum of eta against time in "*data/max.csv*".
+- evolution of maximum of eta against time in "*data/max.csv*";
+- time in "*data/time.csv*".
 
 The computational data can be visualised with Paraview.
 
