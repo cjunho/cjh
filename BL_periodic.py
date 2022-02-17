@@ -235,6 +235,7 @@ q_solver = LinearVariationalSolver(q_problem)
 
 """ ________________ Compute energy and max(eta) ________________ """
 E_data1 = np.zeros(1)
+t_data = np.zeros(1)
 max_eta = np.zeros(1)
 
 phi1.assign(phi2)
@@ -247,8 +248,9 @@ E1 = assemble( (0.5*eta0**2 + 0.5*(1+ep*eta0)*((grad(phi2))**2
 with eta0.dat.vec_ro as vv:
     L_inf = vv.max()[1]
 E_data1[0] = E1
-
 max_eta[0] = L_inf
+t_data[0]  = t
+
 PETSc.Sys.Print(t, L_inf, E1)    
 
 """ ________________ Saving data ________________ """
@@ -282,6 +284,7 @@ while t < t1+T:
       with eta0.dat.vec_ro as v:
         L_inf = v.max()[1]
       max_eta = np.r_[max_eta,[L_inf]]
+      t_data = np.r_[t_data,[t]]
       step += int(1)
       
       # Save data every 100 steps
@@ -291,6 +294,7 @@ while t < t1+T:
         output1.write(phi2, eta0, phi0, time=t)
         np.savetxt('data/energy.csv', E_data1)
         np.savetxt('data/max.csv', max_eta)
+        np.savetxt('data/time.csv', t_data)
         PETSc.Sys.Print(t, L_inf, E1)
 
 # Print computational time
