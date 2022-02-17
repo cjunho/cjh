@@ -25,7 +25,7 @@ After the computation is finished, three sets of data are produced:
 - evolution of maximum of eta against time in "*data/max.csv*";
 - time in "*data/time.csv*".
 
-The computational data can be visualised with Paraview.
+The computational data can be visualised with Paraview. And evolution of maximum of eta against time are plotted by running file call_maximum.py.
 
 ## USAGE
 The usage of the files is the same to `BL_periodic.py`, except that the variables are scaled to dimensional units.
