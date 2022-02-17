@@ -285,7 +285,7 @@ while s < s1+S:
       eta0.assign(eta1)
       phi2.assign(phi1)
       
-      # Compute energy and max(eta)
+      # Compute max(eta)
       with eta0.dat.vec_ro as v:
         L_inf = H0*ep*v.max()[1]
       max_eta = np.r_[max_eta,[L_inf]]
