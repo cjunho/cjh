@@ -4,14 +4,12 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
-""" ________________ Time variable ________________ """
-t0 = -200                       # initial time t0 
-dt = 0.005                      # time step
-T = 0.1                         # duration time
-tt = np.arange(t0,t0+T,dt)      # time variable
-""" ________________ Recall energy ________________ """
-df = pd.read_csv("data123/max.csv")
+""" ________________ Recall energy and time ________________ """
+df = pd.read_csv("data/max.csv")
 max1 = df.to_numpy()
+
+df2 = pd.read_csv("data/max.csv")
+t2 = df2.to_numpy()
 
 """ ________________ Plot evolution ________________ """
 plt.title("Maximum", fontsize=20) 
