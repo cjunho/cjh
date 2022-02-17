@@ -257,7 +257,7 @@ output1.write(phi2, eta0, phi0, time=t)
 
 """ _____________ Time loop _____________ """
 t1 = t          # Initial time
-T = 0.1         # Duration time
+T = 200         # Duration time
 step = int(0)   # Number of steps
 
 while t < t1+T:        
@@ -285,7 +285,7 @@ while t < t1+T:
       step += int(1)
       
       # Save data every 100 steps
-      if step % 2 == 0:  
+      if step % 100 == 0:  
         phi0.assign(phi2+U1)
       
         output1.write(phi2, eta0, phi0, time=t)
