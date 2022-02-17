@@ -4,20 +4,11 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
-soliton_number="SP3"        # choices=["SP2", "SP3"]
-#SP2: Two solitons interaction;
-#SP3: Three solitons interaction
-
-if soliton_number=="SP3":   # initial time t0 
-    t0 = -200
-else:
-    t0 = 0    
-    
 """ ________________ Time variable ________________ """
+t0 = -200                       # initial time t0 
 dt = 0.005                      # time step
 T = 0.1                         # duration time
-tt = np.arange(t0,t0+0.1,dt)    # time variable
-
+tt = np.arange(t0,t0+T,dt)      # time variable
 """ ________________ Recall energy ________________ """
 df = pd.read_csv("data123/max.csv")
 max1 = df.to_numpy()
