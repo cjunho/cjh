@@ -4,17 +4,13 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
     
-  
-""" ________________ Time variable ________________ """
-t0 = -200                       # initial time t0 
-dt = 0.005                      # time step
-T = 0.1                         # duration time
-tt = np.arange(t0,t0+T,dt)      # time variable
-
 """ ________________ Recall energy ________________ """
 df = pd.read_csv("data/energy.csv")
 energy = df.to_numpy()
 energy = energy - energy[0]     # E(t)-E(t_0)
+
+df2 = pd.read_csv("data/time.csv")
+tt = df2.to_numpy()
 
 """ ________________ Plot evolution ________________ """
 plt.title("E(t)-E(%i)" %t0, fontsize=20) 
