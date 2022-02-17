@@ -8,8 +8,8 @@ import matplotlib.pyplot as plt
 df = pd.read_csv("data/max.csv")
 max1 = df.to_numpy()
 
-df2 = pd.read_csv("data/max.csv")
-t2 = df2.to_numpy()
+df2 = pd.read_csv("data/time.csv")
+tt = df2.to_numpy()
 
 """ ________________ Plot evolution ________________ """
 plt.title("Maximum", fontsize=20) 
