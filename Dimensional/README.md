@@ -17,6 +17,8 @@ The code consists of four files:
 - `initial_data.py` defines the initial conditions eta_0(x,y), and Phi_0(x,y);
 - `boundary_point.py` computes points to design a computational domain;
 - `scaling.py` scales the dimensional variables into non-dimensional form, and vice versa.
+- `call_maximum.py` can be used for plotting the evolution of maximum.
+
 
 After the computation is finished, three sets of data are produced:
 - solutions eta and Phi in "*data/output.pvd*";
