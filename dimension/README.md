@@ -16,7 +16,7 @@ The code consists of four files:
 - `BL_dimension.py` is the main file that solves BLE, and then scales the BLE solutions into dimensional variables;
 - `initial_data.py` defines the initial conditions eta_0(x,y), and Phi_0(x,y);
 - `boundary_point.py` computes points to design a computational domain;
-- `scaling.py` are for scaling dimensional vatiables to non-dimensionals, and rescales vice versa.
+- `scaling.py` scales the dimensional variables into non-dimensional form, and vice versa.
 
 After the computation is finished, two sets of data are produced:
 - solutions eta and Phi in "*data/output.pvd*";
@@ -25,4 +25,4 @@ After the computation is finished, two sets of data are produced:
 The computational data can be visualised with Paraview.
 
 ## USAGE
-Except one thing, the usage of the files are the same to 'BL_periodic.py', that is, for scaling, three sections are added to 'BL_periodic.py': 'Dimensional variabels', 'Scaling the dimensional variables into non-dimensional', and 'Rescaling BLE into dimensional variables'. First, set dimensional variables in section Dimensional variabels. Subsequently, in section Scaling the dimensional variables into non-dimensional, a function 'scaling_to_nondim' turns the dimensional variables into non-dimensionals. And then, the codes solves BLE like BL_periodic.py. Finally, a function scaling_to_dim scales the BLE solution into the dimensional variables in section Rescaling BLE into dimensional variables.
+The usage of the files is the same to `BL_periodic.py`, except that the variables are scaled to dimensional units.
