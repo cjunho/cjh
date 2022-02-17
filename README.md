@@ -37,10 +37,10 @@ There are three ***Switches*** in `BL_periodic.py` which the user can modify:
 - basis type: 1, 2 or 3, corresponding to continuous Galerkin basis of the respective order.
 
 To obtain the results and figures in the paper, the ***Switches*** should be chosen as follows:
-Figure | soliton number | domain type | basis type | dimensional variable
---- | ---           | ---         | ---        |--- 
-8 | SP3       | single and both         | CG2        | x
-9-11 | SP2       | single         | CG1, CG2, and CG3        | x
-12-15 | SP3       | single         | CG1, CG2, and CG3        | x
+Figure | soliton number | domain type | basis type
+--- | ---           | ---         | ---
+8 | SP3       | single and both         | CG2
+9-11 | SP2       | single         | CG1, CG2, and CG3
+12-15 | SP3       | single         | CG1, CG2, and CG3
 
 To modify the initial condition, the user can change the values of the variables in sections ***Parameters***, and ***Parameters for k_i*** in `BL_periodic.py`.
