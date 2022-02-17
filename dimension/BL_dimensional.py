@@ -55,7 +55,7 @@ elif soliton_number == "SP2":
     Ly0 = 3577.7087639996635       # Domain width (in meters)
 
 """ ________ Scaling dimensional variables to non-dimensional form ________ """
-t,dt,tan1,tildeA,Ly = scaling_to_nondim(s0,ds,tan0,tildeA0,Ly0,H0,ep)
+(t,dt,tan1,tildeA,Ly) = scaling_to_nondim(s0,ds,tan0,tildeA0,Ly0,H0,ep)
 tan = (2/9)**(1/6)*tan1/np.sqrt(ep)
 
 """ ________________ Parameters for k_i ________________ """
