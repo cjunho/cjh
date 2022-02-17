@@ -4,14 +4,14 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
-""" ________________ Recall energy and time ________________ """
+""" ________________ Recall maximum and time ________________ """
 df = pd.read_csv("data/max.csv")
 max1 = df.to_numpy()
 
 df2 = pd.read_csv("data/time.csv")
 tt = df2.to_numpy()
 
-""" ________________ Plot evolution ________________ """
+""" ________________ Plot evolution of maximum ________________ """
 plt.title("Maximum", fontsize=20) 
 plt.plot(tt, max1, linewidth=5, color='black')
 plt.xticks(fontsize=13, weight='bold')
