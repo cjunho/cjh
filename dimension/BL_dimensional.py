@@ -250,7 +250,7 @@ eta01 = scaling_to_dim(eta01,eta0,H0,ep)
 phi01 = scaling_to_dim(phi01,phi0,H0,ep)
 phi21 = scaling_to_dim(phi21,phi2,H0,ep)
 
-""" ________________ Compute energy and max(eta) ________________ """
+""" ________________ Compute max(eta) ________________ """
 max_eta = np.zeros(1)
 with eta01.dat.vec_ro as vv:
     L_inf = vv.max()[1]
