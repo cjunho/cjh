@@ -41,7 +41,7 @@ mu = 0.0025                 # Small dispersion parameter
 ds = 0.031943828249996996   # Time step
 lam = 1                     # lambda parameter
 
-""" ________________ Dimensional vatiables ________________ """
+""" ________________ Dimensional variables ________________ """
 H0 = 20                            # Depth of water (in meters)
 if soliton_number == "SP3":
     s0 = -1277.75312999988         # Initial time (in seconds)
@@ -54,9 +54,9 @@ elif soliton_number == "SP2":
     tildeA0 = 0.8333333333333334   # Initial height of line solitons (in meters)
     Ly0 = 3577.7087639996635       # Domain width (in meters)
 
-""" ___ Scaling the dimensional vatiables into non-dimensional ________ """
-t,dt,tan1,tildeA,Ly=scaling_to_nondim(s0,ds,tan0,tildeA0,Ly0,H0,ep)
-tan=(2/9)**(1/6)*tan1/np.sqrt(ep)
+""" ________ Scaling dimensional variables to non-dimensional form ________ """
+t,dt,tan1,tildeA,Ly = scaling_to_nondim(s0,ds,tan0,tildeA0,Ly0,H0,ep)
+tan = (2/9)**(1/6)*tan1/np.sqrt(ep)
 
 """ ________________ Parameters for k_i ________________ """
 if soliton_number == "SP3":    
@@ -134,8 +134,8 @@ phi1 = Function(V, name="phi_next")     # phi(n+1)
 phi2 = Function(V, name="phi_periodic") # phi_periodic
 
 phi21 = Function(V, name="save_phi2")   # makes phi2 dimesional
-eta01 = Function(V, name="save_eta0")   # makes eta into dimesional
-phi01 = Function(V, name="save_phi0")   # makes phi into dimesional
+eta01 = Function(V, name="save_eta0")   # makes eta dimesional
+phi01 = Function(V, name="save_phi0")   # makes phi dimesional
 
 q0 = Function(V)                        # q(n)    
 q1 = Function(V)                        # q(n+1) 
