@@ -7,9 +7,9 @@ def scaling_to_nondim(t0,ds,tan0,tildeA,Ly,H0,ep):
     tildeA = tildeA/((4/3)**(1/3)*H0*ep)    # amplitude
     Ly = Ly/(H0/ep**0.5)
     
-    return(t0,dt,tan0,tildeA,Ly)
+    return (t0,dt,tan0,tildeA,Ly)
 
 def scaling_to_dim(eta01,eta0,H0,ep):
     eta01.assign(H0*ep*eta0)
     
-    return(eta01)
+    return (eta01)
