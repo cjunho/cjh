@@ -20,5 +20,5 @@ plt.ticklabel_format(axis='y', style='sci', scilimits=(-3,1))
 plt.xlabel("time", fontsize=15, weight='bold')
 plt.grid()
 
-plt.savefig('data123/maximum.eps')
+plt.savefig('data/maximum.eps')
 plt.show()
