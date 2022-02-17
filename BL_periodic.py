@@ -235,8 +235,8 @@ q_solver = LinearVariationalSolver(q_problem)
 
 """ ________________ Compute energy and max(eta) ________________ """
 E_data1 = np.zeros(1)
-t_data = np.zeros(1)
 max_eta = np.zeros(1)
+t_data = np.zeros(1)
 
 phi1.assign(phi2)
 q_solver.solve()        # Compute Delta(phi)
