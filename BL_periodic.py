@@ -51,9 +51,9 @@ lam = 1                             # lambda
 
 if soliton_number == "SP3":
     tildeA = 0.094454039365117
-    k1 = -0.5*tan-np.sqrt(tildeA*.5/lam)
-    k2 = -0.5*tan+np.sqrt(tildeA*.5/lam)
-    k3 = -np.sqrt(tildeA*.5)
+    k1 = -0.5*tan - np.sqrt(tildeA*0.5/lam)
+    k2 = -0.5*tan + np.sqrt(tildeA*0.5/lam)
+    k3 = -np.sqrt(tildeA*0.5)
     k4 = -k3
     k5 = -k2
     k6 = -k1
@@ -257,13 +257,13 @@ output1.write(phi2, eta0, phi0, time=t)
 
 """ _____________ Time loop _____________ """
 t1 = t          # Initial time
-T = 200         # Duration time
+T = 200         # Time duration
 step = int(0)   # Number of steps
 
 while t < t1+T:        
       t += dt
       
-      # Solve the weak formulations 
+      # Solve the weak formulations
       phi_solver_h.solve()
       q_solver_h.solve()
       eta_solver.solve()
