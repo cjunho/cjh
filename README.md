@@ -20,7 +20,7 @@ The code consists of five files:
 After the computation is finished, four sets of data are produced:
 - solutions eta and Phi in "*data/output.pvd*";
 - evolution of energy against time in "*data/energy.csv*";
-- evolution of maximum of eta against time in "*data/max.csv*".
+- evolution of maximum of eta against time in "*data/max.csv*";
 - time in "*data/time.csv*".
 
 The computational data are visualised as follows:
