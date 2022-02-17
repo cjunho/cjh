@@ -17,10 +17,11 @@ The code consists of five files:
 - `boundary_point.py` computes points to design a computational domain;
 - `call_energy.py` and `call_maximum.py` are for plotting energy evolution and maximum evolution, respectively.
 
-After the computation is finished, three sets of data are produced:
+After the computation is finished, four sets of data are produced:
 - solutions eta and Phi in "*data/output.pvd*";
 - evolution of energy against time in "*data/energy.csv*";
 - evolution of maximum of eta against time in "*data/max.csv*".
+- time "*data/time.csv*".
 
 The computational data are visualised as follows:
 - Solutions eta and Phi are pvd files that are read with Paraview.
