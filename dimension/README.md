@@ -7,13 +7,13 @@ These files are for scaling non-dimensional variables of BLE into dimensional va
 
 The code consists of four files:
 
--'BL_dimension.py' is the main file that solves BLE, and then scales the BLE solutions into dimensional variables;
+- 'BL_dimension.py' is the main file that solves BLE, and then scales the BLE solutions into dimensional variables;
 
--'initial_data.py' defines the initial conditions eta_0(x,y), and Phi_0(x,y);
+- 'initial_data.py' defines the initial conditions eta_0(x,y), and Phi_0(x,y);
 
--'boundary_point.py' computes points to design a computational domain;
+- 'boundary_point.py' computes points to design a computational domain;
 
--'scaling.py' are for scaling dimensional vatiables to non-dimensionals, and rescales vice versa.
+- 'scaling.py' are for scaling dimensional vatiables to non-dimensionals, and rescales vice versa.
 
 How to scale is written in the paper. 
 
