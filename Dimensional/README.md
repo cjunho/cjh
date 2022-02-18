@@ -16,7 +16,7 @@ The code consists of four files:
 - `BL_dimension.py` is the main file that solves BLE, and then scales the BLE solutions into dimensional variables;
 - `initial_data.py` defines the initial conditions eta_0(x,y), and Phi_0(x,y);
 - `boundary_point.py` computes points to design a computational domain;
-- `scaling.py` scales the dimensional variables into non-dimensional form, and vice versa.
+- `scaling.py` scales the dimensional variables into non-dimensional form, and vice versa;
 - `call_maximum.py` can be used for plotting the evolution of maximum.
 
 
@@ -25,7 +25,7 @@ After the computation is finished, three sets of data are produced:
 - evolution of maximum of eta against time in "*data/max.csv*";
 - time in "*data/time.csv*".
 
-The computational data can be visualised with Paraview. And evolution of maximum of eta against time are plotted by running file call_maximum.py.
+The computational data can be visualised with Paraview, and the evolution of the maximum of eta can be plotted by running file `call_maximum.py`.
 
 ## USAGE
 The usage of the files is the same to `BL_periodic.py`, except that the variables are scaled to dimensional units.
