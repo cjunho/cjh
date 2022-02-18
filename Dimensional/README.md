@@ -12,7 +12,7 @@ oblique-soliton interactions", written by J. Choi, O. Bokhove, A. Kalogirou, and
 
 ## FILES
 
-The code consists of four files:
+The code consists of five files:
 - `BL_dimension.py` is the main file that solves BLE, and then scales the BLE solutions into dimensional variables;
 - `initial_data.py` defines the initial conditions eta_0(x,y), and Phi_0(x,y);
 - `boundary_point.py` computes points to design a computational domain;
