@@ -23,10 +23,10 @@ After the computation is finished, four sets of data are produced:
 - evolution of maximum of eta against time in "*data/max.csv*";
 - time in "*data/time.csv*".
 
-The computational data are visualised as follows:
-- Solutions eta and Phi are pvd files that are read with Paraview.
-- Evolution of energy against time are plotted by running file `call_energy.py`.
-- Evolution of maximum of eta against time are plotted by running file `call_maximum.py`.
+The computational data can be visualised as follows:
+- Solutions eta and Phi are pvd files that can be read with Paraview.
+- Time evolution of energy can be plotted by running file `call_energy.py`.
+- Time evolution of maximum of eta can be plotted by running file `call_maximum.py`.
 
 
 ## USAGE
