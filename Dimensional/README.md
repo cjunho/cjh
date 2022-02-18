@@ -7,7 +7,7 @@ The simulation tracks the evolution of two or three line solitons as they intera
 to produce a four or eight times higher splash than the initial height of each soliton.
 
 For more information, please refer to the paper "Numerical experiments on extreme waves through
-oblique-soliton interactions", written by J. Choi, O. Bokhove, A. Kalogirou, and M. A. Kelmanson. And The way to scale the non-dimensional variables into dimensional variables with seconds and meters as units can be seen in scaling.pdf. 
+oblique-soliton interactions", written by J. Choi, O. Bokhove, A. Kalogirou, and M. A. Kelmanson. And the way to scale the non-dimensional variables into dimensional variables with seconds and meters as units can be seen in scaling.pdf. 
 
 
 ## FILES
