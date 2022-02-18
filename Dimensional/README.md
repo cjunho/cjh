@@ -28,4 +28,4 @@ After the computation is finished, three sets of data are produced:
 The computational data can be visualised with Paraview, and the time evolution of the maximum of eta can be plotted by running file `call_maximum.py`.
 
 ## USAGE
-The usage of the files is the same to `BL_periodic.py`, except that the variables are scaled to dimensional units.
+The usage of the files is the same to `BL_periodic.py` [as seen here](../README.md), except that the variables are scaled to dimensional units.
