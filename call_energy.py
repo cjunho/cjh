@@ -13,7 +13,7 @@ df2 = pd.read_csv("data/time.csv")
 tt = df2.to_numpy()
 
 """ ________________ Plot energy evolution ________________ """
-plt.title("E(t)-E(%i)" %t0, fontsize=20) 
+plt.title("E(t)-E(%i)" %tt[0], fontsize=20) 
 plt.plot(tt, energy, linewidth=5, color='black')
 plt.xticks(fontsize=13, weight='bold')
 plt.yticks(fontsize=13, weight='bold')
