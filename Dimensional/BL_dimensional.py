@@ -30,7 +30,7 @@ soliton_number = "SP3"      # Choices: ["SP2", "SP3"]
 domain_type = "single"      # Choices: ["both", "sigle"]
                             # "both": doubly periodic domain in x- and y-directions
                             # "single": singly periodic domain in x-direction only
-basis_type = int(1)         # Choices: ["1", "2", "3"]
+basis_type = int(1)         # Choices: ["1", "2", "3", "4"]
                             # "1": CG1
                             # "2": CG2
                             # "3": CG3
