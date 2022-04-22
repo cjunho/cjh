@@ -112,8 +112,8 @@ elif soliton_number == "SP2":
 if baiss_type==4:
    c=6
 else: c=12    
-Nx = int(c*np.ceil(Lx)+1)
-Ny = int(c*np.ceil(Ly)+1)
+Nx = int(c*np.ceil(Lx))
+Ny = int(c*np.ceil(Ly))
 
 mesh = PeriodicRectangleMesh(Nx, Ny, Lx, Ly, direction=direction,
                           quadrilateral=True, reorder=None,
