@@ -34,6 +34,7 @@ basis_type = int(1)         # Choices: ["1", "2", "3"]
                             # "1": CG1
                             # "2": CG2
                             # "3": CG3
+                            # "4": CG4
 
 """ ________________ Parameters ________________ """
 ep = 0.05                   # Small amplitude parameter 
@@ -108,8 +109,11 @@ elif soliton_number == "SP2":
     xb2 = bd_x22(y2,x_shift,k1,k2,k3,k4,t,ep,mu) # right wall 
     Lx = xb2-xb1
 
-Nx = int(12*np.ceil(Lx)+1)
-Ny = int(12*np.ceil(Ly)+1)
+if baiss_type==4:
+   c=6
+else: c=12    
+Nx = int(c*np.ceil(Lx)+1)
+Ny = int(c*np.ceil(Ly)+1)
 
 mesh = PeriodicRectangleMesh(Nx, Ny, Lx, Ly, direction=direction,
                           quadrilateral=True, reorder=None,
