@@ -34,13 +34,13 @@ The computational data can be visualised as follows:
 There are three ***Switches*** in `BL_periodic.py` which the user can modify:
 - soliton number: SP2 or SP3, corresponding to simulations of two- or three-soliton interations;
 - domain type: single or both, corresponding to singly (x-direction) or doubly (x- and y-directions) periodic domain;
-- basis type: 1, 2 or 3, corresponding to continuous Galerkin basis of the respective order.
+- basis type: 1, 2 3, or 4 corresponding to continuous Galerkin basis of the respective order.
 
 To obtain the results and figures in the paper, the ***Switches*** should be chosen as follows:
 Figure | soliton number | domain type | basis type
 --- | ---           | ---         | ---
 8 | SP3       | single and both         | CG2
 9-11 | SP2       | single         | CG1, CG2, and CG3
-12-15 | SP3       | single         | CG1, CG2, and CG3
+12-15 | SP3       | single         | CG1, CG2, CG3, and CG4
 
 To modify the initial condition, the user can change the values of the variables in sections ***Parameters***, and ***Parameters for k_i*** in `BL_periodic.py`.
