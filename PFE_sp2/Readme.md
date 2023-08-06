@@ -23,7 +23,7 @@ The computational data can be visualised as follows:
 - Time evolution of A can be plotted by running file `PFE_sp2_A.py`.
 - Time evolution of maximum/A can be plotted by running file `PFE_sp2_maxA.py`.
 
-Figure | soliton number | domain type | basis type
+Simulation | $L_x$ (m) | $L_y$ (m) |$L_z (m)$ | $T$ (s) | $N_x$ | $N_y$ |$N_z$|running time (min)
 --- | ---           | ---         | ---
 8 | SP3       | single and both         | CG2
 9-11 | SP2       | single         | CG1, CG2, and CG3
