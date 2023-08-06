@@ -5,7 +5,7 @@ from mpl_toolkits import mplot3d
 import matplotlib.pyplot as plt
 
 
-fileE = 'C:/Users/amtjch/Desktop/pfe_sp2/pfe_sp2_short/potflow3dperenergy.txt'
+fileE = 'C:/Users/amtjch/Desktop/pfe_sp3/pfe_sp3_short/potflow3dperenergy.txt'
 outputE = open(fileE,'r')
 #  infile.readline() # skip the first line not first line here (yet)
 tijd = []
@@ -28,7 +28,7 @@ outputE.close()
 
 
 
-fileE = 'C:/Users/amtjch/Desktop/pfe_sp2/pfe_sp2/potflow3dperenergy.txt'
+fileE = 'C:/Users/amtjch/Desktop/pfe_sp3/pfe_sp3/potflow3dperenergy.txt'
 outputE = open(fileE,'r')
 #  infile.readline() # skip the first line not first line here (yet)
 tijd = []
@@ -47,7 +47,7 @@ tt20=np.array(tijd)
 max20=np.array(max_data)
 outputE.close()
 
-fileE = 'C:/Users/amtjch/Desktop/pfe_sp2/pfe_sp2_long/potflow3dperenergy.txt'
+fileE = 'C:/Users/amtjch/Desktop/pfe_sp3/pfe_sp3_long/potflow3dperenergy.txt'
 outputE = open(fileE,'r')
 #  infile.readline() # skip the first line not first line here (yet)
 tijd = []
@@ -67,7 +67,7 @@ max30=np.array(max_data)
 outputE.close()
 
 
-fileE = 'C:/Users/amtjch/Desktop/pfe_sp2/pfe_sp2_cg4/energy.txt'
+fileE = 'C:/Users/amtjch/Desktop/pfe_sp3/pfe_sp3_cg4/energy.txt'
 outputE = open(fileE,'r')
 #  infile.readline() # skip the first line not first line here (yet)
 tijd = []
@@ -133,19 +133,19 @@ t4=np.linspace(tt40[0],tt40[-1],lqq+1)
 
 
 
-df = pd.read_csv("C:/Users/amtjch/Desktop/pfe_sp2/pfe_sp2_short/maxA13000.csv")
+df = pd.read_csv("C:/Users/amtjch/Desktop/pfe_sp3/pfe_sp3_short/maxA13000.csv")
 maxA_short = df.to_numpy()[:,1]
 
 
-df = pd.read_csv("C:/Users/amtjch/Desktop/pfe_sp2/pfe_sp2/maxA.csv")
+df = pd.read_csv("C:/Users/amtjch/Desktop/pfe_sp3/pfe_sp3/maxA.csv")
 maxA = df.to_numpy()[:,1]
 
 
-df = pd.read_csv("C:/Users/amtjch/Desktop/pfe_sp2/pfe_sp2_long/maxA13000.csv")
+df = pd.read_csv("C:/Users/amtjch/Desktop/pfe_sp3/pfe_sp3_long/maxA13000.csv")
 maxA_long = df.to_numpy()[:,1]
 
 'cg4'
-df = pd.read_csv("C:/Users/amtjch/Desktop/pfe_sp2/pfe_sp2_cg4/maxA13000.csv")
+df = pd.read_csv("C:/Users/amtjch/Desktop/pfe_sp3/pfe_sp3_cg4/maxA13000.csv")
 maxA_cg4 = df.to_numpy()[:,1]
 
 
@@ -176,6 +176,5 @@ plt.savefig('amplification_sp2.eps')
 plt.show(block=True)
 # plt.pause(0.001)
 plt.gcf().clear()
-# plt.show(block=False)
 
 # print("Finished program!")
