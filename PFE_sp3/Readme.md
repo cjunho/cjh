@@ -22,3 +22,11 @@ The computational data can be visualised as follows:
 - Time evolution of maximum of eta can be plotted by running file `PFE_sp3_max.py`.
 - Time evolution of A can be plotted by running file `PFE_sp3_A.py`.
 - Time evolution of maximum/A can be plotted by running file `PFE_sp3_maxA.py`.
+
+Running time table when setting several numerical parameters as in the table for each simulation set, where $T$ is the total simulation time defined as $T=t_{end}-t_{0}$ with $t_0=0{\rm s}$. $\Delta t=0.2855{\rm s}$. Degrees of freedom $n_{DOF}$ scale as $n_{CG} N_x(n_{CG} N_y+1)$ with $N_x$ cells and $N_y$ cells in the $x,y$ directions. Hence, when $n_{CG} N_x$ and $n_{CG} N_Y$ are fixed $n_{DOF}$ remains the same. All simuations were run on 40 cores of Leeds' arc4-HPC (Macbook with 12 cores using $\hat{\phi}=1$; $1055{\rm min}$ with $\hat{\phi}(z)$ GLL2
+
+Simulation |$\epsilon$|$\delta$| $L_x$ (m) | $L_y$ (m) |$L_z=H_0$ (m) | $T$ (s) |$\Delta t BLE$ | $N_x$ | $N_y$ |$N_z$| run-time  
+    PFE-SP3-001-CG2- $\Delta x$ | $0.01$|$10^{-5}$ | 22624.6|50000 | 20|7149.9|0.005  | 120 | 250 | 4|715mins
+    PFE-SP3-001-CG2- $\frac{\Delta x}{2}$ | $0.01$|$10^{-5}$ | 22624.6|50000 | 20|2856.4|0.005  | 226 | 500 | 4|848.5mins
+    PFE-SP3-001-CG2- $\frac{\Delta x}{4}$ | $0.01$|$10^{-5}$ | 22624.6|50000 | 20|2285.2|0.005  | 452 | 1000 | 4|2days
+    PFE-SP3-001-CG4- $\frac{\Delta x}{2}$ | $0.01$|$10^{-5}$ | 22624.6|50000 | 20|1235.7|0.005  | 226 | 500 | 4|2days
