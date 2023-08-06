@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 
 
 
-fileE = 'C:/Users/amtjch/Desktop/pfe_sp2/pfe_sp2_short/potflow3dperenergy.txt'
+fileE = 'C:/Users/amtjch/Desktop/pfe_sp3/pfe_sp3_short/potflow3dperenergy.txt'
 outputE = open(fileE,'r')
 #  infile.readline() # skip the first line not first line here (yet)
 tijd = []
@@ -30,7 +30,7 @@ ene1=np.array(ene_data)
 outputE.close()
 
 
-fileE = 'C:/Users/amtjch/Desktop/pfe_sp2/pfe_sp2/energy.txt'
+fileE = 'C:/Users/amtjch/Desktop/pfe_sp3/pfe_sp3/energy.txt'
 outputE = open(fileE,'r')
 #  infile.readline() # skip the first line not first line here (yet)
 tijd = []
@@ -54,7 +54,7 @@ ene2=np.array(ene_data)
 outputE.close()
 
 "long_start"
-fileE = 'C:/Users/amtjch/Desktop/pfe_sp2/pfe_sp2_long/potflow3dperenergy.txt'
+fileE = 'C:/Users/amtjch/Desktop/pfe_sp3/pfe_sp3_long/potflow3dperenergy.txt'
 outputE = open(fileE,'r')
 #  infile.readline() # skip the first line not first line here (yet)
 tijd = []
@@ -79,7 +79,7 @@ outputE.close()
 "long_end"
 
 
-fileE = 'C:/Users/amtjch/Desktop/pfe_sp2/pfe_sp2_cg4/energy.txt'
+fileE = 'C:/Users/amtjch/Desktop/pfe_sp3/pfe_sp3_cg4/energy.txt'
 outputE = open(fileE,'r')
 #  infile.readline() # skip the first line not first line here (yet)
 tijd = []
@@ -120,6 +120,8 @@ plt.savefig('energy_sp2_2.eps')
 plt.show(block=True)
 # plt.pause(0.001)
 plt.gcf().clear()
-# plt.show(block=False)
+
+plt.savefig('pfe_energy.png')
+plt.show()
 
 # print("Finished program!")
