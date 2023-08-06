@@ -5,7 +5,7 @@ from mpl_toolkits import mplot3d
 import matplotlib.pyplot as plt
 
 
-fileE = 'C:/Users/amtjch/Desktop/pfe_sp2/pfe_sp2_short/potflow3dperenergy.txt'
+fileE = 'C:/Users/amtjch/Desktop/pfe_sp3/pfe_sp3_short/potflow3dperenergy.txt'
 outputE = open(fileE,'r')
 #  infile.readline() # skip the first line not first line here (yet)
 tijd = []
@@ -28,7 +28,7 @@ outputE.close()
 
 
 
-fileE = 'C:/Users/amtjch/Desktop/pfe_sp2/pfe_sp2/potflow3dperenergy.txt'
+fileE = 'C:/Users/amtjch/Desktop/pfe_sp3/pfe_sp3/potflow3dperenergy.txt'
 outputE = open(fileE,'r')
 #  infile.readline() # skip the first line not first line here (yet)
 tijd = []
@@ -47,7 +47,7 @@ tt20=np.array(tijd)
 max20=np.array(max_data)
 outputE.close()
 
-fileE = 'C:/Users/amtjch/Desktop/pfe_sp2/pfe_sp2_long/potflow3dperenergy.txt'
+fileE = 'C:/Users/amtjch/Desktop/pfe_sp3/pfe_sp3_long/potflow3dperenergy.txt'
 outputE = open(fileE,'r')
 #  infile.readline() # skip the first line not first line here (yet)
 tijd = []
@@ -67,7 +67,7 @@ max30=np.array(max_data)
 outputE.close()
 
 
-fileE = 'C:/Users/amtjch/Desktop/pfe_sp2/pfe_sp2_cg4/energy.txt'
+fileE = 'C:/Users/amtjch/Desktop/pfe_sp3/pfe_sp3_cg4/energy.txt'
 outputE = open(fileE,'r')
 #  infile.readline() # skip the first line not first line here (yet)
 tijd = []
@@ -160,6 +160,8 @@ plt.savefig('max_sp2.eps')
 plt.show(block=True)
 # plt.pause(0.001)
 plt.gcf().clear()
-# plt.show(block=False)
+
+plt.savefig('pfe_max.png')
+plt.show()
 
 # print("Finished program!")
