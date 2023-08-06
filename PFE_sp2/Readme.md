@@ -23,6 +23,13 @@ The computational data can be visualised as follows:
 - Time evolution of A can be plotted by running file `PFE_sp2_A.py`.
 - Time evolution of maximum/A can be plotted by running file `PFE_sp2_maxA.py`.
 
+  
+Running time table when setting several numerical parameters as in the table for each simulation set, where $T$ is the total simulation time defined as $T=t_{end}-t_{0}$ with $t_0=0{\rm s}$. $\Delta t=0.2855{\rm s}$. Degrees of freedom $n_{DOF}$ scale as $n_{CG} N_x(n_{CG} N_y+1)$ with $N_x$ cells and $N_y$ cells in the $x,y$ directions. Hence, when $n_{CG} N_x$ and $n_{CG} N_Y$ are fixed $n_{DOF}$ remains the same. All simuations were run on 40 cores of Leeds' arc4-HPC (Macbook with 12 cores using $\hat{\phi}=1$; $1055{\rm min}$ with $\hat{\phi}(z)$ GLL2
 Simulation | $L_x$ (m) | $L_y$ (m) |$L_z (m)$ | $T$ (s) | $N_x$ | $N_y$ |$N_z$|running time (min)
 ---        | ---       | ---       | ---      | ---     |---    |---    | --- | ---
+PFE-SP2-CG2- $\Delta t$ | $4110.90$ | 16000|20 | 1713.4  | 124 | 480|4|956 (1044)
+PFE-SP2-CG2- $\frac{\Delta t}{2}$ | $4110.90$ | 16000|20 | 1713.4  | 124 | 480|4|1437
+PFE-SP2-CG2- $\frac{\Delta t}{4}$ | $4110.90$ | 16000|20 | 1713.4  | 124 | 480|4|2853
+PFE-SP2-CG4- $\Delta t$ | $4110.90$ | 16000|20 | 1713.4  | 62 | 240 |2|1135
+
 
