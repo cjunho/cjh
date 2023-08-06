@@ -22,3 +22,9 @@ The computational data can be visualised as follows:
 - Time evolution of maximum of eta can be plotted by running file `PFE_sp2_max.py`.
 - Time evolution of A can be plotted by running file `PFE_sp2_A.py`.
 - Time evolution of maximum/A can be plotted by running file `PFE_sp2_maxA.py`.
+
+- Figure | soliton number | domain type | basis type
+--- | ---           | ---         | ---
+8 | SP3       | single and both         | CG2
+9-11 | SP2       | single         | CG1, CG2, and CG3
+12-15 | SP3       | single         | CG1, CG2, CG3, and CG4
