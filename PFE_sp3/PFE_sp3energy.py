@@ -116,12 +116,10 @@ plt.grid()
 # plt.axes([0,10,0.001,0.002])
 #plt.yticks([0.0010082,0.0010083,0.0010084,0.0010085,0.0010086])
 plt.ticklabel_format(style='sci', axis='y', scilimits=(0,0)) # [0 10 0.0010082 0.0010086])
-plt.savefig('energy_sp2_2.eps')
+plt.savefig('energy_sp3.png')
 plt.show(block=True)
 # plt.pause(0.001)
 plt.gcf().clear()
 
-plt.savefig('pfe_energy.png')
-plt.show()
 
 # print("Finished program!")
