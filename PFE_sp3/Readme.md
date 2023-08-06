@@ -3,7 +3,7 @@
 Program that solves the Potential Flow Equations (PFE) on a 3D periodic domain using the modified mid-point scheme.
 
 The simulation tracks the evolution of three line solitons as they interact, 
-to produce a four or eight times higher splash than the initial height of each soliton.
+to produce an eight times higher splash than the initial height of each soliton.
 
 ## FILES
 
