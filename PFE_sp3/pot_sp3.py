@@ -107,21 +107,6 @@ else:
     PETSc.Sys.Print('Lx,Ly,x1hat,x2hat,y1hat,y2hat: ',Lx,Ly,x1hat,x2hat,y1hat,y2hat) # printing to compare wth WW-paper data
     PETSc.Sys.Print('Ystar,k4,log(2.7),xx1,xx2: ',Ystar,k4,value,np.log(2.7),xx1,xx2) # printing to compare wth WW-paper data
 
-"___________ Mesh size ___________"
-nCG = 2 # function space order horizontal
-nCGvert = 2 # function space order vertical
-multiple=1
-nx = int(np.round(multiple*5*4/nCG*(x2hat-x1hat)))
-ny = int(np.round(multiple*5*4/nCG*Lyhat))
-nz = 4
-
-ttilde = 50 # BLE final time units used for SP3 in BLE
-dtBLE=1/200
-Nt = ttilde/dtBLE
-
-t_end = ttilde*(H0/np.sqrt(gg*H0*muu))
-dt = t_end/Nt
-
 nvpcase = "MMP" # MMP=modified midpoint VP time discretisation in case of making more cases; SV=Stormer-Verlet
 nphihatz = "Unity" # "unity": phihat=1.0; 1: "GLL1" 1st GLL at nCGvert, etc.                                      
 
@@ -140,6 +125,19 @@ if domain_type == "single":
 
 
 """ ____________ Mesh _____________ """
+nCG = 2 # function space order horizontal
+nCGvert = 2 # function space order vertical
+multiple=1
+nx = int(np.round(multiple*5*4/nCG*(x2hat-x1hat)))
+ny = int(np.round(multiple*5*4/nCG*Lyhat))
+nz = 4
+
+ttilde = 50 # BLE final time units used for SP3 in BLE
+dtBLE=1/200
+Nt = ttilde/dtBLE
+
+t_end = ttilde*(H0/np.sqrt(gg*H0*muu))
+dt = t_end/Nt
 
 
 mesh2d = PeriodicRectangleMesh(nx, ny, Lx, Ly, direction=direction,
