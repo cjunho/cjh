@@ -106,18 +106,26 @@ if nprintout == 1:
 else:
     PETSc.Sys.Print('Lx,Ly,x1hat,x2hat,y1hat,y2hat: ',Lx,Ly,x1hat,x2hat,y1hat,y2hat) # printing to compare wth WW-paper data
     PETSc.Sys.Print('Ystar,k4,log(2.7),xx1,xx2: ',Ystar,k4,value,np.log(2.7),xx1,xx2) # printing to compare wth WW-paper data
+
+"___________ Mesh size ___________"
 nCG = 2 # function space order horizontal
 nCGvert = 2 # function space order vertical
-cxx=5*4/nCG
-# else: c=12
-nx = int(np.ceil(cxx*(x2hat-x1hat)))
-ny = int(np.ceil(cxx*Lyhat))
+multiple=1
+nx = int(np.round(multiple*5*4/nCG*(x2hat-x1hat)))
+ny = int(np.round(multiple*5*4/nCG*Lyhat))
 nz = 4
+
+ttilde = 50 # BLE final time units used for SP3 in BLE
+dtBLE=1/200
+Nt = ttilde/dtBLE
+
+t_end = ttilde*(H0/np.sqrt(gg*H0*muu))
+dt = t_end/Nt
 
 nvpcase = "MMP" # MMP=modified midpoint VP time discretisation in case of making more cases; SV=Stormer-Verlet
 nphihatz = "Unity" # "unity": phihat=1.0; 1: "GLL1" 1st GLL at nCGvert, etc.                                      
 
-#__________________  FIGURE PARAMETERS  _____________________#
+"__________________  FIGURE PARAMETERS  _____________________"
 
 
 factor = 0
@@ -157,8 +165,7 @@ dc0dy = 0.0*c0y.dx(1)
 u0 = dU0dy
 
 """ ____________ Initial conditions _____________ """
-ttilde = 50 # BLE final time units used for SP3 in BLE
-t_end = ttilde*(H0/np.sqrt(gg*H0*muu)) # dimensionless BLE end-time of WW-paper or otherwise times time-scaling factor
+ # dimensionless BLE end-time of WW-paper or otherwise times time-scaling factor
 t0 = that0*(H0/np.sqrt(gg*H0*muu)) 
 # xx1, xx2, yy2=Ly
 Fx = np.sqrt(eps/muu)*(3/np.sqrt(2))**(1/3)
@@ -282,8 +289,7 @@ sickofit =  psi_exact_exprH0
 
 btopoexpr = 0.0*psi_exact_exprH0 # no topography
 
-Nt = ttilde*400
-dt = t_end/Nt # Somehow depends on soliton speed; so dx/U0 with U0=x/t dimensional from argument soliton; see dtt
+ # Somehow depends on soliton speed; so dx/U0 with U0=x/t dimensional from argument soliton; see dtt
 CFL = 0.5
 cc = 1
 dtt = CFL*(Lx/nx)*6.0/((1+eps*cc)*np.sqrt(gg*H0))    
@@ -418,7 +424,7 @@ phi_combonl = fd.NonlinearVariationalSolver(fd.NonlinearVariationalProblem(Fexpr
 
 ###### OUTPUT FILES and initial PLOTTING ##########
 if nsavelocalHPC==1: # save_path =  "/nobackup/$USER/lin_pot_flow/"
-    save_path =  "/nobackup/chlw/amtjch/PFE_sp3_ep01_A05_05/"
+    save_path =  "data/"
 else:
     save_path =  "/Users/onnobokhove/amtob/werk/vuurdraak2021/blexact/"
 
