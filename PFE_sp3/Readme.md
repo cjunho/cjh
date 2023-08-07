@@ -23,7 +23,7 @@ The computational data can be visualised as follows:
 - Time evolution of A can be plotted by running file `PFE_sp3_A.py`.
 - Time evolution of maximum/A can be plotted by running file `PFE_sp3_maxA.py`.
 
-Running time table when varying spatial resolution $\Delta y(1,1/2,1/4)$ where $\Delta x\approx\Delta y=200$. $T$ is the total simulation time defined as $T=t_{end}-t_{0}$ with $t_0=0{\rm s}$. $\Delta t=0.7139{\rm s}$ or $\Delta t BLE=0.005$. The present code of PFE_sp3.py sets CG2, $\Delta y=L_y/N_y$, $L_y=50000m$, $N_y=250$, and $\Delta t BLE=0.005$. In order to change order of basis, modify nCG. For $N_y$, modify $multiple$, for $\Delta t BLE$ modify dtBLE. All simuations were run on 40 cores of Leeds' arc4-HPC.
+Running time table when varying spatial resolution $\Delta y(1,1/2,1/4)$ where $\Delta x\approx\Delta y=200$. $T$ is the total simulation time defined as $T=t_{end}-t_{0}$ with $t_0=0{\rm s}$. $\Delta t=0.7139{\rm s}$ or $\Delta t BLE=0.005$. The present code of PFE_sp3.py sets CG2, $\Delta y=L_y/N_y$, $L_y=50000m$, $N_y=250$, and $\Delta t BLE=0.005$. In order to change order of basis, modify nCG. For $N_y$, modify multiple, for $\Delta t BLE$ modify dtBLE. All simuations were run on 40 cores of Leeds' arc4-HPC.
 Simulation |$\epsilon$|$\delta$| $L_x$ (m) | $L_y$ (m) |$L_z=H_0$ (m) | $T$ (s) |$\Delta t BLE$ | $N_x$ | $N_y$ |$N_z$| run-time  
 :---        | :---      | :---    | :---       | :---       |:---           |:---      | :---           | :---    |:---   |:---| :---
 PFE-SP3-001-CG2- $\Delta y$ | $0.01$|$10^{-5}$ | 22624.6|50000 | 20|7149.9|0.005  | 120 | 250 | 4|715mins
