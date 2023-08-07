@@ -428,38 +428,13 @@ if nsavelocalHPC==1: # save_path =  "/nobackup/$USER/lin_pot_flow/"
 else:
     save_path =  "/Users/onnobokhove/amtob/werk/vuurdraak2021/blexact/"
 
-# if not os.path.exists(save_path):
-#     os.makedirs(save_path) 
 
-if nic=="SP3" and ntflag==0 and ntflag2==0:
-    outfile_psi = fd.File(save_path+"resultsntflag0/psi.pvd")
-    outfile_height = fd.File(save_path+"resultsntflag0/height.pvd")
-    outfile_varphi = fd.File(save_path+"resultsntflag0/varphi.pvd")
-    outfile_sicks = fd.File(save_path+"resultsntflag0/sicks.pvd")
-    outfile_sickss = fd.File(save_path+"resultsntflag0/sickss.pvd")
-    fileE = save_path+"resultsntflag0/potflow3dperenergy.txt"
-    filEtaMax = save_path+"resultsntflag0/potflow3dperetamax.txt"
-    if nprintout==1:
-        print('ntflag=, ntflag2=',ntflag,ntflag2)
-    else:
-        PETSc.Sys.Print('ntflag=, ntflag2=',ntflag,ntflag2)
-elif nic=="SP3" and ntflag==1 and ntflag2==0:
-    outfile_psi = fd.File(save_path+"results1/psi.pvd")
-    outfile_height = fd.File(save_path+"results1/height.pvd")
-    outfile_varphi = fd.File(save_path+"results1/varphi.pvd")
-    # outfile_sicks = fd.File(save_path+"results1/sicks.pvd")
-    # outfile_sickss = fd.File(save_path+"results1/sickss.pvd")
-    fileE = save_path+"results1/potflow3dperenergy.txt"
-    filEtaMax = save_path+"results1/potflow3dperetamax.txt"
+
+outfile_psi = fd.File(save_path+"psi.pvd")
+outfile_height = fd.File(save_path+"height.pvd")
+outfile_varphi = fd.File(save_path+"varphi.pvd")
+fileE = save_path+"potflow3dperenergy.txt"
     
-else:
-    outfile_psi = fd.File(save_path+"results2/psi.pvd")
-    outfile_height = fd.File(save_path+"results2/height.pvd")
-    outfile_varphi = fd.File(save_path+"results2/err.pvd")
-    outfile_sicks = fd.File(save_path+"results2/sicks.pvd")
-    outfile_sickss = fd.File(save_path+"results2/sickss.pvd")
-    fileE = save_path+"results2/potflow3dperenergy.txt"
-    filEtaMax = save_path+"results2/potflow3dperetamax.txt"
 
 
 #
