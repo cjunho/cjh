@@ -29,84 +29,14 @@ ene1=np.array(ene_data)
 # AA3=np.array(AA_data)*(4/3)**(1/3)
 outputE.close()
 
+with open('C:/Users/amtjch/Desktop/pfe_sp3/pfe_sp3_short/potflow3dperenergy.txt', 'r') as f2:
+    qwe = f2.read().split()
+   
+E0=float(qwe[1])+float(qwe[2])
 
-fileE = 'C:/Users/amtjch/Desktop/pfe_sp3/pfe_sp3/energy.txt'
-outputE = open(fileE,'r')
-#  infile.readline() # skip the first line not first line here (yet)
-tijd = []
-# EPot = []
-# EKin = []
-ene_data = []
-AA_data=[]
-for line in outputE:
-    words = line.split()
-    # words[0]: tijd, words[1]: relEnergy
-    tijd.append(float(words[0]))
-    # EPot.append(float(words[1]))
-    # EKin.append(float(words[2]))
-    ene_data.append(float(words[3]))
-    # AA_data.append(float(words[2]))
-
-
-tt2=np.array(tijd)
-ene2=np.array(ene_data)
-# AA3=np.array(AA_data)*(4/3)**(1/3)
-outputE.close()
-
-"long_start"
-fileE = 'C:/Users/amtjch/Desktop/pfe_sp3/pfe_sp3_long/potflow3dperenergy.txt'
-outputE = open(fileE,'r')
-#  infile.readline() # skip the first line not first line here (yet)
-tijd = []
-# EPot = []
-# EKin = []
-ene_data = []
-
-for line in outputE:
-    words = line.split()
-    # words[0]: tijd, words[1]: relEnergy
-    tijd.append(float(words[0]))
-    # EPot.append(float(words[1]))
-    # EKin.append(float(words[2]))
-    ene_data.append(float(words[3]))
-    # AA_data.append(float(words[2]))
-
-
-tt3=np.array(tijd)
-ene3=np.array(ene_data)
-# AA2=np.array(AA_data)*(4/3)**(1/3)
-outputE.close()
-"long_end"
-
-
-fileE = 'C:/Users/amtjch/Desktop/pfe_sp3/pfe_sp3_cg4/energy.txt'
-outputE = open(fileE,'r')
-#  infile.readline() # skip the first line not first line here (yet)
-tijd = []
-# EPot = []
-# EKin = []
-ene_data = []
-AA_data=[]
-for line in outputE:
-    words = line.split()
-    # words[0]: tijd, words[1]: relEnergy
-    tijd.append(float(words[0]))
-    # EPot.append(float(words[1]))
-    # EKin.append(float(words[2]))
-    ene_data.append(float(words[3]))
-    # AA_data.append(float(words[2]))
-
-
-tt4=tijd
-ene4=np.array(ene_data)
-outputE.close()
 
 plt.figure(figsize=(10,6))
-plt.plot(tt1,abs(ene1/2580391452963.693),label=r'CG2/$\Delta t$', linewidth='4')
-plt.plot(tt2,4*abs(ene2/2580391452963.693),label=r'$4\times CG2$/$\frac{\Delta t}{2}$', linewidth='4')
-plt.plot(tt3,16*abs(ene3/2580391452963.693),'--',label=r'$16\times CG2$/$\frac{\Delta t}{4}$', linewidth='4')
-plt.plot(tt4,abs(ene4/2580391402673.916),':',label=r'CG4/$\Delta t$', linewidth='4')
-
+plt.plot(tt1,abs(ene1/E0),label=r'CG2/$\frac{\Delta t}{2}$', linewidth='4')
 
 plt.xlabel(' $t (s)$ ',size=16)
 # plt.ylabel(' $E_{kin}, E_{pot}, E_{tot}$ ',size=16)
