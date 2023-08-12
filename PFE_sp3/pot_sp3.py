@@ -483,7 +483,7 @@ while t <= 1.0*(t_end +dt): #  t_end + dt
     eta1vals = np.max(np.array([h_old.at(x, Lyslice,H0) for x in xvals]))
     PETSc.Sys.Print('t =', t,  EPot,EKin,Etot,L_inf,eta1vals)
         
-    print("%.19f %.19f %.19f %.19f %.19f" %.19f" %(t, EPot,EKin,Etot,L_inf,eta1vals),file=outputE)
+    print("%.19f %.19f %.19f %.19f %.19f %.19f" %(t, EPot,EKin,Etot,L_inf,eta1vals),file=outputE)
     nE0+=int(1)
     t+= dt
     if nE0%50==0:
