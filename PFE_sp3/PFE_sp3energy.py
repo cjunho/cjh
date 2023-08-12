@@ -36,15 +36,12 @@ E0=float(qwe[1])+float(qwe[2])
 
 
 plt.figure(figsize=(10,6))
-plt.plot(tt1,abs(ene1/E0),label=r'CG2/$\frac{\Delta t}{2}$', linewidth='4')
+plt.plot(tt1,abs(ene1/E0),label=r'CG2', linewidth='4')
 
 plt.xlabel(' $t (s)$ ',size=16)
-# plt.ylabel(' $E_{kin}, E_{pot}, E_{tot}$ ',size=16)
 plt.legend(fontsize="16")
 plt.ylabel( r'$\left|(E(t)-E(0))/E(0)\right|$ ',size=16)
 plt.grid()
-# plt.axes([0,10,0.001,0.002])
-#plt.yticks([0.0010082,0.0010083,0.0010084,0.0010085,0.0010086])
 plt.ticklabel_format(style='sci', axis='y', scilimits=(0,0)) # [0 10 0.0010082 0.0010086])
 plt.savefig('energy_sp3.png')
 plt.show(block=True)
