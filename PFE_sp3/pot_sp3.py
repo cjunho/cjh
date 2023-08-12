@@ -81,7 +81,7 @@ A246 = aa*bb*cc*A135
 A146 = bb*A136
 A236 = aa*cc*(-k4*k6**2-k6*k4**2+k5*k6**2-k5*k4**2+k6*k5**2+k4*k5**2) # Error fixed by Junho! 02-04-2023. Hurray. Had typed in term twice by accident.
 
-Lyhat = 25 # BLE yhat-scale 
+Lyhat = 20 # BLE yhat-scale 
 Ystar = 0.0 # KPE Y-scale
 y1hat = Ystar*np.sqrt(muu)*(np.sqrt(2)/3)**(2/3)/eps # KPE Y-scale to BLE yhat-scale
 y2hat = y1hat+Lyhat
@@ -446,7 +446,9 @@ outfile_height.write(h_old, time=t)
 outfile_psi.write(psi_f, time=t)
 outfile_varphi.write(varphi, time=t)
     
-
+xvals=np.linspace(0,Lx,1001)
+Lyslice=Ly*0.875
+eta1vals = np.max(np.array([h_old.at(x, Lyslice,H0) for x in xvals]))
 
 
 
@@ -478,9 +480,10 @@ while t <= 1.0*(t_end +dt): #  t_end + dt
     with h_old.dat.vec_ro as v:
          L_inf = v.max()[1]
     Etot = EKin+EPot-E0
-    PETSc.Sys.Print('t =', t,  EPot,EKin,Etot,L_inf)
+    eta1vals = np.max(np.array([h_old.at(x, Lyslice,H0) for x in xvals]))
+    PETSc.Sys.Print('t =', t,  EPot,EKin,Etot,L_inf,eta1vals)
         
-    print("%.19f %.19f %.19f %.19f %.19f" %(t, EPot,EKin,Etot,L_inf),file=outputE)
+    print("%.19f %.19f %.19f %.19f %.19f" %.19f" %(t, EPot,EKin,Etot,L_inf,eta1vals),file=outputE)
     nE0+=int(1)
     t+= dt
     if nE0%50==0:
