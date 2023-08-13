@@ -5,7 +5,7 @@ from mpl_toolkits import mplot3d
 import matplotlib.pyplot as plt
 
 
-fileE = 'C:/Users/amtjch/Desktop/pfe_sp3/pfe_sp3_short/potflow3dperenergy.txt'
+fileE = 'potflow3dperenergy.txt'
 outputE = open(fileE,'r')
 #  infile.readline() # skip the first line not first line here (yet)
 tijd = []
@@ -31,6 +31,7 @@ outputE.close()
 qq=int(50)
 lqq=int(len(max10)/qq)
 max1=np.zeros((lqq+1,))
+A1=np.zeros((lqq+1,))
 max1[0]=max10[0]
 A1[0]=A10[0]
 
@@ -50,8 +51,8 @@ plt.xlabel(' $t (s)$ ',size=16)
 plt.legend(loc='lower right',fontsize="14")
 plt.ylabel( '$max/A$ ',size=16)
 plt.grid()
-plt.ticklabel_format(style='sci', axis='y', scilimits=(0,0)) # [0 10 0.0010082 0.0010086])
-plt.savefig('amplification_sp2.eps')
+plt.ticklabel_format(style='sci', axis='y', scilimits=(0,0)) 
+plt.savefig('amplification_sp3.png')
 plt.show(block=True)
 # plt.pause(0.001)
 plt.gcf().clear()
