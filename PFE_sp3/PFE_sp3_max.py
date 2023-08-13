@@ -5,19 +5,16 @@ from mpl_toolkits import mplot3d
 import matplotlib.pyplot as plt
 
 
-fileE = 'C:/Users/amtjch/Desktop/pfe_sp3/pfe_sp3_short/potflow3dperenergy.txt'
+fileE = 'potflow3dperenergy.txt'
 outputE = open(fileE,'r')
 #  infile.readline() # skip the first line not first line here (yet)
 tijd = []
-# EPot = []
-# EKin = []
 max_data = []
 
 for line in outputE:
     words = line.split()
     # words[0]: tijd, words[1]: relEnergy
-    tijd.append(float(words[0]))
-    
+    tijd.append(float(words[0]))    
     max_data.append(float(words[4]))
 
 
@@ -44,11 +41,11 @@ t1=np.linspace(tt10[0],tt10[-1],lqq+1)
 
 plt.figure(figsize=(10,6))
 
-plt.plot(t1,max1,label=r'CG2$', linewidth='4')
+plt.plot(t1,max1,label=r'CG2', linewidth='4')
 
 plt.xlabel(' $t (s)$ ',size=16)
 plt.legend(loc='lower right',fontsize="14")
-plt.ylabel( '$max(\eta)$ ',size=16)
+plt.ylabel( '$max(\eta)$(m) ',size=16)
 plt.grid()
 plt.ticklabel_format(style='sci', axis='y', scilimits=(0,0)) # [0 10 0.0010082 0.0010086])
 plt.savefig('max_sp3.png')
