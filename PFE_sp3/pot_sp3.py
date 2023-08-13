@@ -127,7 +127,7 @@ if domain_type == "single":
 """ ____________ Mesh _____________ """
 nCG = 2 # function space order horizontal
 nCGvert = 2 # function space order vertical
-multiple=1
+multiple=3
 nx = int(np.round(multiple*5*4/nCG*(x2hat-x1hat)))
 ny = int(np.round(multiple*5*4/nCG*Lyhat))
 nz = 4
