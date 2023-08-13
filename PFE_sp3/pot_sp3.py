@@ -448,9 +448,6 @@ outfile_varphi.write(varphi, time=t)
     
 xvals=np.linspace(0,Lx,1001)
 Lyslice=Ly*0.875
-eta1vals = np.max(np.array([h_old.at(x, Lyslice,H0) for x in xvals]))
-
-
 
 tic = tijd.time()
 nE0 = 0
