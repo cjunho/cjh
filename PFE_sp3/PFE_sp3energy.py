@@ -6,22 +6,18 @@ import matplotlib.pyplot as plt
 
 
 
-fileE = 'C:/Users/amtjch/Desktop/pfe_sp3/pfe_sp3_short/potflow3dperenergy.txt'
+fileE = 'potflow3dperenergy.txt'
 outputE = open(fileE,'r')
 #  infile.readline() # skip the first line not first line here (yet)
 tijd = []
-# EPot = []
-# EKin = []
+
 ene_data = []
-AA_data=[]
+
 for line in outputE:
     words = line.split()
     # words[0]: tijd, words[1]: relEnergy
     tijd.append(float(words[0]))
-    # EPot.append(float(words[1]))
-    # EKin.append(float(words[2]))
     ene_data.append(float(words[3]))
-    # AA_data.append(float(words[2]))
 
 
 tt1=np.array(tijd)
@@ -29,7 +25,7 @@ ene1=np.array(ene_data)
 # AA3=np.array(AA_data)*(4/3)**(1/3)
 outputE.close()
 
-with open('C:/Users/amtjch/Desktop/pfe_sp3/pfe_sp3_short/potflow3dperenergy.txt', 'r') as f2:
+with open('potflow3dperenergy.txt', 'r') as f2:
     qwe = f2.read().split()
    
 E0=float(qwe[1])+float(qwe[2])
