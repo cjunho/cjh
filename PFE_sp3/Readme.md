@@ -18,7 +18,7 @@ After the computation of `pot_sp3.py` is finished, four sets of data are produce
 
 The computational data can be visualised as follows:
 - Solutions eta and Phi are pvd files that can be read with Paraview.
-- Time evolution of energy can be plotted by running file 'PFE_sp3energy.py`.
+- Time evolution of energy can be plotted by running file `PFE_sp3_energy.py`.
 - Time evolution of maximum of eta can be plotted by running file `PFE_sp3_max.py`.
 - Time evolution of A can be plotted by running file `PFE_sp3_A.py`.
 - Time evolution of maximum/A can be plotted by running file `PFE_sp3_maxA.py`.
