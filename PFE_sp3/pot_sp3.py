@@ -155,12 +155,7 @@ time = [] # time for measurements
 t = 0
 
 fac = 1.0 # Used to split h=H0+eta in such in way that we can switch to solving h (fac=0.0) or eta (fac=1.0)
-# u0 = 0.0 # periodicity factor; default 0
-U0y = x[0]+x[1]
-c0y = x[0]+x[1]
-dU0dy = 0.0*U0y.dx(1)
-dc0dy = 0.0*c0y.dx(1)
-u0 = dU0dy
+
 
 """ ____________ Initial conditions _____________ """
  # dimensionless BLE end-time of WW-paper or otherwise times time-scaling factor
@@ -244,9 +239,9 @@ psix2yz = ((eps*H0*np.sqrt(gg*H0))/np.sqrt(muu))*np.sqrt(eps)*(4*np.sqrt(2)/9)**
 
 
 U0y = (psix2y-psix1y)/(xx22-xx11)
-c0y = (xx22*psix1y-xx11*psix2y)/(xx22-xx11)
-U0yxc0y = U0y*x[0]+c0y # (U0y*x[0]+c0y)
-sicko = U0y*x[0]+c0y
+
+U0yxc0y = U0y*x[0] # (U0y*x[0])
+sicko = U0y*x[0]
 u0 = U0yxc0y.dx(0)
 u0py = U0yxc0y.dx(1)*x[0]
 c0y = (xx22*psix1y-xx11*psix2y)/(xx22-xx11)
@@ -281,7 +276,7 @@ KKXYY = (k4**2+k5**2+k6**2)**2*KKXY \
 GX = 2*Fx**2*( KKXXX/KK-3*KKXX*KKX/KK**2+2*KKX**3/KK**3 )
 GY = 2*Fy**2*( KKXYY/KK-2*KKXY*KKY/KK**2-KKX*KKYY/KK**2+2*KKX*(KKY)**2/KK**3 )
 eta_exact_expr = 2.0*eps*H0*((4/3)**(1/3))*( KKXX/KK -(KKX/KK)**2 )
-psi_exact_exprH0 = ((eps*H0*np.sqrt(gg*H0))/np.sqrt(muu))*np.sqrt(eps)*(4*np.sqrt(2)/9)**(1/3)*(2*KKX/KK-fac0*0.5*muu*((H0+0.0*etax2y)/H0)**2*(GX+GY))-(u0*x[0]+c0y)
+psi_exact_exprH0 = ((eps*H0*np.sqrt(gg*H0))/np.sqrt(muu))*np.sqrt(eps)*(4*np.sqrt(2)/9)**(1/3)*(2*KKX/KK-fac0*0.5*muu*((H0+0.0*etax2y)/H0)**2*(GX+GY))-(u0*x[0])
 psi_exact_exprz = ((eps*H0*np.sqrt(gg*H0))/np.sqrt(muu))*np.sqrt(eps)*(4*np.sqrt(2)/9)**(1/3)*(2*KKX/KK-fac0*0.5*muu*((x[2])/H0)**2*(GX+GY))-(u0z*x[0])
 sickofit =  psi_exact_exprH0 
 
