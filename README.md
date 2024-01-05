@@ -1,5 +1,5 @@
 # User instructions
-This repository stores Python codes for simulating rogue waves. Particularly, the simulations reproduce soliton-interaction modeled by Potential Flow Equations (PFE), Benney-Luke equations (BLE), and Kadomtsev-Petviashvili equation (KPE).
+This repository stores Python codes for simulating rogue waves. Particularly, the simulations are to reproduce soliton-interaction modeled by Potential Flow Equations (PFE), Benney-Luke equations (BLE), and Kadomtsev-Petviashvili equation (KPE).
 
 ## Folders
 - BLE : to simulate soliton interactions using BLE.
