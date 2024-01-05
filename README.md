@@ -7,4 +7,5 @@ Reference for BLE: [1], [2].
 Reference for PFE_sp2 and PFE_sp3: [2].
 
 [1] Choi, J., Bokhove, O., Kalogirou, A., & Kelmanson, M. A. (2022). Numerical Experiments on Extreme Waves Through Oblique–Soliton Interactions. Water Waves, 4(2), 139-179.
+
 [2] Choi, J., Kalogirou, A., Kelmanson, M., Lu, Y., & Bokhove, O. (2023). A study of extreme water waves using a hierarchy of models based on potential-flow theory. Eartharxiv.
