@@ -32,4 +32,5 @@ PFE-SP2-CG2- $\frac{\Delta t}{2}$ | $4110.90$ | 16000|20 | 1713.4  | 124 | 480|4
 PFE-SP2-CG2- $\frac{\Delta t}{4}$ | $4110.90$ | 16000|20 | 1713.4  | 124 | 480|4|2622
 PFE-SP2-CG4- $\Delta t$ | $4110.90$ | 16000|20 | 1713.4  | 62 | 240 |2|1423
 
-
+# Reference
+[1] Choi, J., Kalogirou, A., Kelmanson, M., Lu, Y., & Bokhove, O. (2023). A study of extreme water waves using a hierarchy of models based on potential-flow theory. Eartharxiv.
