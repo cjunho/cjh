@@ -17,11 +17,11 @@ After the computation of `pot_sp3.py` is finished, four sets of data are produce
 
 
 The computational data can be visualised as follows:
-- Solutions eta and Phi are pvd files that can be read with Paraview.
-- Time evolution of energy can be plotted by running file `PFE_sp3energy.py`.
-- Time evolution of maximum of eta can be plotted by running file `PFE_sp3_max.py`.
-- Time evolution of A can be plotted by running file `PFE_sp3_A.py`.
-- Time evolution of maximum/A can be plotted by running file `PFE_sp3_maxA.py`.
+- Solutions eta and Phi are pvd files that can be read with Paraview, which reproduce Fig.11 in referene [1].
+- Time evolution of energy can be plotted by running file `PFE_sp3energy.py`, which reproduce Fig.13(d) in [1].
+- Time evolution of maximum of eta can be plotted by running file `PFE_sp3_max.py`, which reproduce Fig.13(a) in [1].
+- Time evolution of A can be plotted by running file `PFE_sp3_A.py`, which reproduce Fig.13(b) in [1].
+- Time evolution of maximum/A can be plotted by running file `PFE_sp3_maxA.py`, which reproduce Fig.13(c) in [1].
 
 We provide a table in which parameters were uses for setting simulations as follows. We denote spatial resolution by $\Delta x\approx\Delta y=200$. $T$ is the total simulation time defined as $T=t_{end}-t_{0}$ with $t_0=0{\rm s}$. $\Delta t=0.7139{\rm s}$ or $\Delta t BLE=0.005$.  In order to change order of basis, modify nCG (currently setting nCG=2). For $N_y$, modify multiple (currently setting mutiple=3), for $\Delta t BLE$ modify dtBLE(currently setting dtBLE=1/200).  All simuations were run on 40 cores of Leeds' arc4-HPC.
   
@@ -31,3 +31,6 @@ PFE-SP3-CG2- $\frac{\Delta y}{3}$- $\Delta t$ | $0.01$|$10^{-5}$ | 17725.6|40000
 PFE-SP3-CG4- $\frac{2\Delta y}{3}$- $\Delta t$ | $0.01$|$10^{-5}$ | 17725.6|40000 | 20|6855|0.005  | 133 | 300 | 4|5588mins
 PFE-SP3-CG2- $\frac{\Delta y}{4}$- $\Delta t$ | $0.01$|$10^{-5}$ | 17725.6|40000 | 20|6855|0.005  | 355 | 800 | 4|5383mins
 PFE-SP3-CG2- $\frac{\Delta y}{3}$- $\frac{\Delta t}{2}$ | $0.01$|$10^{-5}$ | 17725.6|40000 | 20|6855|0.0025  | 226 | 600 | 4|6094.6mins
+
+## Reference
+[1] Choi, J., Kalogirou, A., Kelmanson, M., Lu, Y., & Bokhove, O. (2023). A study of extreme water waves using a hierarchy of models based on potential-flow theory. Eartharxiv.
