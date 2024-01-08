@@ -31,6 +31,7 @@ PFE: CG2/ $\frac{\Delta y}{3}$ / $\Delta t$ | $0.01$|$10^{-5}$ | 17725.6|40000  
 PFE: CG4/ $\frac{2\Delta y}{3}$ / $\Delta t$ | $0.01$|$10^{-5}$ | 17725.6|40000   | 20|6855|0.005  | 133 | 300 | 4|5,750,388|5588
 PFE: CG2/ $\frac{\Delta y}{4}$ / $\Delta t$ | $0.01$|$10^{-5}$ | 17725.6|40000   | 20|6855|0.005  | 355 | 800 | 4|10,230,390|5383
 PFE: CG2/ $\frac{\Delta y}{3}$ / $\frac{\Delta t}{2}$ | $0.01$|$10^{-5}$ | 17725.6|40000   | 20|6855|0.0025  | 226 | 600 | 4|5,750,388|6094.6
+BLE: CG2/ $\frac{\Delta y}{3}$ / $\Delta t$ | $0.01$|$10^{-5}$ | 17725.6|40000   | 20|6855|0.005  | 226 | 600 |-- |--|396
 
 ## Reference
 [1] Choi, J., Kalogirou, A., Kelmanson, M., Lu, Y., & Bokhove, O. (2023). A study of extreme water waves using a hierarchy of models based on potential-flow theory. Eartharxiv.
