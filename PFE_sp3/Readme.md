@@ -27,10 +27,10 @@ We provide a table in which parameters were uses for setting simulations as foll
   
 Simulation |$\epsilon$|$\delta$| $L_x$ (m) | $L_y$ (m) |$L_z=H_0$ (m) | $T$ (s) |$\Delta t_{BLE}$ | $N_x$ | $N_y$ |$N_z$|DoFs |Run time (min)  
 :---        | :---      | :---    | :---       | :----     |:----           |:---      | :---           | :---    |:---   |:---| :---|:---
-PFE/CG2/ $\frac{\Delta y}{3}$ / $\Delta t$ | $0.01$|$10^{-5}$ | 17725.6|40000   | 20|6855|0.005  | 226 | 600 | 4|5,750,388|2880
-PFE/CG4/ $\frac{2\Delta y}{3}$ / $\Delta t$ | $0.01$|$10^{-5}$ | 17725.6|40000   | 20|6855|0.005  | 133 | 300 | 4|5,750,388|5588
-PFE/CG2/ $\frac{\Delta y}{4}$ / $\Delta t$ | $0.01$|$10^{-5}$ | 17725.6|40000   | 20|6855|0.005  | 355 | 800 | 4|10,230,390|5383
-PFE/CG2/ $\frac{\Delta y}{3}$ / $\frac{\Delta t}{2}$ | $0.01$|$10^{-5}$ | 17725.6|40000   | 20|6855|0.0025  | 226 | 600 | 4|5,750,388|6094.6
+PFE: CG2/ $\frac{\Delta y}{3}$ / $\Delta t$ | $0.01$|$10^{-5}$ | 17725.6|40000   | 20|6855|0.005  | 226 | 600 | 4|5,750,388|2880
+PFE: CG4/ $\frac{2\Delta y}{3}$ / $\Delta t$ | $0.01$|$10^{-5}$ | 17725.6|40000   | 20|6855|0.005  | 133 | 300 | 4|5,750,388|5588
+PFE: CG2/ $\frac{\Delta y}{4}$ / $\Delta t$ | $0.01$|$10^{-5}$ | 17725.6|40000   | 20|6855|0.005  | 355 | 800 | 4|10,230,390|5383
+PFE: CG2/ $\frac{\Delta y}{3}$ / $\frac{\Delta t}{2}$ | $0.01$|$10^{-5}$ | 17725.6|40000   | 20|6855|0.0025  | 226 | 600 | 4|5,750,388|6094.6
 
 ## Reference
 [1] Choi, J., Kalogirou, A., Kelmanson, M., Lu, Y., & Bokhove, O. (2023). A study of extreme water waves using a hierarchy of models based on potential-flow theory. Eartharxiv.
