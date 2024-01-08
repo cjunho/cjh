@@ -26,7 +26,7 @@ The computational data can be visualised as follows:
 We provide a table in which parameters were uses for setting simulations as follows. We denote spatial resolution by $\Delta x\approx\Delta y=200$. $T$ is the total simulation time defined as $T=t_{end}-t_{0}$ with $t_0=0{\rm s}$. $\Delta t=0.7139{\rm s}$ or $\Delta t BLE=0.005$.  In order to change order of basis, modify nCG (currently setting nCG=2). For $N_y$, modify multiple (currently setting mutiple=3), for $\Delta t BLE$ modify dtBLE(currently setting dtBLE=1/200).  All simuations were run on 40 cores of Leeds' arc4-HPC.
   
 Simulation |$\epsilon$|$\delta$| $L_x$ (m) | $L_y$ (m) |$L_z=H_0$ (m) | $T$ (s) |$\Delta t_{BLE}$ | $N_x$ | $N_y$ |$N_z$|DoFs |Run time (min)  
-:---        | :---      | :---    | :---       | :---       |:---           |:---      | :---           | :---    |:---   |:---| :---
+:---        | :---      | :---    | :---       | :---       |:---           |:---      | :---           | :---    |:---   |:---| :---|:---
 PFE-SP3-CG2- $\frac{\Delta y}{3}$- $\Delta t$ | $0.01$|$10^{-5}$ | 17725.6|40000 | 20|6855|0.005  | 226 | 600 | 4|5,750,388|2880
 PFE-SP3-CG4- $\frac{2\Delta y}{3}$- $\Delta t$ | $0.01$|$10^{-5}$ | 17725.6|40000 | 20|6855|0.005  | 133 | 300 | 4|5,750,388|5588
 PFE-SP3-CG2- $\frac{\Delta y}{4}$- $\Delta t$ | $0.01$|$10^{-5}$ | 17725.6|40000 | 20|6855|0.005  | 355 | 800 | 4|10,230,390|5383
