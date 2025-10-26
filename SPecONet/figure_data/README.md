@@ -1,4 +1,4 @@
-The source data to draw Figure 2, 3, 4, 5.
+The source data to draw Figure 2, 3, 4, 5 are explained as follows.
 
 ## Folders
 - fig2 folder: 
