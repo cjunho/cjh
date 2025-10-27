@@ -57,8 +57,8 @@ try:
 except subprocess.CalledProcessError:
     print('error')
     
-
-
+df1 = pd.read_csv(filename+f"/call1_alp.csv")
+PATH_alp=df1['path'][0]
 
 
 for ii in range(2,100+1):
@@ -105,4 +105,5 @@ for ii in range(2,100+1):
     
    
 print(time.time()-time0)
+
 
