@@ -162,9 +162,7 @@ for ii in range(start1,ORDER+1):
     model2.to(device).double()
 
     print({ii})
-    if ii>10:
-        ii=10
-    # else: ii=ii%10    
+   
     df1 = pd.read_csv(f'./training/{EQUATION}{EPSILON}/600N23/order1'+f"/call{ii}_alp.csv")
     df2 = pd.read_csv(f'./training/{EQUATION}{EPSILON}/600N23/order1'+f"/call{ii}_pp.csv")
     PATH=f'Net3D_{args.forcing}_epochs'+df1['path'][0]
