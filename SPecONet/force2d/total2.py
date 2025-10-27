@@ -36,11 +36,13 @@ try:
                     f' --epochs 50000 --nbfuncs 30 --U 9 --dt 0.01 --forcing {forcing}  --ndt 1 --eps 0.1 --kind force', shell=True)
     
     df1 = pd.read_csv(filename+f"/call1_alp.csv")
-    PATH_alp=df1['path'][0] 
+    
     PATH=df1['path'][0]
     subprocess.run(f'python training2alp.py --equation {Equation} --model Net3D --loss MSE --blocks 0 --file 600N23 --ks 9 --filters 10'\
                     f' --epochs 20000 --nbfuncs 30 --U 9 --dt 0.01 --forcing {forcing}  --ndt 1 --eps 0.1 --path {PATH} --kind force --pretrained true', shell=True)
     
+    df1 = pd.read_csv(filename+f"/call1_alp.csv")
+    PATH=df1['path'][0]
     subprocess.run(f'python training2pressure.py --equation {Equation} --model Net3Dpressure --loss MSE --blocks 0 --file 600N23 --kind force'\
                 f' --epochs 10000 --ks 9 --filters 10 --nbfuncs 30 --U 9 --dt 0.01 --forcing {forcing}  --ndt 1 --eps 0.1 --path {PATH} --order 1', shell=True)
     
@@ -103,3 +105,4 @@ for ii in range(2,100+1):
     
    
 print(time.time()-time0)
+
