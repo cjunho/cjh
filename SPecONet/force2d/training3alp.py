@@ -482,7 +482,7 @@ for batch_idx, sample_batch in enumerate(trainloader):
         # all00 = sample_batch['data_u'][:BATCH_SIZE,:,ORDER-2:ORDER-1].double().to(device).reshape((BATCH_SIZE,3,ndt,SHAPE-2,SHAPE-2))
         all0 = sample_batch['data_u'][:BATCH_SIZE,:2,ORDER-1-ini:ORDER-ini].double().to(device).reshape((BATCH_SIZE,2,ndt,SHAPE-2,SHAPE-2))
         # fdata0 = sample_batch['f'][:BATCH_SIZE,0::3].double().to(device)
-        fdata = sample_batch['f'][:BATCH_SIZE,:,0].double().to(device)
+        fdata = sample_batch['f'][:BATCH_SIZE,:,ORDER-1-ini].double().to(device)
         # cf00 = sample_batch['cf0'][:200,:,1:2].double().to(device)   
         cf1 = sample_batch['cf'][:BATCH_SIZE,:,ORDER-1-ini].double().to(device)[:,:2*ndt,]
 print(all0.shape)
