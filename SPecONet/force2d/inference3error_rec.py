@@ -255,7 +255,7 @@ for batch_idx, sample_batch in enumerate(trainloader):
         # aa= sample_batch['data_u'][:BATCH_SIZE,3:4,start1-1:ORDER].double().to(device)
         all0 = sample_batch['data_u'][:BATCH_SIZE,:3,start1-1:ORDER].double().to(device)
         udata00 = sample_batch['uex'].double().to(device)[:BATCH_SIZE,:2,start1-1:ORDER]
-        fdata000 = sample_batch['f'][:BATCH_SIZE,:,0:1].double().to(device)
+        fdata000 = sample_batch['f'][:BATCH_SIZE,:,start1-1:ORDER].double().to(device)
         # fdata000 = sample_batch['f'][:BATCH_SIZE,:,0:1].double().to(device)
 
 
