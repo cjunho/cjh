@@ -15,19 +15,21 @@ filename = f'./training/{Equation}{eps}/{FILE}/order1'
 
 
 data_path=f"data/{Equation}{eps}/{kind}"
-if os.path.isdir(data_path) == False: os.makedirs(data_path)
+
    
 time0 = time.time()
 
 forcing='sigma5'
 
-try:
-    subprocess.run(f'python ns_solver.py --case train --Nsamples 600 --Ntimes 100 --Equation {Equation}', shell=True)
-    subprocess.run(f'python ns_solver.py --case test --Nsamples 100 --Ntimes 100 --Equation {Equation}', shell=True)
-    print("Script executed successfully.")
-    
-except subprocess.CalledProcessError:
-    print('error')
+if os.path.isdir(data_path) == False: 
+   os.makedirs(data_path)
+   try:
+       subprocess.run(f'python ns_solver.py --case train --Nsamples 600 --Ntimes 100 --Equation {Equation}', shell=True)
+       subprocess.run(f'python ns_solver.py --case test --Nsamples 100 --Ntimes 100 --Equation {Equation}', shell=True)
+       print("Script executed successfully.")
+       
+   except subprocess.CalledProcessError:
+       print('error')
     
 
     
@@ -105,5 +107,6 @@ for ii in range(2,100+1):
     
    
 print(time.time()-time0)
+
 
 
