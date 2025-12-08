@@ -5,13 +5,7 @@ import os
 from sem import sem as sem
 from tqdm import tqdm
 import argparse
-from mpl_toolkits import mplot3d 
-from pprint import pprint
 from funsjax import *
-import matplotlib
-import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
-from matplotlib import cm
 import time
 parser = argparse.ArgumentParser("SEM")
 
@@ -95,19 +89,12 @@ Mdxd=np.diag(mxdd[:N-2],1)-np.diag(mxdd[:N-2],-1)
 Mxdd=Mdxd.T
 
 for ii in range(N-1):
-    # dirix = (lepolysx[ii].T-lepolysx[ii+2].T)/(sd_diag[ii])**.5
-    
     neunx = (lepolysx[ii].T+ bn[ii]*lepolysx[ii+2].T)/(sn_diag[ii])**.5
-    # neun = (lepolys[ii]+ bn[ii]*lepolys[ii+2])/(sn_diag[ii])**.5
     for jj in range(N-1):
         diri1=(lepolys[jj]-lepolys[jj+2])/(sd_diag[jj])**.5
         dirix1 = (lepolysx[jj].T  -lepolysx[jj+2].T)/(sd_diag[jj])**.5
         
-        # psi_l_M = (lepolysx[jj].T  -lepolysx[jj+2].T)/(sd_diag[jj])**.5
         phi1=neunx*diri1/lepolys[N]**2
-       
-        
-        # Mnd[jj,ii]=np.sum(phi4)*(2/(N*(N+1)))
         Mxnd[jj,ii]=np.sum(phi1)*(2/(N*(N+1)))
        
 
@@ -117,47 +104,24 @@ Mxnd[abs(Mxnd)<10**-8]=0  #diri*neumann
 
 t=0
 
-# u0,v0,w0,_,_,_=ini(-dt,X,Y,Z)
-# u1,v1,w1,px,py,pz=ini(0,X,Y,Z)
 
 iMd=Ed@np.diag(1/eid)@Ed.T
 iMn=En@np.diag(1/ein)@En.T
-
-# tdata=np.reshape(dt*np.array(np.arange(0,11)),(11,1,1,1))
-
 
 
 
 
 ode_data=np.zeros((N-1,N-1,N-1))
-# ode_data2=np.zeros((N-1,N-1,N-1))
-
-# iode_data=np.zeros((N-1,N-1,N-1,N-1))
 
 for jj in range(N-1):
         for ii in range(N-1):
             ode_data[jj,]=(1.5*eid[jj]/dt+eps)*Md+eps*eid[jj]*np.eye(N-1)
-            # ode_data2[jj,ii,]=eid[ii]*Md+eid[jj]*Md+ein[jj]*eid[ii]*np.eye(N-1)
-            # iode_data[jj,ii,]=np.diag(1/np.diag(ode1[jj,ii,])**.5)
-            # ode_data[jj,ii,]=(iode_data[jj,ii,]@ode1[jj,ii,])@iode_data[jj,ii,]
-
+           
 oden_data=np.zeros((N-1,N-1,N-1))
-# ioden_data=np.zeros((N-1,N-1,N-1,N-1))
 for jj in range(N-1):
-        # ode1=(eie[jj]*3*.5/dt+1)*eie[0]*M+eie[jj]*M+eie[jj]*eie[0]*np.eye(N-1)
         for ii in range(N-1):
             oden_data[jj,]=oden_data[jj,]=Mn+ein[jj]*np.eye(N-1)
-            # ioden_data[jj,ii,]=np.diag(1/np.diag(ode2[jj,ii,])**.5)
-            # oden_data[jj,ii,]=(ioden_data[jj,ii,]@ode2[jj,ii,])@ioden_data[jj,ii,]
-
-# phiset0=phiset(sd_diag,b,'dirichlet')
-# phiset1=phiset(sd_diag,b,'dirichlet1')
-# phiset2=phiset(sd_diag,b,'dirichlet2')
-
-
-
-
-
+  
 T=Ind*dt
 
 
@@ -231,32 +195,14 @@ filename=f'./data/{equation}{eps}/force'
 
 qq1=qq[:,0]+1j*qq[:,1]
 
-
-# qq1[:,:,0,0,0]=qq1[:,:,0,0,0]+(N+1)**3
-
 X1=np.pi*(X+1)
 Y1=np.pi*(Y+1)
 
 
-
-
-# fx=np.sin(tt)*1.5*((1+np.cos(0*X1+1*Y1)-np.sin(1*X1+0*Y1)-np.sin(1*X1+1*Y1)).reshape((1,24,24)))
-# fy=np.sin(tt)*1.5*((1+np.sin(0*X1+1*Y1)-np.cos(1*X1+0*Y1)-np.cos(1*X1+1*Y1)).reshape((1,24,24)))
-
-# noi1=1
-
-
-for jnd in range(1,Jnd+1):    
-    
+for jnd in range(1,Jnd+1):       
     
     fx=exf2(tt,qq1[jnd-1,0],X1,Y1)
-    
-    
-    
-    
     fy=exf2(tt,qq1[jnd-1,1],X1,Y1)
-
-   
     fxdata[jnd-1,]=fx
     fydata[jnd-1,]=fy
   
@@ -297,12 +243,10 @@ cfdata[:,1,0]=cFy0
 
 t00 = time.time()
 for ind in range(1,Ind+1):
-# ind=1
+
     
     exfx=np.zeros((Jnd,N-1,N-1))
     exfy=np.zeros((Jnd,N-1,N-1))
-    
-    # eee0[jj,]=np.reshape(Ed[:,jj],(N-1,1,1))*cFx
     exfx=Ed.T@cFx
     exfy=Ed.T@cFy
     
@@ -314,7 +258,7 @@ for ind in range(1,Ind+1):
     
     alx=Ed@np.transpose(alx1,(2,0,1))
     aly=Ed@np.transpose(aly1,(2,0,1))
-    # alz=Ed@alz1
+   
     
     cFnx1=(Mmx@alx)@Mm.T  #second
    
@@ -351,9 +295,8 @@ for ind in range(1,Ind+1):
     
     cp_data[:,ind-1,]=phial
     
-    # phiall[0,:,:]=0
-    phiall[:,:,0]=0
-    # phiall[:,:,0]=0
+   
+    phiall[:,:,0]=0  
     px1=(Mxnd@phiall)@Mnd.T
     
  
@@ -362,11 +305,6 @@ for ind in range(1,Ind+1):
        
    
     vv1=(Mdxd@aly)@Mxdd.T
-       
-   
-    
-    ""
-    # py1=np.zeros((N-1,N-1,N-1))
     phiall=phial.copy()
     
     phiall[:,0,:]=0
@@ -390,25 +328,19 @@ for ind in range(1,Ind+1):
     
     al_unext3=(Md@alx)@Md
    
-    phiall=phial.copy()
-   
-    # phiall[0,:,:]=0
+    phiall=phial.copy()  
+  
     phiall[:,:,0]=0
     
     phixnext3=(Mxnd@phiall)@Mnd.T
    
     
     al_vnext3=(Md@aly)@Md
-    
-    # phiznext3=np.zeros((N-1,N-1,N-1))
     phiall=phial.copy()
     phiall[:,0,:]=0
     
     phiynext3=(Mnd@phiall)@Mxnd.T
-    """initial data pp"""
    
-    # p_data[:,ind-1]=phiset(phixnext300,phinsets)
-    """"""
    
 
     al_unext=al_unext3-2*dt*phixnext3/3
@@ -447,15 +379,7 @@ for ind in range(1,Ind+1):
   
 print('compuational time',time.time() - t00)
 print(u_data.shape)
-# input('time')
-#Ind=20
-"""initial data saving """
-# from scipy.io import savemat
-# mdic = {"fxdata": fxdata[22,-1,:,:,:], "fydata": fydata[22,-1,:,:,:],"u":u_data[22,::10,:,:,:],"v":v_data[22,::10,:,:,:],"p":p_data[0,::10,:,:,:]}
 
-# savemat("forcing data.mat", mdic)
-# input('sdfsdf')
-""""""
 data_uu=np.zeros((Jnd,2,Ind,N+1,N+1))
 data_alp=np.zeros((Jnd,3,Ind,N-1,N-1))
 fdata=np.zeros((Jnd,2,(Ind),N+1,N+1))
@@ -481,9 +405,7 @@ Ind=1-1
 
 for jnd in range(Jnd):
     data.append([data_alp[jnd,], fdata[jnd,],data_uu[jnd,],cfdata[jnd,],cfdata0[jnd]])
-    
-    # data.append([data_alp[jnd,:,Ind:], fdata[jnd,:,0:1],cfdata[jnd,:,Ind:],data_uu[jnd,:,Ind:]])
-
+  
 
 data = np.array(data, dtype=object)
 
