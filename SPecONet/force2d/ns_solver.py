@@ -113,10 +113,6 @@ for ii in range(N-1):
 
 Mxnd[abs(Mxnd)<10**-8]=0  #diri*neumann
 
-# Mxnxd[abs(Mxnxd)<10**-8]=0  #diri_x*neuman_x
-# Mxdd[abs(Mxdd)<10**-8]=0  #diri_x*neuman_x
-# Mnd[abs(Mnd)<10**-8]=0     #diri_x*diri
-# Mdnx[abs(Mdnx)<10**-8]=0   #diri*neuman_x
 
 
 t=0
