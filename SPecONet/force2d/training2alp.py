@@ -1,5 +1,5 @@
 "find au, av, aw at first time step"
-# python training2alp00.py --equation ConvDiff2D --model Net3D --loss MSE --blocks 0 --file 800N23 --epochs 50000 --ks 9 --filters 10 --nbfuncs 30 --U 9 --pre_epochs 5000 --dt 0.01 --forcing num444am2  --kind cosN30 --ndt 1 --eps 0.1
+# python training2alp.py --equation NS2d --model Net3D --loss MSE --blocks 0 --file 600N23 --ks 9 --filters 10 --epochs 50 --nbfuncs 30 --U 9 --dt 0.01 --forcing sigma5  --ndt 1 --eps 0.1 --kind force
 
 import random
 import torch
@@ -72,15 +72,7 @@ pre_test=args.pre_test
 EPSILON = args.eps
 PATH_alp=args.path
 
-models = {
-          'ResNet': ResNet,
-          'NetA': NetA,
-          'NetB': NetB,
-          'NetC': NetC,
-          'NetD': NetD,
-          'Net3D': Net3D,
-          'Net2D': Net2D
-          }
+models = {'Net3D': Net3D}
 MODEL = models[args.model]
 
 #GLOBALS
@@ -413,10 +405,10 @@ loss_u_test, loss_wf_test=0,0
 print(torch.cuda.memory_allocated()/1024**3)
 
 for batch_idx, sample_batch in enumerate(trainloader):
-       all0 = sample_batch['data_u'][:BATCH_SIZE,:2,:1].double().to(device)
+    all0 = sample_batch['data_u'][:BATCH_SIZE,:2,:1].double().to(device)
        
-        fdata = sample_batch['f'][:BATCH_SIZE,:,0].double().to(device)
-        cf00 = sample_batch['cf0'].double().to(device)
+    fdata = sample_batch['f'][:BATCH_SIZE,:,0].double().to(device)
+    cf00 = sample_batch['cf0'].double().to(device)
        
 
 print(all0.shape)
