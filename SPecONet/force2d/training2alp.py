@@ -1,6 +1,5 @@
 "find au, av, aw at first time step"
-# python training2alp.py --equation NS2d --model Net3D --loss MSE --blocks 0 --file 600N23 --ks 9 --filters 10 --epochs 50 --nbfuncs 30 --U 9 --dt 0.01 --forcing sigma5  --ndt 1 --eps 0.1 --kind force
-
+# python training2alp.py --blocks 0 --file 600N23 --ks 9 --filters 10 --epochs 50 --dt 0.01 --forcing sigma5  --ndt 1 --eps 0.1 --kind train
 import random
 import torch
 import time
