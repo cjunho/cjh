@@ -60,7 +60,7 @@ parser.add_argument("--path", type=str, default=None)
 
 args = parser.parse_args()
 gparams = args.__dict__
-#pprint(gparams)
+
 
 ndt=args.ndt
 kind=args.kind
@@ -170,11 +170,6 @@ gparams['device'] = device
 
 # SEND TO GPU (or CPU)
 model.to(device).double()
-# www1=np.load('neww200.npy')
-# www=torch.from_numpy(www1).contiguous().to(device).double()
-
-# with torch.no_grad():
-#     model.fcH.weight = torch.nn.parameter.Parameter(www)
 
 
 param_size = 0
@@ -182,7 +177,7 @@ r0=1
 
 
 for name,param in model.named_parameters():
-    # print(name,r0,param.nelement())
+    
     print(name,r0,param.shape)
     param_size += param.nelement() * param.element_size()
     r0+=1
@@ -235,9 +230,7 @@ losses = {'loss_u':[],
 gparams['path'] = PATH
 log_gparams(gparams)
 
-# for parameter in model.parameters():
-#     print(parameter)
-# print(sum(p.numel() for p in model.parameters()))
+
 
 dt=0.01
 
@@ -300,15 +293,15 @@ Mdxd=np.diag(mxdd[:NN-2],1)-np.diag(mxdd[:NN-2],-1)
 Mxdd=Mdxd.T
 
 for ii in range(NN-1):
-    # dirix = (lepolysx[ii].T-lepolysx[ii+2].T)/(sd_diag[ii])**.5
+   
     
     neunx = (lepolysx[ii].T+ bn[ii]*lepolysx[ii+2].T)/(sn_diag[ii])**.5
-    # neun = (lepolys[ii]+ bn[ii]*lepolys[ii+2])/(sn_diag[ii])**.5
+   
     for jj in range(NN-1):
         diri1=(lepolys[jj]-lepolys[jj+2])/(sd_diag[jj])**.5
         dirix1 = (lepolysx[jj].T  -lepolysx[jj+2].T)/(sd_diag[jj])**.5
         
-        # psi_l_M = (lepolysx[jj].T  -lepolysx[jj+2].T)/(sd_diag[jj])**.5
+       
         phi1=neunx*diri1/lepolys[NN]**2
  
         Mxnd[jj,ii]=np.sum(phi1)*(2/(NN*(NN+1)))
@@ -318,26 +311,24 @@ ode_data=np.zeros((NN-1,NN-1,NN-1))
 
 iode_data=np.zeros((NN-1,NN-1,NN-1))
 
-# ode_cond=np.zeros((NN-1,NN-1,NN-1))
-# iode_cond=np.zeros((NN-1,NN-1,NN-1))
+
 
 
 
 pre_cond=np.zeros((NN-1,NN-1,NN-1))
-# ipre_cond=np.zeros((NN-1,NN-1,NN-1))
+
 ode_eye=np.zeros((NN-1,NN-1,NN-1))
 for jj in range(NN-1):
        
             ode_data0=(1.5*eid[jj]/dt+EPSILON)*Md+EPSILON*eid[jj]*np.eye(NN-1)
             ode_data[jj,]=np.diag(np.diag(ode_data0)**.5)
-            # iode_data[jj,]=np.linalg.solve(ode_data0,np.eye(NN-1))
+            
             iode_data[jj,]=np.diag(1/np.diag(ode_data0)**.5)
             ode_eye[jj,]=(iode_data[jj,]@ode_data0)@iode_data[jj,]
-            # ode_data[jj,]=(eid[jj]+eps)*Md+eps*eid[jj]*np.eye(NN-1)
-            # ode_data[jj,]=ode1
+          
 
 
-# cond=np.sum(np.sum(ode_data**2,-1),-1)*np.sum(np.sum(iode_data**2,-1),-1)
+
 
 
 Mxnd[abs(Mxnd)<10**-8]=0  #diri*neumann
@@ -370,64 +361,34 @@ iode_data=torch.from_numpy(iode_data).to(device).double()
 
 ode_eye=torch.from_numpy(ode_eye).to(device).double()
 
-# cond=torch.from_numpy(cond.reshape(1,1,NN-1,NN-1)).to(device).double()
-
-# ode_cond=torch.from_numpy(ode_cond).to(device).double()
-
-# icc=torch.sum(torch.sum(iode_cond,2),2)
-
-# cc=torch.sum(torch.sum(ode_cond,2),2)
-
-# print(icc,cc)
 
 def closure(ald,fdata0,cf0):
  
-    # print('111',torch.cuda.memory_allocated()/1024**3)
+    
     model.train()
-    # print('222',torch.cuda.memory_allocated()/1024**3)
+    
     if torch.is_grad_enabled():
         optimizer.zero_grad()
-    # print('333',torch.cuda.memory_allocated()/1024**3)
-    # f0=torch.reshape(fdata,(1,1,NN-1,NN-1,NN-1) ).to(device).double()
+    
     a_pred = model(fdata0)
-    # print('444',torch.cuda.memory_allocated()/1024**3)
-    # print(a_pred.shape)
-    # input('dddd')
-    # print(a_pred.shape)
-    "check weak form"
-    # a_pred=torch.sum(ode_data@((Ed.T@ald).reshape((BATCH_SIZE,2,1,NN-1,NN-1,1))),5)
-    # print(a_pred.shape)
     
     alx=a_pred[:,0]
     aly=a_pred[:,1]
-    # print(alx.shape)
-    # input('sdf')
-    # u_pred = torch.sum(phiset*a_pred0,dim=1)
+   
     loss_u=torch.zeros(1)
     cfx0=cf0[:,0]
     cfy0=cf0[:,1]
    
-    
-    # cFx=cf[:,0:ndt]
-    # cFy=cf[:,ndt:2*ndt]
-    # cFz=cf[:,2*ndt:3*ndt]
-    
-    # al_unext,al_vnext,al_wnext,exfx,exfy,exfz,phial,Pexfx = weak_form0(EPSILON,al_upre,al_vpre,al_wpre,cfx0,cfy0,cfz0,cFx,cFy,cFz,dt, NN,ode_data,oden_data,pre_cond,pre_condn, a_pred,Mxnd,Mnd,Md,Mxdd,Mdxd,Ed,En,Mm,Mmx )
     al_unext,al_vnext,exfx,exfy = weak_form0(alx,aly,cfx0,cfy0, NN,ode_eye,iode_data, Ed )
     
     
     
     alx0=Ed@torch.sum(iode_data@(alx.reshape((BATCH_SIZE,1,NN-1,NN-1,1))),4)
     aly0=Ed@torch.sum(iode_data@(aly.reshape((BATCH_SIZE,1,NN-1,NN-1,1))),4)
-    #loss = U*(torch.sum((al_unext-exfx)**2))+U*torch.sum((alx-ald0)**2)
-    # loss = U*torch.sum((alx-ald0)**2)
     loss=10**9*((torch.sum((al_unext-exfx)**2))+(torch.sum((al_vnext-exfy)**2)))
        
     
 
-
-            #           +(BATCH_SIZE/inx)*torch.sum((a_pred1[:3*inx:3,:ndt,]-ald[:4*inx:4,0:ndt,])**2+(a_pred1[1:3*inx:3,:ndt,]-ald[1:4*inx:4,0:ndt,])**2\
-            # +(a_pred1[2:3*inx:3,:ndt,]-ald[2:4*inx:4,0:ndt,])**2))
     loss_u1 = torch.max(abs(alx0-ald[:,0]))+torch.max(abs(aly0-ald[:,1]))
    
     if loss.requires_grad:
@@ -452,39 +413,28 @@ loss_u_test, loss_wf_test=0,0
 print(torch.cuda.memory_allocated()/1024**3)
 
 for batch_idx, sample_batch in enumerate(trainloader):
-        # all0 = sample_batch['data_u'][:BATCH_SIZE,:2,:1].double().to(device).reshape((BATCH_SIZE,2,ndt,SHAPE-2,SHAPE-2))
-        all0 = sample_batch['data_u'][:BATCH_SIZE,:2,:1].double().to(device)
+       all0 = sample_batch['data_u'][:BATCH_SIZE,:2,:1].double().to(device)
        
         fdata = sample_batch['f'][:BATCH_SIZE,:,0].double().to(device)
         cf00 = sample_batch['cf0'].double().to(device)
-        # cf1 = sample_batch['cf'][:BATCH_SIZE,:,0].double().to(device)[:,:3*ndt,]
+       
 
 print(all0.shape)
 print(fdata.shape)
 print(cf00.shape)
-# print(cf1.shape)
 
-# fdata00=fdata.detach().cpu().numpy()
-# with open('fxtorch.npy', 'wb') as data_ex:
-#     np.save(data_ex, fdata00[:,0])
-# input('dddff')
 
 loss_wf1=0
 
-# print(torch.cuda.memory_allocated()/1024**3)
 
 
 for epoch in tqdm(range(1, EPOCHS+1)):
         
         loss_u,loss_u1,  loss,a_pred = closure(all0,fdata,cf00)
-        # print(torch.cuda.memory_summary())
-        # print(torch.cuda.memory_allocated()/1024**3)
         optimizer.step(loss.item)
         
         
-       # optimizer.step()
-        # print(torch.cuda.memory_allocated()/1024**3)
-        # input('ggg')
+       
         
         loss_u11 = np.round(float(loss_u1.item()), 12)        
         loss_train = np.round(float(loss.item()), 12)
@@ -496,15 +446,7 @@ for epoch in tqdm(range(1, EPOCHS+1)):
         if epoch % int(2) == 0:
             
             losses = log_loss(NBFUNCS,losses, loss_a,loss_u11,loss_f, loss_wf1, loss_train,  loss_wf_test,BATCH_SIZE, loss_u_test)
-        #if lu1<5*10**-9 and lv1<5*10**-9 and lw1<5*10**-9:
-         #   break
         
-        #scheduler.step()
-
-# u_test_save.append(np.reshape(dd[:,0][700][:,1],(D_out,))) 
-# u_test_save.append(np.reshape(xx,(D_out,)))            
-# with open(PATH+"/u_test.pkl", "wb") as fp:   #Pickling
-#     pickle.dump(u_test_save, fp)
 
 torch.save(model.state_dict(), PATH + '/model.pt')
 torch.save(a_pred, PATH + '/data.pt')
