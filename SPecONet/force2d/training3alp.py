@@ -1,5 +1,5 @@
 "find au, av, aw at second time step by using training2alp"
-# python training3alp00.py --equation ConvDiff2D --model Net3D --loss MSE --blocks 0 --file 300N31 --epochs 100 --ks 9 --filters 21 --nbfuncs 30 --U 9 --pre_epochs 5000 --dt 0.01 --forcing num555  --ndt 1 --eps 0.1 --order 2 --path 100_20250725T080906 --kind cosN30
+# python training3alp.py --equation NS2d --model Net3D --loss MSE --blocks 0 --file 600N23 --ks 9 --filters 10 --epochs 50000 --nbfuncs 30 --U 9 --dt 0.01 --forcing sigma5  --ndt 1 --eps 0.1 --path {PATH} --order {ORDER} --kind force
 import random
 import torch
 import time
