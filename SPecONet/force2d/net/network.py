@@ -29,8 +29,8 @@ def init_optim(model):
     return torch.optim.LBFGS(model.parameters(), **params)
     # return torch.optim.Adam(model.parameters(), lr=1e-5, betas=(0.9, 0.999), eps=1e-10, weight_decay=0, amsgrad=False)
     # return torch.optim.Adam
-def swish(x,beta):
-    return x * torch.sigmoid(beta*x)
+def swish(x):
+    return x * torch.sigmoid(x)
 
 
 class RMSELoss(nn.Module):
@@ -83,14 +83,14 @@ class Linear(nn.Module):
 
 
 class Net3D(nn.Module) :
-    def __init__(self,beta,ndt, d_in, filters, d_out, kernel_size=7, padding=3, blocks=0) :
+    def __init__(self,ndt, d_in, filters, d_out, kernel_size=7, padding=3, blocks=0) :
         super(Net3D, self).__init__()
         self.d_in = d_in
         self.blocks = blocks
         self.filters = filters
         self.d_out = d_out
         self.swish = swish
-        self.beta=beta
+        
         # self.swish = nn. ReLU()
         self.kern = kernel_size
         self.pad = padding
@@ -110,7 +110,7 @@ class Net3D(nn.Module) :
         
         m = self.swish
        
-        out = m(self.conv1(x),self.beta)
+        out = m(self.conv1(x))
         
        
         

@@ -14,46 +14,25 @@ def load_obj(name):
         data = data[:,:,0,:]
     return data
 
-def get_data1(gparams, kind='train', transform_f=None):
-    equation, file, sd = 'Standard', gparams['file'], gparams['sd']
-    # input("789")
-    # print(file)
-    if sd == 1:
-        sd = 1.0
-    
-    shape, epsilon = int(file.split('N')[1]) + 1, gparams['epsilon']
-    forcing = 'normal'
-    # input("456")
-    # print(file)
-    if kind == 'validate':
-        size = 1000
-        file = f'{size}N{shape-1}'
-    else:
-        size = int(file.split('N')[0])
-    # input("098")
-    # print(file)
-    data = LGDataset(equation=equation, pickle_file=file, shape=shape, kind=kind, sd=sd, forcing=forcing, transform_f=transform_f)
-    return data
+
 
 
 def get_data(gparams, kind='train', transform_f=None):
-    equation, file, sd,dt,ndt = gparams['equation'], gparams['file'], gparams['sd'],gparams['dt'],gparams['ndt']
+    file,dt,ndt =  gparams['file'], gparams['dt'],gparams['ndt']
     # equation, sd,dt,ndt = gparams['equation'], gparams['sd'],gparams['dt'],gparams['ndt']
     # file = f'100N15'
     # input("123")
     # print(equation)
-    if sd == 1:
-        sd = 1.0
-    
+   
     shape, epsilon = int(file.split('N')[1]) + 1, gparams['epsilon']
     # ndata=int(gparams['file'].split('N')[0])
     forcing = gparams['forcing']
     
     # PATH_prev=gparams['PATH_prev']
     # input("qwe456")
-    print(equation)
+    
    
-    if equation == 'test3d':
+    if kind == 'test':
         size = 100
         file = f'{size}N{shape-1}'
         
@@ -62,7 +41,7 @@ def get_data(gparams, kind='train', transform_f=None):
     # input("789")
     # print(file)
     # try:
-    data = LGDataset(equation=equation,dt=dt,ndt=ndt,epsilon=epsilon, pickle_file=file, shape=shape, kind=kind, sd=sd, forcing=forcing, transform_f=transform_f)
+    data = LGDataset(dt=dt,ndt=ndt,epsilon=epsilon, pickle_file=file, shape=shape, kind=kind,  forcing=forcing, transform_f=transform_f)
         
     # except:        
         
@@ -73,31 +52,11 @@ def get_data(gparams, kind='train', transform_f=None):
         
     return data
 
-def get_data1(path,shape):
-    
-    data = LGDataset0(path,shape)
-    return data
-class LGDataset0():
-    def __init__(self,  path,shape):
-       
-        f=torch.load(path+'/data.pt')
-           
-            # self.data = pickle.load(f)
-        self.data = f
-        self.shape = shape
-    def __len__(self):
-        return len(self.data)
-    def __getitem__(self, idx):
-        if torch.is_tensor(idx):
-            idx = idx.tolist()
-        
-        u = self.data[idx].double().detach().reshape(3,1,self.shape-2, self.shape-2, self.shape-2)
-        
-        sample = {'data_u': u}
-        return sample
+
+
 class LGDataset():
     """Legendre-Galerkin Dataset."""    
-    def __init__(self, equation,dt,ndt,epsilon, pickle_file, shape=64, transform_f=None, transform_a=None, kind='train', sd=1, forcing='uniform',path=None):
+    def __init__(self,dt,ndt,epsilon, pickle_file, shape=64, transform_f=None, transform_a=None, kind='train', forcing='uniform',path=None):
         # print(equation)
         """
         Args:
@@ -112,7 +71,7 @@ class LGDataset():
         #     pickle_file += f'sd{sd}'
         # else: pickle_file += f'zero'
         
-        with open(f'./data/{equation}{epsilon}/{kind}/' + pickle_file + f'{forcing}.pkl', 'rb') as f:
+        with open(f'./data/NS2d{epsilon}/{kind}/' + pickle_file + f'{forcing}.pkl', 'rb') as f:
            
             self.data = pickle.load(f)
             self.data = self.data[:,:]
@@ -120,7 +79,7 @@ class LGDataset():
         self.ndt = ndt
         # self.ndata = ndata
         self.epsilon = epsilon
-        self.equation = equation
+        
         self.transform_f = transform_f
         self.transform_a = transform_a
         self.shape = shape
@@ -149,54 +108,17 @@ class LGDataset():
         if torch.is_tensor(idx):
             idx = idx.tolist()
         
-        #if self.equation == 'Standard2D':
-        if self.equation in ('Standard2D', 'NS2d'):
-            # print(torch.from_numpy(self.data[:,0][idx][:,:,:,:]).shape)
-            # input('sdfds')
-            u = torch.from_numpy(self.data[:,0][idx][:,:,:,:]).double().reshape(3,LL,self.shape-2, self.shape-2)
-            # f = torch.from_numpy(self.data[:,1][idx][:,:,:,:]).double().reshape(2,LL, self.shape, self.shape)
-            f = torch.from_numpy(self.data[:,1][idx][:,:,:,:]).double().reshape(2,LL, self.shape, self.shape)
-            
-            uex = torch.from_numpy(self.data[:,2][idx]).double()
-            cf=torch.from_numpy(self.data[:,3][idx][:,:,:,:]).double().reshape(2,LL, self.shape-2, self.shape-2)
-            cf0=torch.from_numpy(self.data[:,4][idx]).double().reshape(2, self.shape-2, self.shape-2)
-            
-            sample = {'data_u': u, 'f': f ,'cf':cf,'uex':uex,'cf0':cf0}
-            # sample = {'data_u': u, 'f': f ,'uex':uex,'cf':cf}
-        elif self.equation in ('test3d'):
-            # print(type(self.data[1][idx]))
-            # print(self.data[1][idx].shape)
-            # print(self.data[:,1][idx].shape)
-            # print(idx)
-            # print(self.data[:,2][idx].shape)
-            # input('okok')
-            uex = torch.from_numpy(self.data[:,1][idx]).double()
-            f = torch.from_numpy(self.data[:,0][idx]).double().reshape(3,LL, self.shape, self.shape, self.shape)
-            u = torch.from_numpy(self.data[:,2][idx][:,:,:,:, :]).double().reshape(4,LL,self.shape-2, self.shape-2, self.shape-2)
-            
-            
-            sample = { 'f': f,'uex':uex,'data_u': u}
-        elif self.equation == 'Standardb':            
-            u = torch.transpose(torch.Tensor(self.data[:,0][idx]).double().reshape(self.shape,LL),0,1)
-            f = torch.Tensor(self.data[:,1][idx]).double().reshape(1, self.shape)
-            a = torch.Tensor(self.data[:,2][idx]).double().reshape(1, self.shape-1)
-            p = torch.Tensor(self.data[:,3][idx]).double().reshape(1, L)
-            Mass = torch.Tensor(self.data[:,5][idx]).double().reshape(self.shape-1, self.shape-1)
-            # print(self.data[:,5][idx].shape)
-            ff=f
-            sample = {'data_u': u, 'f': f, 'a': a, 'p': p, 'fn': ff,'Mass':Mass}
-        else:
-            
-            u = torch.transpose(torch.from_numpy(self.data[:,0][idx]).float().reshape(self.shape,LL),0,1)
-            f = torch.from_numpy(self.data[:,1][idx]).double().reshape(1, self.shape)
-            a = torch.from_numpy(self.data[:,2][idx]).double().reshape(1, self.shape-2)
-            p = torch.from_numpy(self.data[:,3][idx]).double().reshape(1, L)
-            # Mass = torch.Tensor([self.data[:,5][idx]]).reshape(self.shape-1, self.shape-1)
-            
-            ff=f
-            sample = {'data_u': u, 'f': f, 'a': a, 'p': p, 'fn': ff}
-            # else:
-            # sample = {'u': u,'uu': uu, 'f': f, 'a': a, 'p': p}
+       
+        u = torch.from_numpy(self.data[:,0][idx][:,:,:,:]).double().reshape(3,LL,self.shape-2, self.shape-2)
+        f = torch.from_numpy(self.data[:,1][idx][:,:,:,:]).double().reshape(2,LL, self.shape, self.shape)
+        
+        uex = torch.from_numpy(self.data[:,2][idx]).double()
+        cf=torch.from_numpy(self.data[:,3][idx][:,:,:,:]).double().reshape(2,LL, self.shape-2, self.shape-2)
+        cf0=torch.from_numpy(self.data[:,4][idx]).double().reshape(2, self.shape-2, self.shape-2)
+        
+        sample = {'data_u': u, 'f': f ,'cf':cf,'uex':uex,'cf0':cf0}
+        
+        
         return sample
 
 

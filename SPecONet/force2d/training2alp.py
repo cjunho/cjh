@@ -33,23 +33,12 @@ torch.set_default_dtype(torch.float64)
 # ARGS
 # python training.py --equation Burgers --model NetC --blocks 4 --file 10000N63 --forcing uniform --epochs 50000
 parser = argparse.ArgumentParser("SEM")
-parser.add_argument("--equation", type=str, default='ConvDiff2D', choices=['NS2d','Standard','Standard1', 'Burgers', 'Helmholtz', 'Standard2D', 'ConvDiff2D']) #, 'BurgersT' 
-parser.add_argument("--pre_test", type=str, default='pre_Standard1', choices=['pre_Standard','pre_Standard1', 'pre_Burgers', 'pre_Helmholtz', 'pre_Standard2D', 'pre_ConvDiff2D'])
-parser.add_argument("--model", type=str, default='Net3D', choices=['ResNet', 'NetA', 'NetB', 'NetC', 'NetD', 'Net2D', 'Net3D']) 
 parser.add_argument("--blocks", type=int, default=0)
-parser.add_argument("--loss", type=str, default='MSE', choices=['MAE', 'MSE', 'RMSE', 'RelMSE'])
 parser.add_argument("--file", type=str, default='10000N15', help='Example: --file 2000N31') # 2^5-1, 2^6-1
 parser.add_argument("--forcing", type=str, default='normal')
 parser.add_argument("--epochs", type=int, default=80000)
-parser.add_argument("--pre_epochs", type=int, default=5000)
 parser.add_argument("--ks", type=int, default=5)
 parser.add_argument("--filters", type=int, default=32)
-parser.add_argument("--nbfuncs", type=int, default=1)
-parser.add_argument("--A", type=float, default=0)
-parser.add_argument("--F", type=float, default=0)
-parser.add_argument("--U", type=float, default=1)
-parser.add_argument("--WF", type=float, default=1) # 1 = include weaf form
-parser.add_argument("--sd", type=float, default=1)
 parser.add_argument("--pretrained", type=str, default=None)
 parser.add_argument("--dt", type=float, default=0.01)
 parser.add_argument("--ndt", type=int, default=5)
@@ -66,14 +55,14 @@ ndt=args.ndt
 kind=args.kind
 D_in = 2*ndt
 
-EQUATION = args.equation
-pre_test=args.pre_test
+EQUATION = 'NS2d'
+
 
 EPSILON = args.eps
 PATH_alp=args.path
 
-models = {'Net3D': Net3D}
-MODEL = models[args.model]
+
+MODEL = Net3D
 
 #GLOBALS
 gparams['epsilon'] = EPSILON
@@ -83,8 +72,8 @@ SHAPE = int(FILE.split('N')[1]) + 1
 
 BLOCKS = int(gparams['blocks'])
 EPOCHS = int(gparams['epochs'])
-pre_EPOCHS = int(gparams['pre_epochs'])
-NBFUNCS = int(gparams['nbfuncs'])
+
+
 dt = gparams['dt']
 FILTERS = int(gparams['filters'])
 KERNEL_SIZE = int(gparams['ks'])
@@ -92,16 +81,16 @@ KERNEL_SIZE = int(gparams['ks'])
 PADDING = int(3)
 cur_time = str(datetime.datetime.now()).replace(' ', 'T')
 cur_time = cur_time.replace(':','').split('.')[0].replace('-','')
-FOLDER = f'{gparams["model"]}_{args.forcing}_epochs{EPOCHS}_{cur_time}'
-pre_PATH = os.path.join('training', f"{pre_test}", FILE, FOLDER)
+FOLDER = f'{MODEL}_{args.forcing}_epochs{EPOCHS}_{cur_time}'
+
 PATH = os.path.join('training', f"{EQUATION}{EPSILON}", FILE,'order1', FOLDER)
-gparams['path'] = pre_PATH
+
 
 
 
 BATCH_SIZE, Filters, D_out = int(DATASET), FILTERS, SHAPE
 # LOSS SCALE FACTORS
-A, U, F, WF = int(gparams['A']), 10**(gparams['U']), int(gparams['F']), (gparams['WF'])
+
 
 NN=SHAPE-1
 
@@ -109,12 +98,7 @@ NN=SHAPE-1
 
 # CREATE PATHING
 if os.path.isdir(PATH) == False: os.makedirs(PATH)
-elif os.path.isdir(PATH) == True:
-    if args.pretrained is None:
-        print("\n\nPATH ALREADY EXISTS!\n\nEXITING\n\n")
-        exit()
-    else:
-        print("\n\nPATH ALREADY EXISTS!\n\nLOADING MODEL\n\n")
+
         
 # CREATE BASIS VECTORS
 xx, lepolys, lepoly_x, lepoly_xx, phi, phi_x, phi_xx, D,aa1,bb1 = basis_vectors(D_out,EPSILON ,equation=EQUATION)
@@ -124,17 +108,10 @@ xx, lepolys, lepoly_x, lepoly_xx, phi, phi_x, phi_xx, D,aa1,bb1 = basis_vectors(
 # else: 
 shuffle1=False
 
-if args.model != 'ResNet' and args.model != 'Net3D'and args.model != 'Net3Dpressure':
-    # NORMALIZE DATASET    
-    NORM = True
-    gparams['norm'] = True
-    lg_dataset = get_data(gparams, kind)
-    trainloader = torch.utils.data.DataLoader(lg_dataset, batch_size=BATCH_SIZE, shuffle=shuffle1)
-    gparams, transform_f = normalize(gparams, trainloader)
-else:
-    NORM = False
-    gparams['norm'] = False
-    transform_f = None
+
+NORM = False
+gparams['norm'] = False
+transform_f = None
 
 # LOAD DATASET
 lg_dataset = get_data(gparams, kind, transform_f=transform_f)
@@ -144,15 +121,11 @@ trainloader = torch.utils.data.DataLoader(lg_dataset, batch_size=BATCH_SIZE, shu
 # validateloader = torch.utils.data.DataLoader(lg_dataset, batch_size=BATCH_SIZE, shuffle=True)
 
 # INITIALIZE a model
-if EQUATION=="Standardb":
-    model = MODEL(D_in, Filters, D_out - 1, kernel_size=KERNEL_SIZE, padding=PADDING, blocks=BLOCKS)
-else:
-    model = MODEL(10**A,ndt,D_in, Filters, D_out - 2, kernel_size=KERNEL_SIZE, padding=PADDING, blocks=BLOCKS)
+model = MODEL(ndt,D_in, Filters, D_out - 2, kernel_size=KERNEL_SIZE, padding=PADDING, blocks=BLOCKS)
 
 # LOAD the trained model
 if args.pretrained is not None:
     args.pretrained = 'N' + args.file.split('N')[-1] + '_' + args.equation + '_' + args.forcing
-    # model.load_state_dict(torch.load(r'training/ConvDiff2D0.1/10N23/order1/Net3D_num333am2sigma5_epochs150000_20251025T192136/model.pt'), strict=False)
     model.load_state_dict(torch.load(f'training/{EQUATION}{EPSILON}/{BATCH_SIZE}N23/order1/Net3D_{args.forcing}_epochs{PATH_alp}/model.pt'), strict=False)
     model.train()
 
@@ -188,32 +161,16 @@ print('model size: {:.3f}GiB'.format(size_all_mb))
 
 
 #KAIMING HE INIT
-if args.pretrained is None and args.model != 'NetB':
-    model.apply(weights_init)
-elif args.model == 'NetB':
-    model.apply(weights_xavier)
+
+model.apply(weights_init)
+
 
 #INIT OPTIMIZER
 optimizer = init_optim(model)
-#scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=20000, gamma=0.5)
-# Construct our loss function and an Optimizer.
-LOSS_TYPE = args.loss
-if args.loss == 'MAE':
-    criterion_a, criterion_u, criterion_wf = torch.nn.L1Loss(), torch.nn.L1Loss(), torch.nn.L1Loss()
-elif args.loss == 'MSE':
-    criterion_a, criterion_u, criterion_wf = torch.nn.MSELoss(reduction="sum"), L2, torch.nn.MSELoss(reduction="sum")
-elif args.loss == 'RMSE':
-    criterion_a, criterion_u, criterion_wf = RMSELoss(), RMSELoss(), RMSELoss()
-elif args.loss == 'RelMSE':
-    criterion_a, criterion_u, criterion_wf = RelMSELoss(batch=BATCH_SIZE), RelMSELoss(batch=BATCH_SIZE), RelMSELoss(batch=BATCH_SIZE)
-criterion_f = torch.nn.L1Loss()
 
-criterion = {
-             'a': criterion_a,
-             'f': criterion_f,
-             'u': criterion_u,
-             'wf': criterion_wf,
-            }
+# Construct our loss function and an Optimizer.
+
+
 BEST_LOSS = float('inf')
 losses = {'loss_u':[],
           'loss_train':[],
@@ -277,9 +234,7 @@ for ii in range(NN-1):
         dirix = (lepolysx[ii+1].T-lepolysx[ii+3].T)/(sd_diag[ii+1])**.5
         qwe=diri*dirix/lepolys[NN]**2
         mxdd[ii]=np.sum(qwe)*(2/(NN*(NN+1)))
-    # mxnxd[ii]=-bn[ii]*(4*ii+6)/(sd_diag[ii]*sn_diag[ii])**.5
-# mxnxd[0]=1/sd_diag[0]**.5
-
+  
 Mnd=  mnd2*np.eye(NN-1)+np.diag(mnd1[0:NN-3],2)+np.diag(mnd3[0:NN-3],-2)
 Mdxd=np.diag(mxdd[:NN-2],1)-np.diag(mxdd[:NN-2],-1)
 Mxdd=Mdxd.T
@@ -437,7 +392,7 @@ for epoch in tqdm(range(1, EPOCHS+1)):
         #SAVE train data
         if epoch % int(2) == 0:
             
-            losses = log_loss(NBFUNCS,losses, loss_a,loss_u11,loss_f, loss_wf1, loss_train,  loss_wf_test,BATCH_SIZE, loss_u_test)
+            losses = log_loss(losses, loss_a,loss_u11,loss_f, loss_wf1, loss_train,  loss_wf_test,BATCH_SIZE, loss_u_test)
         
 
 torch.save(model.state_dict(), PATH + '/model.pt')
@@ -466,7 +421,7 @@ gparams['nParams'] = NPARAMS
 gparams['batchSize'] = BATCH_SIZE
 # gparams['bestLoss'] = BEST_LOSS
 gparams['losses'] = losses
-gparams['lossType'] = LOSS_TYPE
+
 
 log_path(PATH)
 
@@ -475,12 +430,12 @@ log_path(PATH)
 log_gparams(gparams)
 
 import pandas as pd
-newcall={'blocks':[],'file':[],'ks':[],'nbfuncs':[],'dt':[],'forcing':[],'ndt':[],'eps':[],'path':[],'order':[]}
+newcall={'blocks':[],'file':[],'ks':[],'dt':[],'forcing':[],'ndt':[],'eps':[],'path':[],'order':[]}
 
 newcall['blocks'].append(BLOCKS)
 newcall['file'].append(FILE)
 newcall['ks'].append(KERNEL_SIZE)
-newcall['nbfuncs'].append(NBFUNCS)
+
 newcall['dt'].append(dt)
 newcall['forcing'].append(args.forcing)
 newcall['ndt'].append(ndt)

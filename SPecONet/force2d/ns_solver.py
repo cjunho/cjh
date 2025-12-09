@@ -191,7 +191,7 @@ mdata=np.zeros((Jnd,3,1+num))
 qq2=np.random.normal(0,sigma,2000*2*2*num**2)  # if Jnd=700, 800 qq2.
 qq=qq2.reshape(2000,2,2,num,num)  # 10--> ampli=3, 3--> ampli=1
 
-filename=f'./data/{equation}{eps}/force'
+filename=f'./data/{equation}{eps}/train'
 
 qq1=qq[:,0]+1j*qq[:,1]
 
