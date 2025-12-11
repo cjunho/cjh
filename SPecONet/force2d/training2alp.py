@@ -285,18 +285,18 @@ t=0
 
 
 
-al_upre=torch.zeros((BATCH_SIZE,SHAPE-2,SHAPE-2,SHAPE-2)).to(device).double()
-al_vpre=torch.zeros((BATCH_SIZE,SHAPE-2,SHAPE-2,SHAPE-2)).to(device).double()
-al_wpre=torch.zeros((BATCH_SIZE,SHAPE-2,SHAPE-2,SHAPE-2)).to(device).double()
-Mnd=torch.from_numpy(Mnd).to(device).double()
-Mdxd=torch.from_numpy(Mdxd).to(device).double()
-Mxdd=torch.from_numpy(Mxdd).to(device).double()
-Md=torch.from_numpy(Md).to(device).double()
-Mxnd=torch.from_numpy(Mxnd).to(device).double()
+# al_upre=torch.zeros((BATCH_SIZE,SHAPE-2,SHAPE-2,SHAPE-2)).to(device).double()
+# al_vpre=torch.zeros((BATCH_SIZE,SHAPE-2,SHAPE-2,SHAPE-2)).to(device).double()
+# al_wpre=torch.zeros((BATCH_SIZE,SHAPE-2,SHAPE-2,SHAPE-2)).to(device).double()
+# Mnd=torch.from_numpy(Mnd).to(device).double()
+# Mdxd=torch.from_numpy(Mdxd).to(device).double()
+# Mxdd=torch.from_numpy(Mxdd).to(device).double()
+# Md=torch.from_numpy(Md).to(device).double()
+# Mxnd=torch.from_numpy(Mxnd).to(device).double()
 Ed=torch.from_numpy(Ed).to(device).double()
-En=torch.from_numpy(En).to(device).double()
-Mm=torch.from_numpy(Mm).to(device).double()
-Mmx=torch.from_numpy(Mmx).to(device).double()
+# En=torch.from_numpy(En).to(device).double()
+# Mm=torch.from_numpy(Mm).to(device).double()
+# Mmx=torch.from_numpy(Mmx).to(device).double()
 
 
 
