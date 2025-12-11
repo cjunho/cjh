@@ -22,7 +22,7 @@ from reconstruct import *
 from data_logging import *
 from evaluate import *
 from pprint import pprint
-from funs import *
+from funsjax import matA
 
 # EVERYONE APRECIATES A CLEAN WORKSPACE
 gc.collect()
@@ -183,104 +183,104 @@ log_gparams(gparams)
 dt=0.01
 
 
-Y,X,Z=np.meshgrid(xx,xx,xx)
-
-Md,sd_diag,Ed,eid=basic_mat(b,NN,'dirichlet')
-
-Mn,sn_diag,En,ein=basic_mat(bn,NN,'neumann')
 
 
-Mm=np.zeros((NN-1,NN-1))
-Mmx=np.zeros((NN-1,NN-1))
+# Md,sd_diag,Ed,eid=basic_mat(b,NN,'dirichlet')
 
-iMd=Ed@np.diag(1/eid)@Ed.T
-iMn=En@np.diag(1/ein)@En.T
+# Mn,sn_diag,En,ein=basic_mat(bn,NN,'neumann')
 
 
+# Mm=np.zeros((NN-1,NN-1))
+# Mmx=np.zeros((NN-1,NN-1))
+
+# iMd=Ed@np.diag(1/eid)@Ed.T
+# iMn=En@np.diag(1/ein)@En.T
 
 
 
-for ii in range(NN-1):
-    phi=(lepolys[ii]- lepolys[ii+2])/(sd_diag[ii])**.5
-    phix=(lepolysx[ii].T-lepolysx[ii+2].T)/(sd_diag[ii])**.5
-    for jj in range(NN-1):
-        psi=(lepolys[jj]+ bn[jj]*lepolys[jj+2])/(sn_diag[jj])**.5
-        Mm[jj,ii]=np.sum(psi*phi/(lepolys[NN])**2)*(2/(NN*(NN+1)))
-        Mmx[jj,ii]=np.sum(psi*phix/(lepolys[NN])**2)*(2/(NN*(NN+1)))
-
-Mm[abs(Mm)<10**-8]=0
-Mmx[abs(Mmx)<10**-8]=0
 
 
-Mxnd=np.zeros((NN-1,NN-1))
-Mdxd=np.zeros((NN-1,NN-1))
-Mxdd=np.zeros((NN-1,NN-1))
-Mnd=np.zeros((NN-1,NN-1))
+# for ii in range(NN-1):
+#     phi=(lepolys[ii]- lepolys[ii+2])/(sd_diag[ii])**.5
+#     phix=(lepolysx[ii].T-lepolysx[ii+2].T)/(sd_diag[ii])**.5
+#     for jj in range(NN-1):
+#         psi=(lepolys[jj]+ bn[jj]*lepolys[jj+2])/(sn_diag[jj])**.5
+#         Mm[jj,ii]=np.sum(psi*phi/(lepolys[NN])**2)*(2/(NN*(NN+1)))
+#         Mmx[jj,ii]=np.sum(psi*phix/(lepolys[NN])**2)*(2/(NN*(NN+1)))
+
+# Mm[abs(Mm)<10**-8]=0
+# Mmx[abs(Mmx)<10**-8]=0
 
 
-mnd1=np.zeros((NN-1,))
-mnd2=np.zeros((NN-1,))
-mnd3=np.zeros((NN-1,))
+# Mxnd=np.zeros((NN-1,NN-1))
+# Mdxd=np.zeros((NN-1,NN-1))
+# Mxdd=np.zeros((NN-1,NN-1))
+# Mnd=np.zeros((NN-1,NN-1))
 
-mxdd=np.zeros((NN-1,))
 
-for ii in range(NN-1):
-    mnd2[ii]=2*(1/(2*ii+1)+b[ii]*bn[ii]/(2*ii+5))/(sd_diag[ii]*sn_diag[ii])**.5
-    mnd1[ii]=(b[ii])*2/(2*ii+5)/(sd_diag[ii]*sn_diag[ii+2])**.5
-    mnd3[ii]=(bn[ii])*2/(2*ii+5)/(sd_diag[2+ii]*sn_diag[ii])**.5
-    if ii< NN-2:
-        diri = (lepolys[ii]-lepolys[ii+2])/(sd_diag[ii])**.5
-        dirix = (lepolysx[ii+1].T-lepolysx[ii+3].T)/(sd_diag[ii+1])**.5
-        qwe=diri*dirix/lepolys[NN]**2
-        mxdd[ii]=np.sum(qwe)*(2/(NN*(NN+1)))
+# mnd1=np.zeros((NN-1,))
+# mnd2=np.zeros((NN-1,))
+# mnd3=np.zeros((NN-1,))
+
+# mxdd=np.zeros((NN-1,))
+
+# for ii in range(NN-1):
+#     mnd2[ii]=2*(1/(2*ii+1)+b[ii]*bn[ii]/(2*ii+5))/(sd_diag[ii]*sn_diag[ii])**.5
+#     mnd1[ii]=(b[ii])*2/(2*ii+5)/(sd_diag[ii]*sn_diag[ii+2])**.5
+#     mnd3[ii]=(bn[ii])*2/(2*ii+5)/(sd_diag[2+ii]*sn_diag[ii])**.5
+#     if ii< NN-2:
+#         diri = (lepolys[ii]-lepolys[ii+2])/(sd_diag[ii])**.5
+#         dirix = (lepolysx[ii+1].T-lepolysx[ii+3].T)/(sd_diag[ii+1])**.5
+#         qwe=diri*dirix/lepolys[NN]**2
+#         mxdd[ii]=np.sum(qwe)*(2/(NN*(NN+1)))
   
-Mnd=  mnd2*np.eye(NN-1)+np.diag(mnd1[0:NN-3],2)+np.diag(mnd3[0:NN-3],-2)
-Mdxd=np.diag(mxdd[:NN-2],1)-np.diag(mxdd[:NN-2],-1)
-Mxdd=Mdxd.T
+# Mnd=  mnd2*np.eye(NN-1)+np.diag(mnd1[0:NN-3],2)+np.diag(mnd3[0:NN-3],-2)
+# Mdxd=np.diag(mxdd[:NN-2],1)-np.diag(mxdd[:NN-2],-1)
+# Mxdd=Mdxd.T
 
-for ii in range(NN-1):
+# for ii in range(NN-1):
    
     
-    neunx = (lepolysx[ii].T+ bn[ii]*lepolysx[ii+2].T)/(sn_diag[ii])**.5
+#     neunx = (lepolysx[ii].T+ bn[ii]*lepolysx[ii+2].T)/(sn_diag[ii])**.5
    
-    for jj in range(NN-1):
-        diri1=(lepolys[jj]-lepolys[jj+2])/(sd_diag[jj])**.5
-        dirix1 = (lepolysx[jj].T  -lepolysx[jj+2].T)/(sd_diag[jj])**.5
+#     for jj in range(NN-1):
+#         diri1=(lepolys[jj]-lepolys[jj+2])/(sd_diag[jj])**.5
+#         dirix1 = (lepolysx[jj].T  -lepolysx[jj+2].T)/(sd_diag[jj])**.5
         
        
-        phi1=neunx*diri1/lepolys[NN]**2
+#         phi1=neunx*diri1/lepolys[NN]**2
  
-        Mxnd[jj,ii]=np.sum(phi1)*(2/(NN*(NN+1)))
+#         Mxnd[jj,ii]=np.sum(phi1)*(2/(NN*(NN+1)))
 
 
-ode_data=np.zeros((NN-1,NN-1,NN-1))
 
+
+
+
+
+ode_data,_, Ed,_,_,_,_,_,_,_,_,_,_,_,_,_=matA(NN,dt,EPSILON)
+
+
+
+
+# ode_data=np.zeros((NN-1,NN-1,NN-1))
 iode_data=np.zeros((NN-1,NN-1,NN-1))
-
-
-
-
-
-pre_cond=np.zeros((NN-1,NN-1,NN-1))
-
 ode_eye=np.zeros((NN-1,NN-1,NN-1))
-for jj in range(NN-1):
-       
-            ode_data0=(1.5*eid[jj]/dt+EPSILON)*Md+EPSILON*eid[jj]*np.eye(NN-1)
+
+for jj in range(NN-1):       
+            ode_data0=ode_data[jj]
             ode_data[jj,]=np.diag(np.diag(ode_data0)**.5)
             
             iode_data[jj,]=np.diag(1/np.diag(ode_data0)**.5)
             ode_eye[jj,]=(iode_data[jj,]@ode_data0)@iode_data[jj,]
-          
 
 
 
 
 
-Mxnd[abs(Mxnd)<10**-8]=0  #diri*neumann
 
+# Mxnd[abs(Mxnd)<10**-8]=0  #diri*neumann
 
-t=0
 
 
 

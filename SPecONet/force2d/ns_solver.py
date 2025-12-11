@@ -24,109 +24,11 @@ N=int(24-1)
 dt=0.01
 eps=0.1
 
-Y,X=np.meshgrid(x,x)
-
-
-
-D = sem.legslbdiff(N+1, x)
-
-Md,sd_diag,Ed,eid=basic_mat(b,N,'dirichlet')
-
-Mn,sn_diag,En,ein=basic_mat(bn,N,'neumann')
-
-
-Mm=np.zeros((N-1,N-1))
-Mmx=np.zeros((N-1,N-1))
-phisets=np.zeros((N+1,N-1))
-phinsets=np.zeros((N+1,N-1))
-
-
-phixsets=np.zeros((N+1,N-1))
-lep=lepolys[N]
-
-for ii in range(N-1):
-    phi=(lepolys[ii]- lepolys[ii+2])/(sd_diag[ii])**.5
-    psi00=(lepolys[ii]+ bn[ii]*lepolys[ii+2])/(sn_diag[ii])**.5
-    phix=(lepolysx[ii].T-lepolysx[ii+2].T)/(sd_diag[ii])**.5
-    phisets[:,ii]=phi[:,0]
-    phinsets[:,ii]=psi00[:,0]
-    phixsets[:,ii]=phix[:,0]
-    for jj in range(N-1):
-        psi=(lepolys[jj]+ bn[jj]*lepolys[jj+2])/(sn_diag[jj])**.5
-        Mm[jj,ii]=np.sum(psi*phi/(lepolys[N])**2)*(2/(N*(N+1)))
-        Mmx[jj,ii]=np.sum(psi*phix/(lepolys[N])**2)*(2/(N*(N+1)))
-
-Mm[abs(Mm)<10**-8]=0
-Mmx[abs(Mmx)<10**-8]=0
-SS=np.diag(sd_diag[:N-1])
-
-Mxnd=np.zeros((N-1,N-1))
-Mdxd=np.zeros((N-1,N-1))
-Mxdd=np.zeros((N-1,N-1))
-Mnd=np.zeros((N-1,N-1))
-Mxnxd=np.zeros((N-1,N-1))
-
-mnd1=np.zeros((N-1,))
-mnd2=np.zeros((N-1,))
-mnd3=np.zeros((N-1,))
-mxnxd=np.zeros((N-1,))
-mxdd=np.zeros((N-1,))
-
-for ii in range(N-1):
-    mnd2[ii]=2*(1/(2*ii+1)+b[ii]*bn[ii]/(2*ii+5))/(sd_diag[ii]*sn_diag[ii])**.5
-    mnd1[ii]=(b[ii])*2/(2*ii+5)/(sd_diag[ii]*sn_diag[ii+2])**.5
-    mnd3[ii]=(bn[ii])*2/(2*ii+5)/(sd_diag[2+ii]*sn_diag[ii])**.5
-    if ii< N-2:
-        diri = (lepolys[ii]-lepolys[ii+2])/(sd_diag[ii])**.5
-        dirix = (lepolysx[ii+1].T-lepolysx[ii+3].T)/(sd_diag[ii+1])**.5
-        qwe=diri*dirix/lepolys[N]**2
-        mxdd[ii]=np.sum(qwe)*(2/(N*(N+1)))
-    # mxnxd[ii]=-bn[ii]*(4*ii+6)/(sd_diag[ii]*sn_diag[ii])**.5
-# mxnxd[0]=1/sd_diag[0]**.5
-
-Mnd=  mnd2*np.eye(N-1)+np.diag(mnd1[0:N-3],2)+np.diag(mnd3[0:N-3],-2)
-Mdxd=np.diag(mxdd[:N-2],1)-np.diag(mxdd[:N-2],-1)
-Mxdd=Mdxd.T
-
-for ii in range(N-1):
-    neunx = (lepolysx[ii].T+ bn[ii]*lepolysx[ii+2].T)/(sn_diag[ii])**.5
-    for jj in range(N-1):
-        diri1=(lepolys[jj]-lepolys[jj+2])/(sd_diag[jj])**.5
-        dirix1 = (lepolysx[jj].T  -lepolysx[jj+2].T)/(sd_diag[jj])**.5
-        
-        phi1=neunx*diri1/lepolys[N]**2
-        Mxnd[jj,ii]=np.sum(phi1)*(2/(N*(N+1)))
-       
-
-Mxnd[abs(Mxnd)<10**-8]=0  #diri*neumann
-
-
-
-t=0
-
-
-iMd=Ed@np.diag(1/eid)@Ed.T
-iMn=En@np.diag(1/ein)@En.T
-
-
-
-
-ode_data=np.zeros((N-1,N-1,N-1))
-
-for jj in range(N-1):
-        for ii in range(N-1):
-            ode_data[jj,]=(1.5*eid[jj]/dt+eps)*Md+eps*eid[jj]*np.eye(N-1)
-           
-oden_data=np.zeros((N-1,N-1,N-1))
-for jj in range(N-1):
-        for ii in range(N-1):
-            oden_data[jj,]=oden_data[jj,]=Mn+ein[jj]*np.eye(N-1)
-  
 T=Ind*dt
 
 
 
-
+ode_data, oden_data, Ed,En,X,Y,Mnd,Mxdd,Mxnd,Mdxd,Md,iMd,Mm,Mmx,phisets,lep=matA(N,dt,eps)
 
 
 uun1=0
@@ -210,11 +112,6 @@ for jnd in range(1,Jnd+1):
 aa=fxdata[:,-1]**2+fydata[:,-1]**2
 aa=aa.reshape(Jnd,-1)
 aa1=np.max(aa,1)
-
-
-qq=np.where(aa1==np.max(aa1))
-
-
 
 
 
