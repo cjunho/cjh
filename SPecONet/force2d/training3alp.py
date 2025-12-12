@@ -1,5 +1,5 @@
 "find au, av, aw at second time step by using training2alp"
-# python training3alp.py --equation NS2d --model Net3D --loss MSE --blocks 0 --file 600N23 --ks 9 --filters 10 --epochs 50000 --nbfuncs 30 --U 9 --dt 0.01 --forcing sigma5  --ndt 1 --eps 0.1 --path {PATH} --order {ORDER} --kind force
+# python training3alp.py --blocks 0 --file 600N23 --ks 9 --filters 10 --epochs 50 --dt 0.01 --forcing sigma5  --ndt 1 --eps 0.1 --path 60_20251213T062112 --order 2 --kind force2d
 import random
 import torch
 import time
@@ -205,10 +205,7 @@ optimizer = init_optim(model)
 # Construct our loss function and an Optimizer.
 
 BEST_LOSS = float('inf')
-losses = {'loss_u':[],
-          'loss_train':[],
-          'loss_validate':[],
-          'avg_l2_u': []}
+losses = {'loss_train':[]}
 gparams['path'] = PATH
 log_gparams(gparams)
 
@@ -348,7 +345,7 @@ sd_diag=torch.from_numpy(sd_diag).to(device).double()
 # cond=torch.from_numpy(cond.reshape(1,1,NN-1,NN-1)).to(device).double()
 # cu0,cv0,cw0=0,0,0
 
-def closure(ald,fdata0,cf,cu1,cv1,cFx01,cFy01):
+def closure(fdata0,cf,cu1,cv1,cFx01,cFy01):
 
     # print('111',torch.cuda.memory_allocated()/1024**3)
     model.train()
@@ -367,9 +364,7 @@ def closure(ald,fdata0,cf,cu1,cv1,cFx01,cFy01):
 
     alx=a_pred[:,0]
     aly=a_pred[:,1]
-    #a_pred=aex
-    loss_u=torch.zeros(1)
-    
+   
         
     al_unext,al_vnext,exfx,exfy = weak_form1(cu0,cv0,cu1,cv1,cuu0,cvv0,cuu1,cvv1,cFx01,cFy01,cFx,cFy,dt,ode_eye,iode_data, a_pred,Ed )
 
@@ -382,20 +377,14 @@ def closure(ald,fdata0,cf,cu1,cv1,cFx01,cFy01):
     #loss = U*(torch.sum((al_unext-exfx)**2))+U*torch.sum((alx-ald0)**2)
     # loss = U*torch.sum((alx-ald0)**2)
     loss=10**7*((torch.sum((al_unext-exfx)**2))+(torch.sum((al_vnext-exfy)**2)))
-       
     
-    
-
-            #           +(BATCH_SIZE/inx)*torch.sum((a_pred1[:3*inx:3,:ndt,]-ald[:4*inx:4,0:ndt,])**2+(a_pred1[1:3*inx:3,:ndt,]-ald[1:4*inx:4,0:ndt,])**2\
-            # +(a_pred1[2:3*inx:3,:ndt,]-ald[2:4*inx:4,0:ndt,])**2))
-    loss_u1 = torch.max(abs(alx0-ald[:,0]))+torch.max(abs(aly0-ald[:,1]))
    
     if loss.requires_grad:
         loss.backward()
     
     ald1=torch.stack((alx0,aly0),dim=1)
 
-    return  loss_u,loss_u1, loss, ald1
+    return  loss, ald1
 
 #
 
@@ -413,14 +402,10 @@ ini=1-1
 print(torch.cuda.memory_allocated()/1024**3)
 
 for batch_idx, sample_batch in enumerate(trainloader):
-        # all000 = sample_batch['data_u'][:BATCH_SIZE,:,ORDER-3:ORDER-2].double().to(device).reshape((4*BATCH_SIZE,ndt,SHAPE-2,SHAPE-2,SHAPE-2))
-        # all00 = sample_batch['data_u'][:BATCH_SIZE,:,ORDER-2:ORDER-1].double().to(device).reshape((BATCH_SIZE,3,ndt,SHAPE-2,SHAPE-2))
-        all0 = sample_batch['data_u'][:BATCH_SIZE,:2,ORDER-1-ini:ORDER-ini].double().to(device).reshape((BATCH_SIZE,2,ndt,SHAPE-2,SHAPE-2))
-        # fdata0 = sample_batch['f'][:BATCH_SIZE,0::3].double().to(device)
         fdata = sample_batch['f'][:BATCH_SIZE,:,ORDER-1-ini].double().to(device)
         # cf00 = sample_batch['cf0'][:200,:,1:2].double().to(device)   
         cf1 = sample_batch['cf'][:BATCH_SIZE,:,ORDER-1-ini].double().to(device)[:,:2*ndt,]
-print(all0.shape)
+
 print(fdata.shape)
 # print(cf00.shape)
 print(cf1.shape)
@@ -490,7 +475,7 @@ rr=0
 
 for epoch in tqdm(range(1, EPOCHS+1)):
         
-        loss_u,loss_u1,  loss,a_pred = closure(all0,fdata,cf1,cu11,cv11,cFx011,cFy011)
+        loss,a_pred = closure(fdata,cf1,cu11,cv11,cFx011,cFy011)
         # print(torch.cuda.memory_summary())
         # print(torch.cuda.memory_allocated()/1024**3)
         optimizer.step(loss.item)
@@ -500,7 +485,7 @@ for epoch in tqdm(range(1, EPOCHS+1)):
         # print(torch.cuda.memory_allocated()/1024**3)
         # input('ggg')
         
-        loss_u11 = np.round(float(loss_u1.item()), 12)        
+        
         loss_train = np.round(float(loss.item()), 12)
         
         gc.collect()
@@ -509,7 +494,7 @@ for epoch in tqdm(range(1, EPOCHS+1)):
         #SAVE train data
         if epoch % int(2) == 0:
             
-            losses = log_loss(losses, loss_a,loss_u11,loss_f, loss_wf1, loss_train,  loss_wf_test,BATCH_SIZE, loss_u_test)
+            losses = log_loss(losses, loss_train)
         #SAVE test data
         # if epoch % int(100)==0:
         #         loss_u,loss_u1,  loss,u_pred = closure(dt,aa1,bb1,  test_f, test_u,xx)
@@ -529,7 +514,6 @@ torch.save(model.state_dict(), PATH + '/model.pt')
 torch.save(a_pred, PATH + '/data.pt')
 
 print(loss_train)
-print(torch.max(abs(a_pred[:,0,:ndt,]-all0[:,0,:ndt,])),torch.max(abs(a_pred[:,1,:ndt,]-all0[:,1,:ndt,])))
 
 
 df = pd.DataFrame(losses)

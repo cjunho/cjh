@@ -1,5 +1,5 @@
 "find ap at first time step by using training2alp"
-# python training2pressure00.py --blocks 0 --file 600N23 --epochs 60 --ks 9 --filters 10 --dt 0.01 --forcing sigma5  --ndt 1 --eps 0.1 --order 1 --kind train --path 50_20251212T063320
+# python training2pressure00.py --blocks 0 --file 600N23 --epochs 60 --ks 9 --filters 10 --dt 0.01 --forcing sigma5  --ndt 1 --eps 0.1 --order 1 --kind force2d --path 50_20251212T063320
 import torch
 import time
 import datetime
@@ -28,25 +28,13 @@ torch.cuda.empty_cache()
 # torch.set_default_tensor_type(torch.DoubleTensor)
 torch.set_default_dtype(torch.float64)
 # ARGS
-# python training.py --equation Burgers --model NetC --blocks 4 --file 10000N63 --forcing uniform --epochs 50000
 parser = argparse.ArgumentParser("SEM")
-# parser.add_argument("--equation", type=str, default='ConvDiff2D', choices=['NS2d','Standard','Standard1', 'Burgers', 'Helmholtz', 'Standard2D', 'ConvDiff2D']) #, 'BurgersT' 
-# parser.add_argument("--pre_test", type=str, default='pre_Standard1', choices=['pre_Standard','pre_Standard1', 'pre_Burgers', 'pre_Helmholtz', 'pre_Standard2D', 'pre_ConvDiff2D'])
-# parser.add_argument("--model", type=str, default='Net3D', choices=['ResNet', 'NetA', 'NetB', 'NetC', 'NetD', 'Net2D', 'Net3D', 'Net3Dpressure']) 
 parser.add_argument("--blocks", type=int, default=0)
-# parser.add_argument("--loss", type=str, default='MSE', choices=['MAE', 'MSE', 'RMSE', 'RelMSE'])
 parser.add_argument("--file", type=str, default='10000N15', help='Example: --file 2000N31') # 2^5-1, 2^6-1
 parser.add_argument("--forcing", type=str, default='normal')
 parser.add_argument("--epochs", type=int, default=80000)
-# parser.add_argument("--pre_epochs", type=int, default=5000)
 parser.add_argument("--ks", type=int, default=5)
 parser.add_argument("--filters", type=int, default=32)
-# parser.add_argument("--nbfuncs", type=int, default=1)
-# parser.add_argument("--A", type=float, default=0)
-# parser.add_argument("--F", type=float, default=0)
-# parser.add_argument("--U", type=float, default=1)
-# parser.add_argument("--WF", type=float, default=1) # 1 = include weaf form
-# parser.add_argument("--sd", type=float, default=1)
 parser.add_argument("--pretrained", type=str, default=None)
 parser.add_argument("--dt", type=float, default=0.01)
 parser.add_argument("--ndt", type=int, default=5)
@@ -57,7 +45,7 @@ parser.add_argument("--kind", type=str, default='trainN10')
 
 args = parser.parse_args()
 gparams = args.__dict__
-#pprint(gparams)
+
 
 ndt=args.ndt
 PATH0=args.path
@@ -116,9 +104,7 @@ if os.path.isdir(PATH) == False: os.makedirs(PATH)
 # CREATE BASIS VECTORS
 xx, lepolys, lepoly_x, lepoly_xx, phi, phi_x, phi_xx, D,aa1,bb1 = basis_vectors(D_out,EPSILON ,equation=EQUATION)
 
-# if BATCH_SIZE+1<DATASET:
-#     shuffle1=True
-# else: 
+
 shuffle1=False
 
 
@@ -129,16 +115,7 @@ transform_f = None
 # LOAD DATASET
 lg_dataset = get_data(gparams, kind, transform_f=transform_f)
 trainloader = torch.utils.data.DataLoader(lg_dataset, batch_size=BATCH_SIZE, shuffle=shuffle1)
-# lg_dataset = get_data(gparams, kind='validate', transform_f=transform_f)
-# validateloader = torch.utils.data.DataLoader(lg_dataset, batch_size=BATCH_SIZE, shuffle=True)
 
-# INITIALIZE a model
-
-# model0 = MODEL0(1,D_in, 3*Filters, D_out - 2, kernel_size=KERNEL_SIZE, padding=PADDING, blocks=BLOCKS)
-# model0.load_state_dict(torch.load(r'training/ConvDiff2D1.0/200N15/Net3D_uniform_epochs10000_20240811T224627fil21/model.pt'), strict=False)
-
-# for name,param in model0.named_parameters():
-#     param.requires_grad = False
 
 model= MODEL(1,D_in, Filters, D_out - 2, kernel_size=KERNEL_SIZE, padding=PADDING, blocks=BLOCKS)
 # LOAD the trained model
@@ -157,8 +134,7 @@ param_size = 0
 r0=1
 
 
-for name,param in model.named_parameters():
-    # print(name,r0,param.nelement())
+for name,param in model.named_parameters():    
     print(name,r0,param.shape)
     param_size += param.nelement() * param.element_size()
     r0+=1
@@ -183,50 +159,14 @@ optimizer = init_optim(model)
 # Construct our loss function and an Optimizer.
 
 BEST_LOSS = float('inf')
-losses = {'loss_u':[],
-          'loss_train':[],
-          'loss_validate':[],
-          'avg_l2_u': []}
+losses = {'loss_train':[]}
+
 gparams['path'] = PATH
 log_gparams(gparams)
 
-# for parameter in model.parameters():
-#     print(parameter)
-# print(sum(p.numel() for p in model.parameters()))
+
 
 dt=0.01
-
-
-# Y,X,Z=np.meshgrid(xx,xx,xx)
-
-# Md,sd_diag,Ed,eid=basic_mat(b,NN,'dirichlet')
-
-# Mn,sn_diag,En,ein=basic_mat(bn,NN,'neumann')
-
-
-# Mm=np.zeros((NN-1,NN-1))
-# Mmx=np.zeros((NN-1,NN-1))
-
-
-# iMn=En@np.diag(1/ein)@En.T
-
-
-# phisets=np.zeros((N+1,N-1))
-# phixsets=np.zeros((N+1,N-1))
-
-
-# for ii in range(NN-1):
-#     phi=(lepolys[ii]- lepolys[ii+2])/(sd_diag[ii])**.5
-#     phix=(lepolysx[ii].T-lepolysx[ii+2].T)/(sd_diag[ii])**.5
-#     phisets[:,ii]=phi[:,0]
-#     phixsets[:,ii]=phix[:,0]
-#     for jj in range(NN-1):
-#         psi=(lepolys[jj]+ bn[jj]*lepolys[jj+2])/(sn_diag[jj])**.5
-#         Mm[jj,ii]=np.sum(psi*phi/(lepolys[NN])**2)*(2/(NN*(NN+1)))
-#         Mmx[jj,ii]=np.sum(psi*phix/(lepolys[NN])**2)*(2/(NN*(NN+1)))
-
-# Mm[abs(Mm)<10**-8]=0
-# Mmx[abs(Mmx)<10**-8]=0
 
 
 
@@ -251,8 +191,6 @@ t=0
 
 
 
-# al_upre=torch.zeros((BATCH_SIZE,SHAPE-2,SHAPE-2)).to(device).double()
-# al_vpre=torch.zeros((BATCH_SIZE,SHAPE-2,SHAPE-2)).to(device).double()
 
 En=torch.from_numpy(En).to(device).double()
 Mm=torch.from_numpy(Mm).to(device).double()
@@ -270,48 +208,31 @@ ipre_condn=torch.from_numpy(ipre_condn).to(device).double()
 phisets=torch.from_numpy(phisets).to(device).double()
 phixsets=torch.from_numpy(phixsets).to(device).double()
 
-def closure(dt,ald,fdata0,alp):
+def closure(dt,fdata0,alp):
  
-    # print('111',torch.cuda.memory_allocated()/1024**3)
+    
     model.train()
-    # print('222',torch.cuda.memory_allocated()/1024**3)
     if torch.is_grad_enabled():
         optimizer.zero_grad()
-    # print('333',torch.cuda.memory_allocated()/1024**3)
-    # f0=torch.reshape(fdata,(1,1,NN-1,NN-1,NN-1) ).to(device).double()
-    
+   
     a_pred = model(fdata0)
 
     "check weak form"
-    # a_pred=torch.sum(ipre_condn@((En.T@ald[:,2]).reshape((BATCH_SIZE,1,NN-1,NN-1,1))),4)
+    
    
-    loss_u=torch.zeros(1)
     
     phial00,Pexfx = weak_pressure(alp[:,0,:ndt,],alp[:,1,:ndt,], a_pred,Mmx,Mm,dt, oden_data,pre_condn,En )
 
-    # phial00,Pexfx = weak_pressure(ald[:,0],ald[:,1], a_pred,Mmx,Mm,dt, oden_data,pre_condn,En )
-    
+   
     phi0=En@torch.sum(pre_condn@(a_pred.reshape((BATCH_SIZE,1,NN-1,NN-1,1))),4)
-    #phi0=p_pred
-    #loss_u1 = torch.max(abs(a_pred1[:BATCH_SIZE,:ndt,]-ald[:,3,:ndt,]))
     
     loss = 10**7*(torch.sum((phial00-Pexfx)**2))#+torch.sum((abs(a_pred-aex))**2))
-    #loss = U*(torch.sum((abs(a_pred-aex))**2))
-   
-    # loss_u1= torch.max(abs(num2*(a_pred1+malphi0)-ald[:,:ndt,]))
-    # loss_u1 = torch.max(abs(phi0-aphiex))
-    loss_u1=torch.zeros((1))
-    # print('555',torch.cuda.memory_allocated()/1024**3)
+    
     if loss.requires_grad:
         loss.backward()
-    # aa=a_pred1[:BATCH_SIZE,:ndt,].detach().cpu().numpy()
-    # 
-    # print('ff',fff.shape)
-   
-    # with open('rhd.npy', 'wb') as data_ex:
-    #     np.save(data_ex, fff)
     
-    return  loss_u,loss_u1, loss, phi0
+    
+    return  loss, phi0
 
 #
 
@@ -328,60 +249,32 @@ ini=1-1
 
 print(torch.cuda.memory_allocated()/1024**3)
 
-# for batch_idx, sample_batch in enumerate(trainloader):
-#         all0 = sample_batch['data_u'][:BATCH_SIZE,:,ORDER-1:ORDER-0].double().to(device).reshape((BATCH_SIZE,3,ndt,SHAPE-2,SHAPE-2))
-        # alp11 = sample_batch['data_u'][:BATCH_SIZE,:3,ORDER-1-ini:ORDER-ini].double().to(device).reshape((BATCH_SIZE,3,ndt,SHAPE-2,SHAPE-2,SHAPE-2))
-        # all0 = sample_batch['data_u'][:BATCH_SIZE,3,ORDER-1-ini:ORDER-ini].double().to(device).reshape((BATCH_SIZE,ndt,SHAPE-2,SHAPE-2,SHAPE-2))
-        # fdata00 = sample_batch['f'][:BATCH_SIZE,0:3,ORDER-1-ini].double().to(device)
-        # cf00 = sample_batch['cf0'].double().to(device)
-        # cf1 = sample_batch['cf'].double().to(device)[:,:3*1,]
-# alp=model0(fdata)
 
-# del model0
-# fdata=(torch.mean(fdata0,dim=1)).reshape((BATCH_SIZE,ndt,SHAPE,SHAPE,SHAPE))
-
-# fdata=torch.zeros((BATCH_SIZE,num2,3,SHAPE,SHAPE,SHAPE)).double().to(device)
 alp1=torch.load(PATH_prev+'/data.pt').detach().double().to(device)
 
-# malp1=1*torch.mean(alp11,dim=0)
-# alp1=(alp11)/num2
+
 ux=reconstructx(alp1[:,0], phisets,phixsets)
 vx=reconstructx(alp1[:,1],phixsets, phisets)
 
 fdata=ux+vx
 
-# malphi=mphi(malp1,Mm,Mmx,En,oden_data,dt)
-# malphi=malphi.reshape(1,1,SHAPE-2,SHAPE-2,SHAPE-2)
-# malphi=0
 
-# fdata=fdata.reshape((BATCH_SIZE*num2,3,SHAPE,SHAPE,SHAPE))
-# fdata[:,0]=reconstruct(alp1[:,0],phisets)
-# fdata[:,1]=reconstruct(alp1[:,1],phisets)
-# fdata[:,2]=reconstruct(alp1[:,2],phisets)
-
-# 
-# alp1=alp11.detach().double().to(device)
-# print(all0.shape)
 print(fdata.shape)
 
-loss_wf1=0
 
-all0=0
+
+
 
 
 for epoch in tqdm(range(1, EPOCHS+1)):
         
-        loss_u,loss_u1,  loss,a_pred = closure(dt,all0,fdata,alp1)
-        # print(torch.cuda.memory_summary())
-        # print(torch.cuda.memory_allocated()/1024**3)
+        loss,a_pred = closure(dt,fdata,alp1)
+      
         optimizer.step(loss.item)
         
+      
         
-       # optimizer.step()
-        # print(torch.cuda.memory_allocated()/1024**3)
-        # input('ggg')
         
-        loss_u11 = np.round(float(loss_u1.item()), 12)        
         loss_train = np.round(float(loss.item()), 12)
         
         gc.collect()
@@ -390,24 +283,13 @@ for epoch in tqdm(range(1, EPOCHS+1)):
         #SAVE train data
         if epoch % int(2) == 0:
             
-            losses = log_loss(losses, loss_a,loss_u11,loss_f, loss_wf1, loss_train,  loss_wf_test,BATCH_SIZE, loss_u_test)
-        #SAVE test data
-        # if epoch % int(100)==0:
-        #         loss_u,loss_u1,  loss,u_pred = closure(dt,aa1,bb1,  test_f, test_u,xx)
-        #         u_save1=np.reshape(u_pred.detach().cpu().numpy(),(D_out,))
-        #         u_test_save.append(u_save1)
-        #scheduler.step()
-        # if loss_train<10**-3:
-        #     break
-# u_test_save.append(np.reshape(dd[:,0][700][:,1],(D_out,))) 
-# u_test_save.append(np.reshape(xx,(D_out,)))            
-# with open(PATH+"/u_test.pkl", "wb") as fp:   #Pickling
-#     pickle.dump(u_test_save, fp)
+            losses = log_loss(losses, loss_train)
+       
 
 torch.save(model.state_dict(), PATH + '/model.pt')
 
 print(loss_train)
-# print(torch.max(abs(a_pred-all0[:,:ndt,])))
+
 
 
 
@@ -446,14 +328,12 @@ gparams['dt'] = dt
 gparams['avgIter'] = AVG_ITER
 gparams['nParams'] = NPARAMS
 gparams['batchSize'] = BATCH_SIZE
-# gparams['bestLoss'] = BEST_LOSS
+
 gparams['losses'] = losses
-# gparams['lossType'] = LOSS_TYPE
 
 log_path(PATH)
 
-# loss_plot(gparams)
-#values = model_stats(PATH, kind='validate', gparams=gparams)
+
 log_gparams(gparams)
 
 import pandas as pd
@@ -478,11 +358,3 @@ gc.collect()
 torch.cuda.empty_cache()
 
 
-# if ORDER >1 and ORDER <10:
-#     os.kill(os.getpid(), signal.SIGTERM)
-
-#     subprocess.run(f'python training3alp.py --equation ConvDiff2D --model Net3D --loss MSE --blocks {BLOCKS} --file {FILE} --epochs 2000 --ks {KERNEL_SIZE} --filters 21'\
-#                     f' --nbfuncs {NBFUNCS} --U 1 --dt {dt} --forcing {args.forcing}  --ndt {ndt} --eps {EPSILON} --path {EPOCHS}_{cur_time} --order {ORDER+1}', shell=True)
-    
-        # os.system(f'python training3alp.py --equation ConvDiff2D --model Net3D --loss MSE --blocks {BLOCKS} --file {FILE} --epochs 20000 --ks {KERNEL_SIZE} --filters 21'\
-    #                f' --nbfuncs {NBFUNCS} --U 1 --dt {dt} --forcing {args.forcing}  --ndt {ndt} --eps {EPSILON} --path {EPOCHS}_{cur_time} --order {ORDER+1}')

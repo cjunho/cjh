@@ -14,16 +14,10 @@ def record_path(path):
         f.write(entry)
 
 
-def log_loss(losses, loss_a, loss_u, loss_f, loss_wf,  loss_train, loss_validate, dataset, avg_l2_u): #loss_wf1, loss_wf2, loss_wf3, 
-   
-    if type(loss_u) == int:
-        losses['loss_u'].append(loss_u/dataset)
-    else:
-        losses['loss_u'].append(loss_u/dataset)
+def log_loss(losses,loss_train):     
     
-    losses['loss_train'].append(loss_train.item()/dataset)
-    losses['loss_validate'].append(loss_validate/1000)
-    losses['avg_l2_u'].append((avg_l2_u)/1000)
+    
+    losses['loss_train'].append(loss_train.item())
     return losses
 
 

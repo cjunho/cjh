@@ -1,5 +1,5 @@
 "find ap at first time step by using training2alp"
-# python training2pressure2.py --blocks 0 --file 600N23 --epochs 60 --ks 9 --filters 10 --dt 0.01 --forcing sigma5  --ndt 1 --eps 0.1 --order 1 --kind train --path 50_20251212T063320 --path2 60_20251212T064446
+# python training2pressure2.py --blocks 0 --file 600N23 --epochs 60 --ks 9 --filters 10 --dt 0.01 --forcing sigma5  --ndt 1 --eps 0.1 --order 1 --kind force2d --path 50_20251212T063320 --path2 60_20251212T064446
 import torch
 import time
 import datetime
@@ -196,10 +196,7 @@ optimizer = init_optim(model)
 # Construct our loss function and an Optimizer.
 
 BEST_LOSS = float('inf')
-losses = {'loss_u':[],
-          'loss_train':[],
-          'loss_validate':[],
-          'avg_l2_u': []}
+losses = {'loss_train':[]}
 gparams['path'] = PATH
 log_gparams(gparams)
 
@@ -283,7 +280,7 @@ ipre_condn=torch.from_numpy(ipre_condn).to(device).double()
 phisets=torch.from_numpy(phisets).to(device).double()
 phixsets=torch.from_numpy(phixsets).to(device).double()
 
-def closure(dt,ald,fdata0,alp):
+def closure(dt,fdata0,alp):
  
     # print('111',torch.cuda.memory_allocated()/1024**3)
     model.train()
@@ -309,22 +306,12 @@ def closure(dt,ald,fdata0,alp):
     #loss_u1 = torch.max(abs(a_pred1[:BATCH_SIZE,:ndt,]-ald[:,3,:ndt,]))
     
     loss = 10**7*(torch.sum((phial00-Pexfx)**2))#+torch.sum((abs(a_pred-aex))**2))
-    #loss = U*(torch.sum((abs(a_pred-aex))**2))
-   
-    # loss_u1= torch.max(abs(num2*(a_pred1+malphi0)-ald[:,:ndt,]))
-    # loss_u1 = torch.max(abs(phi0-aphiex))
-    loss_u1=torch.zeros((1))
-    # print('555',torch.cuda.memory_allocated()/1024**3)
+    
     if loss.requires_grad:
         loss.backward()
-    # aa=a_pred1[:BATCH_SIZE,:ndt,].detach().cpu().numpy()
-    # 
-    # print('ff',fff.shape)
-   
-    # with open('rhd.npy', 'wb') as data_ex:
-    #     np.save(data_ex, fff)
     
-    return  loss_u,loss_u1, loss, phi0
+    
+    return  loss, phi0
 
 #
 
@@ -379,12 +366,12 @@ print(fdata.shape)
 
 loss_wf1=0
 
-all0=0
+
 
 
 for epoch in tqdm(range(1, EPOCHS+1)):
         
-        loss_u,loss_u1,  loss,a_pred = closure(dt,all0,fdata,alp1)
+        loss,a_pred = closure(dt,fdata,alp1)
         # print(torch.cuda.memory_summary())
         # print(torch.cuda.memory_allocated()/1024**3)
         optimizer.step(loss.item)
@@ -394,7 +381,7 @@ for epoch in tqdm(range(1, EPOCHS+1)):
         # print(torch.cuda.memory_allocated()/1024**3)
         # input('ggg')
         
-        loss_u11 = np.round(float(loss_u1.item()), 12)        
+        
         loss_train = np.round(float(loss.item()), 12)
         
         gc.collect()
@@ -403,24 +390,13 @@ for epoch in tqdm(range(1, EPOCHS+1)):
         #SAVE train data
         if epoch % int(2) == 0:
             
-            losses = log_loss(losses, loss_a,loss_u11,loss_f, loss_wf1, loss_train,  loss_wf_test,BATCH_SIZE, loss_u_test)
-        #SAVE test data
-        # if epoch % int(100)==0:
-        #         loss_u,loss_u1,  loss,u_pred = closure(dt,aa1,bb1,  test_f, test_u,xx)
-        #         u_save1=np.reshape(u_pred.detach().cpu().numpy(),(D_out,))
-        #         u_test_save.append(u_save1)
-        #scheduler.step()
-        # if loss_train<10**-3:
-        #     break
-# u_test_save.append(np.reshape(dd[:,0][700][:,1],(D_out,))) 
-# u_test_save.append(np.reshape(xx,(D_out,)))            
-# with open(PATH+"/u_test.pkl", "wb") as fp:   #Pickling
-#     pickle.dump(u_test_save, fp)
+            losses = log_loss(losses,loss_train)
+        
 
 torch.save(model.state_dict(), PATH + '/model.pt')
 
 print(loss_train)
-# print(torch.max(abs(a_pred-all0[:,:ndt,])))
+
 
 
 
