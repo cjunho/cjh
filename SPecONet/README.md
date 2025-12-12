@@ -7,6 +7,13 @@ The network is designed to infer solutions of Navier Stokes equations for given 
 ## Types of inputs
 - the foloder named "force2d" : to train SPecOnet for 2D forcing functions as input data.
 
+## Reference
+A data free neural operator enabling fast inference of 2D and 3D Navier Stokes equations
+
+Junho Choi, Teng-Yuan Chang, Namjung Kim, Youngjoon Hong
+
+https://arxiv.org/abs/2510.23936
+
 
 
 
