@@ -14,6 +14,10 @@ After the code has finished running, The computational data are saved as follows
   
 
 ## Reference
+A data free neural operator enabling fast inference of 2D and 3D Navier Stokes equations
 
+Junho Choi, Teng-Yuan Chang, Namjung Kim, Youngjoon Hong
+
+https://arxiv.org/abs/2510.23936
 
 
