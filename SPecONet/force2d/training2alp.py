@@ -105,7 +105,7 @@ gparams['device'] = device
 # SEND TO GPU (or CPU)
 model.to(device).double()
 
-# Counting the number of the network's parameters 
+# Count the number of the network's parameters 
 param_size = 0
 r0=1
 for name,param in model.named_parameters():
@@ -124,7 +124,7 @@ for buffer in model.buffers():
 size_all_mb = (param_size + buffer_size) / 1024**3
 print(param_size,buffer_size)
 print('model size: {:.3f}GiB'.format(size_all_mb))
-
+print(torch.cuda.memory_allocated()/1024**3)
 
 #KAIMING HE INIT
 if args.pretrained is None:
@@ -134,96 +134,73 @@ if args.pretrained is None:
 #INIT OPTIMIZER
 optimizer = init_optim(model)
 
-# Construct our loss function and an Optimizer.
-
-
 BEST_LOSS = float('inf')
 losses = {'loss_train':[]}
 gparams['path'] = PATH
 log_gparams(gparams)
 
 
-
-dt=0.01
+#Generate matrices to compute the weak formulation
 ode_data,_, Ed,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_=matA(NN,dt,EPSILON)
-
 
 iode_data=np.zeros((NN-1,NN-1,NN-1))
 ode_eye=np.zeros((NN-1,NN-1,NN-1))
 
 for jj in range(NN-1):       
             ode_data0=ode_data[jj]
-            # ode_data[jj,]=np.diag(np.diag(ode_data0)**.5)
-            
             iode_data[jj,]=np.diag(1/np.diag(ode_data0)**.5)
             ode_eye[jj,]=(iode_data[jj,]@ode_data0)@iode_data[jj,]
 
 
-
+#Convert numpy files into torch files
 Ed=torch.from_numpy(Ed).to(device).double()
-
-
 ode_data=torch.from_numpy(ode_data).to(device).double()
 iode_data=torch.from_numpy(iode_data).to(device).double()
 ode_eye=torch.from_numpy(ode_eye).to(device).double()
 
-def closure(fdata0,cf0):
- 
-    
+def closure(fdata0,cf0):    
     model.train()
-    
+        
     if torch.is_grad_enabled():
         optimizer.zero_grad()
     
-    a_pred = model(fdata0)
+    # Mapping outputs
+    a_pred = model(fdata0)   
     
     alx=a_pred[:,0]
-    aly=a_pred[:,1]
-   
-    loss_u=torch.zeros(1)
+    aly=a_pred[:,1]   
     cfx0=cf0[:,0]
     cfy0=cf0[:,1]
    
+    # Compute the residual of the weak formulation
     al_unext,al_vnext,exfx,exfy = weak_form0(alx,aly,cfx0,cfy0, NN,ode_eye,iode_data, Ed )
-    
-    
-    
-    alx0=Ed@torch.sum(iode_data@(alx.reshape((BATCH_SIZE,1,NN-1,NN-1,1))),4)
-    aly0=Ed@torch.sum(iode_data@(aly.reshape((BATCH_SIZE,1,NN-1,NN-1,1))),4)
+        
+    #Loss of the residual in l2 norm
     loss=10**9*((torch.sum((al_unext-exfx)**2))+(torch.sum((al_vnext-exfy)**2)))
        
    
     if loss.requires_grad:
         loss.backward()
-    
+        
+    #Inference, alpha     
+    alx0=Ed@torch.sum(iode_data@(alx.reshape((BATCH_SIZE,1,NN-1,NN-1,1))),4)
+    aly0=Ed@torch.sum(iode_data@(aly.reshape((BATCH_SIZE,1,NN-1,NN-1,1))),4)
     ald1=torch.stack((alx0,aly0),dim=1)
 
     return  loss, ald1
 #
 
-f_pred=0.0
 torch.autograd.set_detect_anomaly(True)
 ################################################
 time0 = time.time()
-test1=int(1)
-loss_a,  loss_f,    loss_validate, avg_l2_u=0,0,0,0
 
-loss_u_test, loss_wf_test=0,0
-
-
-
-print(torch.cuda.memory_allocated()/1024**3)
-
+#Load input data
 for batch_idx, sample_batch in enumerate(trainloader):       
     fdata = sample_batch['f'][:BATCH_SIZE,:,0].double().to(device)
     cf00 = sample_batch['cf0'].double().to(device)
-       
-
 
 print(fdata.shape)
 print(cf00.shape)
-
-
 
 
 for epoch in tqdm(range(1, EPOCHS+1)):
@@ -231,18 +208,13 @@ for epoch in tqdm(range(1, EPOCHS+1)):
         loss,a_pred = closure(fdata,cf00)
         optimizer.step(loss.item)
         
-        
-       
-        
-              
         loss_train = np.round(float(loss.item()), 12)
         
         gc.collect()
         torch.cuda.empty_cache()
         
-        #SAVE train data
-        if epoch % int(2) == 0:
-            
+        #SAVE train loss
+        if epoch % int(2) == 0:            
             losses = log_loss(losses, loss_train)
         
 
@@ -250,7 +222,7 @@ torch.save(model.state_dict(), PATH + '/model.pt')
 torch.save(a_pred, PATH + '/data.pt')
 
 
-print(loss_train)
+print('Final loss:',loss_train)
 
 
 

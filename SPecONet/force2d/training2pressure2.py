@@ -25,28 +25,15 @@ from funsjax import matA
 # EVERYONE APRECIATES A CLEAN WORKSPACE
 gc.collect()
 torch.cuda.empty_cache()
-# torch.set_default_tensor_type(torch.DoubleTensor)
 torch.set_default_dtype(torch.float64)
 # ARGS
-# python training.py --equation Burgers --model NetC --blocks 4 --file 10000N63 --forcing uniform --epochs 50000
 parser = argparse.ArgumentParser("SEM")
-# parser.add_argument("--equation", type=str, default='ConvDiff2D', choices=['NS2d','Standard','Standard1', 'Burgers', 'Helmholtz', 'Standard2D', 'ConvDiff2D']) #, 'BurgersT' 
-# parser.add_argument("--pre_test", type=str, default='pre_Standard1', choices=['pre_Standard','pre_Standard1', 'pre_Burgers', 'pre_Helmholtz', 'pre_Standard2D', 'pre_ConvDiff2D'])
-# parser.add_argument("--model", type=str, default='Net3D', choices=['ResNet', 'NetA', 'NetB', 'NetC', 'NetD', 'Net2D', 'Net3D', 'Net3Dpressure']) 
 parser.add_argument("--blocks", type=int, default=0)
-# parser.add_argument("--loss", type=str, default='MSE', choices=['MAE', 'MSE', 'RMSE', 'RelMSE'])
 parser.add_argument("--file", type=str, default='10000N15', help='Example: --file 2000N31') # 2^5-1, 2^6-1
 parser.add_argument("--forcing", type=str, default='normal')
 parser.add_argument("--epochs", type=int, default=80000)
-# parser.add_argument("--pre_epochs", type=int, default=5000)
 parser.add_argument("--ks", type=int, default=5)
 parser.add_argument("--filters", type=int, default=32)
-# parser.add_argument("--nbfuncs", type=int, default=1)
-# parser.add_argument("--A", type=float, default=0)
-# parser.add_argument("--F", type=float, default=0)
-# parser.add_argument("--U", type=float, default=1)
-# parser.add_argument("--WF", type=float, default=1) # 1 = include weaf form
-# parser.add_argument("--sd", type=float, default=1)
 parser.add_argument("--pretrained", type=str, default=None)
 parser.add_argument("--dt", type=float, default=0.01)
 parser.add_argument("--ndt", type=int, default=5)
@@ -59,23 +46,15 @@ parser.add_argument("--kind", type=str, default='trainN10')
 
 args = parser.parse_args()
 gparams = args.__dict__
-#pprint(gparams)
 
 ndt=args.ndt
 PATH0=args.path
 PATH2=args.path2
-
 D_in = 1
 kind=args.kind
 ORDER=args.order
-
 EQUATION = 'NS2d'
-
-
 EPSILON = args.eps
-# models0 = {'Net3D': Net3D}
-
-
 MODEL = Net3Dpressure
 
 #GLOBALS
@@ -83,11 +62,8 @@ gparams['epsilon'] = EPSILON
 FILE = gparams['file']
 DATASET = int(FILE.split('N')[0])
 SHAPE = int(FILE.split('N')[1]) + 1
-
 BLOCKS = int(gparams['blocks'])
 EPOCHS = int(gparams['epochs'])
-
-
 dt = gparams['dt']
 FILTERS = int(gparams['filters'])
 KERNEL_SIZE = int(gparams['ks'])
@@ -95,22 +71,13 @@ KERNEL_SIZE = int(gparams['ks'])
 PADDING = int(3)
 cur_time = str(datetime.datetime.now()).replace(' ', 'T')
 cur_time = cur_time.replace(':','').split('.')[0].replace('-','')
-
 FOLDER = f'Net3Dpressure_{args.forcing}_epochs{EPOCHS}_{cur_time}'
-
 FOLDER0 = f'Net3D_{args.forcing}_epochs{PATH0}'
-
 FOLDER2 = f'Net3Dpressure_{args.forcing}_epochs{PATH2}'
-
 PATH = os.path.join('training', f"{EQUATION}{EPSILON}", FILE,f"order{ORDER}" ,FOLDER)
-
 PATH_prev1=os.path.join('training', f"{EQUATION}{EPSILON}", FILE,f"order{ORDER}" ,FOLDER0)
-
 PATH_prev2=os.path.join('training', f"{EQUATION}{EPSILON}", FILE,f"order{ORDER}" ,FOLDER2)
-
 BATCH_SIZE, Filters, D_out = int(DATASET), FILTERS, SHAPE
-# LOSS SCALE FACTORS
-
 NN=SHAPE-1
 
 
@@ -121,12 +88,7 @@ if os.path.isdir(PATH) == False: os.makedirs(PATH)
 # CREATE BASIS VECTORS
 xx, lepolys, lepoly_x, lepoly_xx, phi, phi_x, phi_xx, D,aa1,bb1 = basis_vectors(D_out,EPSILON ,equation=EQUATION)
 
-# if BATCH_SIZE+1<DATASET:
-#     shuffle1=True
-# else: 
 shuffle1=False
-
-
 NORM = False
 gparams['norm'] = False
 transform_f = None
@@ -134,21 +96,11 @@ transform_f = None
 # LOAD DATASET
 lg_dataset = get_data(gparams, kind, transform_f=transform_f)
 trainloader = torch.utils.data.DataLoader(lg_dataset, batch_size=BATCH_SIZE, shuffle=shuffle1)
-# lg_dataset = get_data(gparams, kind='validate', transform_f=transform_f)
-# validateloader = torch.utils.data.DataLoader(lg_dataset, batch_size=BATCH_SIZE, shuffle=True)
 
 # INITIALIZE a model
-
-# model0 = MODEL0(1,D_in, 3*Filters, D_out - 2, kernel_size=KERNEL_SIZE, padding=PADDING, blocks=BLOCKS)
-# model0.load_state_dict(torch.load(r'training/ConvDiff2D1.0/200N15/Net3D_uniform_epochs10000_20240811T224627fil21/model.pt'), strict=False)
-
-# for name,param in model0.named_parameters():
-#     param.requires_grad = False
-
 model= MODEL(1,D_in, Filters, D_out - 2, kernel_size=KERNEL_SIZE, padding=PADDING, blocks=BLOCKS)
-# LOAD the trained model
+#Load the trained model
 model.load_state_dict(torch.load(f'{PATH_prev2}/model.pt'), strict=False)
-    # model.load_state_dict(torch.load(r'training/ConvDiff2D1.0/70N19/order1/Net3Dpressure_num222sigma5_epochs10000_20241203T022537/model.pt'), strict=False)
 model.train()
 
 # Check if CUDA is available and then use it.
@@ -156,26 +108,15 @@ device = get_device()
 gparams['device'] = device
 
 # SEND TO GPU (or CPU)
-# model0.to(device).double()
 model.to(device).double()
-# www1=np.load('neww200.npy')
-# www=torch.from_numpy(www1).contiguous().to(device).double()
 
-# with torch.no_grad():
-#     model.fcH.weight = torch.nn.parameter.Parameter(www)
-
-
+# Count the number of the network's parameters
 param_size = 0
 r0=1
-
-
-for name,param in model.named_parameters():
-    # print(name,r0,param.nelement())
+for name,param in model.named_parameters(): 
     print(name,r0,param.shape)
     param_size += param.nelement() * param.element_size()
     r0+=1
-    
-    # if args.pretrained is not None:
     if name !='fcH.weight':
         param.requires_grad = False
 
@@ -185,63 +126,18 @@ for buffer in model.buffers():
 
 size_all_mb = (param_size + buffer_size) / 1024**3
 print(param_size,buffer_size)
-
 print('model size: {:.3f}GiB'.format(size_all_mb))
+print(torch.cuda.memory_allocated()/1024**3)
 
-#KAIMING HE INIT
 
 #INIT OPTIMIZER
 optimizer = init_optim(model)
-#scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=20000, gamma=0.5)
-# Construct our loss function and an Optimizer.
-
 BEST_LOSS = float('inf')
 losses = {'loss_train':[]}
 gparams['path'] = PATH
 log_gparams(gparams)
 
-# for parameter in model.parameters():
-#     print(parameter)
-# print(sum(p.numel() for p in model.parameters()))
-
-dt=0.01
-
-
-# Y,X,Z=np.meshgrid(xx,xx,xx)
-
-# Md,sd_diag,Ed,eid=basic_mat(b,NN,'dirichlet')
-
-# Mn,sn_diag,En,ein=basic_mat(bn,NN,'neumann')
-
-
-# Mm=np.zeros((NN-1,NN-1))
-# Mmx=np.zeros((NN-1,NN-1))
-
-
-# iMn=En@np.diag(1/ein)@En.T
-
-
-# phisets=np.zeros((N+1,N-1))
-# phixsets=np.zeros((N+1,N-1))
-
-
-# for ii in range(NN-1):
-#     phi=(lepolys[ii]- lepolys[ii+2])/(sd_diag[ii])**.5
-#     phix=(lepolysx[ii].T-lepolysx[ii+2].T)/(sd_diag[ii])**.5
-#     phisets[:,ii]=phi[:,0]
-#     phixsets[:,ii]=phix[:,0]
-#     for jj in range(NN-1):
-#         psi=(lepolys[jj]+ bn[jj]*lepolys[jj+2])/(sn_diag[jj])**.5
-#         Mm[jj,ii]=np.sum(psi*phi/(lepolys[NN])**2)*(2/(NN*(NN+1)))
-#         Mmx[jj,ii]=np.sum(psi*phix/(lepolys[NN])**2)*(2/(NN*(NN+1)))
-
-# Mm[abs(Mm)<10**-8]=0
-# Mmx[abs(Mmx)<10**-8]=0
-
-
-
-
-
+#Generate matrices to compute the weak formulation
 _,oden_data0,_,En,_,_,_,_,_,_,_,_,Mm,Mmx,phisets,phixsets,_,_,_=matA(NN,dt,EPSILON)
 
 oden_data=np.zeros((NN-1,NN-1,NN-1))
@@ -255,116 +151,59 @@ for jj in range(NN-1):
         ipre_condn[jj,]=np.diag(np.diag(ode1)**.5)
         oden_data[jj,]=(pre_condn[jj,]@ode1)@pre_condn[jj,]
 
-
-t=0
-
-
-
-
-# al_upre=torch.zeros((BATCH_SIZE,SHAPE-2,SHAPE-2)).to(device).double()
-# al_vpre=torch.zeros((BATCH_SIZE,SHAPE-2,SHAPE-2)).to(device).double()
-
+#Convert numpy files into torch files
 En=torch.from_numpy(En).to(device).double()
 Mm=torch.from_numpy(Mm).to(device).double()
 Mmx=torch.from_numpy(Mmx).to(device).double()
-
 oden_data=torch.from_numpy(oden_data).to(device).double()
-
-
-
 pre_condn=torch.from_numpy(pre_condn).to(device).double()
 ipre_condn=torch.from_numpy(ipre_condn).to(device).double()
-
-
-
 phisets=torch.from_numpy(phisets).to(device).double()
 phixsets=torch.from_numpy(phixsets).to(device).double()
 
+
 def closure(dt,fdata0,alp):
  
-    # print('111',torch.cuda.memory_allocated()/1024**3)
     model.train()
-    # print('222',torch.cuda.memory_allocated()/1024**3)
     if torch.is_grad_enabled():
         optimizer.zero_grad()
-    # print('333',torch.cuda.memory_allocated()/1024**3)
-    # f0=torch.reshape(fdata,(1,1,NN-1,NN-1,NN-1) ).to(device).double()
     
+    # Mapping outputs
     a_pred = model(fdata0)
 
-    "check weak form"
-    # a_pred=torch.sum(ipre_condn@((En.T@ald[:,2]).reshape((BATCH_SIZE,1,NN-1,NN-1,1))),4)
-   
-    loss_u=torch.zeros(1)
-    
+    # Compute the residual of the weak formulation
     phial00,Pexfx = weak_pressure(alp[:,0,:ndt,],alp[:,1,:ndt,], a_pred,Mmx,Mm,dt, oden_data,pre_condn,En )
-
-    # phial00,Pexfx = weak_pressure(ald[:,0],ald[:,1], a_pred,Mmx,Mm,dt, oden_data,pre_condn,En )
     
-    phi0=En@torch.sum(pre_condn@(a_pred.reshape((BATCH_SIZE,1,NN-1,NN-1,1))),4)
-    #phi0=p_pred
-    #loss_u1 = torch.max(abs(a_pred1[:BATCH_SIZE,:ndt,]-ald[:,3,:ndt,]))
-    
+    #Loss of the residual in l2 norm
     loss = 10**7*(torch.sum((phial00-Pexfx)**2))#+torch.sum((abs(a_pred-aex))**2))
     
     if loss.requires_grad:
         loss.backward()
+    
+    #Inference, phi  
+    phi0=En@torch.sum(pre_condn@(a_pred.reshape((BATCH_SIZE,1,NN-1,NN-1,1))),4)
     
     
     return  loss, phi0
 
 #
 
-f_pred=0.0
+
 torch.autograd.set_detect_anomaly(True)
 ################################################
 time0 = time.time()
-test1=int(1)
-loss_a,  loss_f,    loss_validate, avg_l2_u=0,0,0,0
 
-loss_u_test, loss_wf_test=0,0
-
-ini=1-1
-
-print(torch.cuda.memory_allocated()/1024**3)
-
-# for batch_idx, sample_batch in enumerate(trainloader):
-#         all0 = sample_batch['data_u'][:BATCH_SIZE,:,ORDER-1:ORDER-0].double().to(device).reshape((BATCH_SIZE,3,ndt,SHAPE-2,SHAPE-2))
-        # alp11 = sample_batch['data_u'][:BATCH_SIZE,:3,ORDER-1-ini:ORDER-ini].double().to(device).reshape((BATCH_SIZE,3,ndt,SHAPE-2,SHAPE-2,SHAPE-2))
-        # all0 = sample_batch['data_u'][:BATCH_SIZE,3,ORDER-1-ini:ORDER-ini].double().to(device).reshape((BATCH_SIZE,ndt,SHAPE-2,SHAPE-2,SHAPE-2))
-        # fdata00 = sample_batch['f'][:BATCH_SIZE,0:3,ORDER-1-ini].double().to(device)
-        # cf00 = sample_batch['cf0'].double().to(device)
-        # cf1 = sample_batch['cf'].double().to(device)[:,:3*1,]
-# alp=model0(fdata)
-
-# del model0
-# fdata=(torch.mean(fdata0,dim=1)).reshape((BATCH_SIZE,ndt,SHAPE,SHAPE,SHAPE))
-
-# fdata=torch.zeros((BATCH_SIZE,num2,3,SHAPE,SHAPE,SHAPE)).double().to(device)
+#Compute the input data, laplace*u
 alp1=torch.load(PATH_prev1+'/data.pt').detach().double().to(device)
-
-# malp1=1*torch.mean(alp11,dim=0)
-# alp1=(alp11)/num2
 ux=reconstructx(alp1[:,0], phisets,phixsets)
-vx=reconstructx(alp1[:,1],phixsets, phisets)
+vy=reconstructx(alp1[:,1],phixsets, phisets)
 
-fdata=ux+vx
+fdata=ux+vy
 
-# malphi=mphi(malp1,Mm,Mmx,En,oden_data,dt)
-# malphi=malphi.reshape(1,1,SHAPE-2,SHAPE-2,SHAPE-2)
-# malphi=0
 
-# fdata=fdata.reshape((BATCH_SIZE*num2,3,SHAPE,SHAPE,SHAPE))
-# fdata[:,0]=reconstruct(alp1[:,0],phisets)
-# fdata[:,1]=reconstruct(alp1[:,1],phisets)
-# fdata[:,2]=reconstruct(alp1[:,2],phisets)
-
-# 
-# alp1=alp11.detach().double().to(device)
-# print(all0.shape)
 print(fdata.shape)
 
-loss_wf1=0
+
 
 
 
@@ -372,14 +211,8 @@ loss_wf1=0
 for epoch in tqdm(range(1, EPOCHS+1)):
         
         loss,a_pred = closure(dt,fdata,alp1)
-        # print(torch.cuda.memory_summary())
-        # print(torch.cuda.memory_allocated()/1024**3)
         optimizer.step(loss.item)
         
-        
-       # optimizer.step()
-        # print(torch.cuda.memory_allocated()/1024**3)
-        # input('ggg')
         
         
         loss_train = np.round(float(loss.item()), 12)
@@ -387,7 +220,7 @@ for epoch in tqdm(range(1, EPOCHS+1)):
         gc.collect()
         torch.cuda.empty_cache()
         
-        #SAVE train data
+        #SAVE train loss
         if epoch % int(2) == 0:
             
             losses = log_loss(losses,loss_train)
@@ -395,11 +228,10 @@ for epoch in tqdm(range(1, EPOCHS+1)):
 
 torch.save(model.state_dict(), PATH + '/model.pt')
 
-print(loss_train)
+print('Final loss:',loss_train)
 
 
-
-
+#Save inference data
 if ORDER>1:
     os.replace(PATH_prev2+'/cu0.pt',PATH +"/cu0.pt")
     os.replace(PATH_prev2+'/cv0.pt',PATH +"/cv0.pt")
@@ -441,8 +273,6 @@ gparams['losses'] = losses
 
 log_path(PATH)
 
-# loss_plot(gparams)
-#values = model_stats(PATH, kind='validate', gparams=gparams)
 log_gparams(gparams)
 
 import pandas as pd
@@ -467,8 +297,10 @@ df.to_csv(PATH_call + f'/call{ORDER}_pp.csv')
 gc.collect()
 torch.cuda.empty_cache()
 
-if os.path.isdir(f'training/{EQUATION}{EPSILON}/pp') == False: os.makedirs(f'training/{EQUATION}{EPSILON}/pp')
 
+# Evaluate the error of inference upon test samples
+
+if os.path.isdir(f'training/{EQUATION}{EPSILON}/pp') == False: os.makedirs(f'training/{EQUATION}{EPSILON}/pp')
 try:
     subprocess.run(f'python inference3error_rec.py --blocks 0 --ks 9 --filters 10 --dt 0.01'\
                     f' --forcing {args.forcing} --ndt 1 --eps 0.1 --kind {kind} --order {ORDER} --start {ORDER} --file 100N23', shell=True)
