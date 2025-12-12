@@ -1,5 +1,5 @@
 "inference time check"
-# python inference3error_rec00.py --equation ConvDiff2D --model Net3D0 --loss MSE --blocks 0 --epochs 5000 --ks 9 --filters 10 --nbfuncs 10 --U 9 --pre_epochs 5000 --dt 0.01  --ndt 1 --eps 0.1 --kind cosN30 --file 100N23 --forcing num444am2sigma5 --order 20 --start 20
+# python inference3error_rec.py --blocks 0 --ks 9 --filters 10 --dt 0.01  --ndt 1 --eps 0.1 --kind force2d --file 100N23 --forcing sigma5 --order 1 --start 1
 import random
 import torch
 import time
@@ -22,7 +22,7 @@ from reconstruct import *
 from data_logging import *
 from evaluate import *
 from pprint import pprint
-from funs import *
+from funsjax import matA
 
 # EVERYONE APRECIATES A CLEAN WORKSPACE
 gc.collect()
@@ -33,30 +33,19 @@ torch.set_default_dtype(torch.float64)
 # python training.py --equation Burgers --model NetC --blocks 4 --file 10000N63 --forcing uniform --epochs 50000
 parser = argparse.ArgumentParser("SEM")
 parser.add_argument("--equation", type=str, default='ConvDiff2D', choices=['NS2d','Standard', 'test3d','Standard1', 'Burgers', 'test3d', 'Helmholtz', 'Standard2D', 'ConvDiff2D']) #, 'BurgersT' 
-parser.add_argument("--pre_test", type=str, default='pre_Standard1', choices=['pre_Standard','pre_Standard1', 'pre_Burgers', 'pre_Helmholtz', 'pre_Standard2D', 'pre_ConvDiff2D'])
-parser.add_argument("--model", type=str, default='Net3D', choices=['ResNet', 'NetA', 'NetB', 'NetC', 'NetD', 'Net2D', 'Net3D', 'Net3D0']) 
 parser.add_argument("--blocks", type=int, default=0)
-parser.add_argument("--loss", type=str, default='MSE', choices=['MAE', 'MSE', 'RMSE', 'RelMSE'])
 parser.add_argument("--file", type=str, default='10000N15', help='Example: --file 2000N31') # 2^5-1, 2^6-1
 parser.add_argument("--forcing", type=str, default='normal')
 parser.add_argument("--kind", type=str, default='trainN10')
-parser.add_argument("--epochs", type=int, default=80000)
-parser.add_argument("--pre_epochs", type=int, default=5000)
 parser.add_argument("--ks", type=int, default=5)
 parser.add_argument("--filters", type=int, default=32)
-parser.add_argument("--nbfuncs", type=int, default=1)
-parser.add_argument("--A", type=float, default=0)
-parser.add_argument("--F", type=float, default=0)
-parser.add_argument("--U", type=float, default=1)
-parser.add_argument("--WF", type=int, default=1) # 1 = include weaf form
-parser.add_argument("--sd", type=float, default=1)
 parser.add_argument("--pretrained", type=str, default=None)
 parser.add_argument("--dt", type=float, default=0.01)
 parser.add_argument("--ndt", type=int, default=5)
 parser.add_argument("--eps", type=float, default=1)
 parser.add_argument("--order", type=int, default=1)
 parser.add_argument("--start", type=int, default=1)
-parser.add_argument("--path", type=str)
+
 
 args = parser.parse_args()
 gparams = args.__dict__
@@ -69,24 +58,14 @@ start1=args.start
 
 D_in = 2*ndt
 
-EQUATION = args.equation
-pre_test=args.pre_test
+EQUATION = 'NS2d'
+
 
 EPSILON = args.eps
-models = {
-          'ResNet': ResNet,
-          'NetA': NetA,
-          'NetB': NetB,
-          'NetC': NetC,
-          'NetD': NetD,
-          'Net3D': Net3D,
-          'Net3D0': Net3D0,
-          'Net2D': Net2D,
-          'Net3Dpressure0':Net3Dpressure0
-          }
-MODEL = models[args.model]
+MODEL = Net3D0
 
-MODEL2 = models['Net3Dpressure0']
+MODEL2 = Net3Dpressure0
+
 kind=args.kind
 
 #GLOBALS
@@ -95,29 +74,18 @@ FILE = gparams['file']
 DATASET = int(FILE.split('N')[0])
 SHAPE = int(FILE.split('N')[1]) + 1
 BLOCKS = int(gparams['blocks'])
-EPOCHS = int(gparams['epochs'])
-pre_EPOCHS = int(gparams['pre_epochs'])
-NBFUNCS = int(gparams['nbfuncs'])
+
+
+
 dt = gparams['dt']
 FILTERS = int(gparams['filters'])
 KERNEL_SIZE = int(gparams['ks'])
 # PADDING = (KERNEL_SIZE - 1)//2
 PADDING = int(3)
-cur_time = str(datetime.datetime.now()).replace(' ', 'T')
-cur_time = cur_time.replace(':','').split('.')[0].replace('-','')
-FOLDER = f'{gparams["model"]}_{args.forcing}_epochs{EPOCHS}_{cur_time}'
-PATH0 = args.path
-FOLDER0 = f'Net3Dpressure_{args.forcing}_epochs{PATH0}'
 
-PATH = os.path.join('training', f"{EQUATION}{EPSILON}", FILE,f"order{ORDER}" ,FOLDER)
-
-PATH_prev=os.path.join('training', f"{EQUATION}{EPSILON}", FILE,f"order{ORDER-1}", FOLDER0)
-
-gparams['PATH_prev']=PATH_prev
 
 BATCH_SIZE, Filters, D_out = int(DATASET), FILTERS, SHAPE
 # LOSS SCALE FACTORS
-A, U, F, WF = int(gparams['A']), (gparams['U']), int(gparams['F']), int(gparams['WF'])
 
 NN=SHAPE-1
 
@@ -152,8 +120,8 @@ lin_weight2=torch.zeros((ORDER+1-start1, 4840, 484)).to(device).double()
 
 for ii in range(start1,ORDER+1):
     if ii>start1:        del model, param#,model2
-    model = MODEL(1,ndt,D_in, Filters, D_out - 2, kernel_size=KERNEL_SIZE, padding=PADDING, blocks=BLOCKS)
-    model2 = MODEL2(1,1,1, 10, D_out - 2,  kernel_size=KERNEL_SIZE, padding=PADDING, blocks=BLOCKS)
+    model = MODEL(ndt,D_in, Filters, D_out - 2, kernel_size=KERNEL_SIZE, padding=PADDING, blocks=BLOCKS)
+    model2 = MODEL2(1,1, 10, D_out - 2,  kernel_size=KERNEL_SIZE, padding=PADDING, blocks=BLOCKS)
     
  
     device = get_device()
@@ -190,39 +158,20 @@ for ii in range(start1,ORDER+1):
 # Check if CUDA is available and then use it.
 
 
-Mxnd=np.zeros((NN-1,NN-1))
-phisets=np.zeros((N+1,N-1))
-phinsets=np.zeros((N+1,N-1))
-phixsets=np.zeros((N+1,N-1))
-Md,sd_diag,Ed,eid=basic_mat(b,NN,'dirichlet')
-Mn,sn_diag,En,ein=basic_mat(bn,NN,'neumann')
+# Mxnd=np.zeros((NN-1,NN-1))
+# phisets=np.zeros((N+1,N-1))
+# phinsets=np.zeros((N+1,N-1))
+# phixsets=np.zeros((N+1,N-1))
+
 # for ii in range(NN-1):
-#     
-iMd=Ed@np.diag(1/eid)@Ed.T
-
-mnd1=np.zeros((NN-1,))
-mnd2=np.zeros((NN-1,))
-mnd3=np.zeros((NN-1,))
+ode_data,oden_data, Ed,En,_,_,Mnd,Mxdd,Mxnd,Mdxd,Md,iMd,Mm,Mmx,phisets,phixsets,phinsets,sd_diag,lepp=matA(NN,dt,EPSILON)
 
 
-for ii in range(NN-1):
-    phi=(lepolys[ii]- lepolys[ii+2])/(sd_diag[ii])**.5
-    phin=(lepolys[ii]+bn[ii]*lepolys[ii+2])/(sn_diag[ii])**.5
-    phix=(lepolysx[ii].T-lepolysx[ii+2].T)/(sd_diag[ii])**.5
-    phinsets[:,ii]=phin[:,0]
-    phisets[:,ii]=phi[:,0]
-    phixsets[:,ii]=phix[:,0]
-    neunx = (lepolysx[ii].T+ bn[ii]*lepolysx[ii+2].T)/(sn_diag[ii])**.5
-    dirix = (lepolysx[ii].T-lepolysx[ii+2].T)/(sd_diag[ii])**.5
-    mnd2[ii]=2*(1/(2*ii+1)+b[ii]*bn[ii]/(2*ii+5))/(sd_diag[ii]*sn_diag[ii])**.5
-    mnd1[ii]=(b[ii])*2/(2*ii+5)/(sd_diag[ii]*sn_diag[ii+2])**.5
-    mnd3[ii]=(bn[ii])*2/(2*ii+5)/(sd_diag[2+ii]*sn_diag[ii])**.5
-    for jj in range(NN-1):
-          diri1=(lepolys[jj]-lepolys[jj+2])/(sd_diag[jj])**.5
-          phi1=neunx*diri1/lepolys[NN]**2
-          Mxnd[jj,ii]=np.sum(phi1)*(2/(NN*(NN+1)))
+  
 
-Mnd=  mnd2*np.eye(NN-1)+np.diag(mnd1[0:NN-3],2)+np.diag(mnd3[0:NN-3],-2)
+
+
+# Mnd=  mnd2*np.eye(NN-1)+np.diag(mnd1[0:NN-3],2)+np.diag(mnd3[0:NN-3],-2)
 
 # ode_eye=np.zeros((NN-1,NN-1,NN-1))
 # ode_data=np.zeros((NN-1,NN-1,NN-1))
@@ -230,12 +179,12 @@ iode_data=np.zeros((NN-1,NN-1,NN-1))
 ioden_data=np.zeros((NN-1,NN-1,NN-1))
 for jj in range(NN-1):
        
-            ode_data0=(1.5*eid[jj]/dt+EPSILON)*Md+EPSILON*eid[jj]*np.eye(NN-1)
-            oden_data0=Mn+ein[jj]*np.eye(NN-1)
+            # ode_data0=(1.5*eid[jj]/dt+EPSILON)*Md+EPSILON*eid[jj]*np.eye(NN-1)
+            # oden_data0=Mn+ein[jj]*np.eye(NN-1)
             # iode_data[jj,]=np.linalg.solve(ode_data0,np.eye(NN-1))
-            iode_data[jj,]=np.diag(1/np.diag(ode_data0)**.5)
+            iode_data[jj,]=np.diag(1/np.diag(ode_data[jj])**.5)
            
-            ioden_data[jj,]=np.diag(1/np.diag(oden_data0)**.5)
+            ioden_data[jj,]=np.diag(1/np.diag(oden_data[jj])**.5)
 
 phisets=torch.from_numpy(phisets).to(device).double()
 phinsets=torch.from_numpy(phinsets).to(device).double()
@@ -339,7 +288,7 @@ pexy=pexy.detach().cpu().numpy()
 
 
 
-lepp=(lepolys[N]*lepolys[N].T).reshape(1,1,SHAPE,SHAPE)
+
 
 def intt(f,le):
     jj=SHAPE

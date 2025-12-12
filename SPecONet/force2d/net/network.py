@@ -125,14 +125,14 @@ class Net3D(nn.Module) :
         return out
 
 class Net3D0(nn.Module) :
-    def __init__(self,beta,ndt, d_in, filters, d_out, kernel_size=7, padding=3, blocks=0) :
+    def __init__(self,ndt, d_in, filters, d_out, kernel_size=7, padding=3, blocks=0) :
         super(Net3D0, self).__init__()
         self.d_in = d_in
         self.blocks = blocks
         self.filters = filters
         self.d_out = d_out
         self.swish = swish
-        self.beta=beta
+       
         # self.swish = nn. ReLU()
         self.kern = kernel_size
         self.pad = padding
@@ -153,7 +153,7 @@ class Net3D0(nn.Module) :
         
         m = self.swish
        
-        out = m(self.conv1(x),self.beta)
+        out = m(self.conv1(x))
         
        
       
@@ -207,14 +207,14 @@ class Net3D1(nn.Module) :
         return out
     
 class Net3Dpressure(nn.Module) :
-    def __init__(self,beta,ndt, d_in, filters, d_out, kernel_size=7, padding=3, blocks=0) :
+    def __init__(self,ndt, d_in, filters, d_out, kernel_size=7, padding=3, blocks=0) :
         super(Net3Dpressure, self).__init__()
         self.d_in = d_in
         self.blocks = blocks
         self.filters = filters
         self.d_out = d_out
         self.swish = swish
-        self.beta=beta
+        
         # self.swish = nn. ReLU()
         self.kern = kernel_size
         self.pad = padding
@@ -238,7 +238,7 @@ class Net3Dpressure(nn.Module) :
         m = self.swish
         
         # print('11',x.shape)
-        out = m(self.conv1(x),self.beta)
+        out = m(self.conv1(x))
         
        
         out=out.view(out.shape[0],self.filters*self.Dout**2)
@@ -253,14 +253,14 @@ class Net3Dpressure(nn.Module) :
 
 
 class Net3Dpressure0(nn.Module) :
-    def __init__(self,beta,ndt, d_in, filters, d_out, kernel_size=7, padding=3, blocks=0) :
+    def __init__(self,ndt, d_in, filters, d_out, kernel_size=7, padding=3, blocks=0) :
         super(Net3Dpressure0, self).__init__()
         self.d_in = d_in
         self.blocks = blocks
         self.filters = filters
         self.d_out = d_out
         self.swish = swish
-        self.beta=beta
+        
         # self.swish = nn. ReLU()
         self.kern = kernel_size
         self.pad = padding
@@ -279,44 +279,9 @@ class Net3Dpressure0(nn.Module) :
         m = self.swish
         
         # print('11',x.shape)
-        out = m(self.conv1(x),self.beta)
+        out = m(self.conv1(x))
         
         out=out.view(out.shape[0],self.filters*self.Dout**2)
-        
-        return out
-
-
-class Net3Dpressure1(nn.Module) :
-    def __init__(self,beta,ndt, d_in, filters, d_out, kernel_size=7, padding=3, blocks=0) :
-        super(Net3Dpressure1, self).__init__()
-        self.d_in = d_in
-        self.blocks = blocks
-        self.filters = filters
-        self.d_out = d_out
-        self.swish = swish
-        self.beta=beta
-        # self.swish = nn. ReLU()
-        self.kern = kernel_size
-        self.pad = padding
-        self.Dout=self.d_out+2+(2*self.pad-self.kern+1)
-        # print(self.d_in)
-        # print(self.Dout)
-        # print(3*ndt*filters*self.Dout**3)
-        self.ndt=ndt
-        # self.Dout=12
-        # self.ll=   int(self.filters) 
-    
-        self.conv1 = conv3d(self.d_in, self.filters, kernel_size=self.kern, padding=self.pad, bias=True)
-        
-        
-    def forward(self, x):
-        
-        m = self.swish
-        
-        # print('11',x.shape)
-        out = m(self.conv1(x),self.beta)
-        
-        out=out.view(out.shape[0],self.filters*self.Dout**3)
         
         return out
 

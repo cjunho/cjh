@@ -28,7 +28,7 @@ T=Ind*dt
 
 
 
-ode_data, oden_data, Ed,En,X,Y,Mnd,Mxdd,Mxnd,Mdxd,Md,iMd,Mm,Mmx,phisets,lep=matA(N,dt,eps)
+ode_data, oden_data, Ed,En,X,Y,Mnd,Mxdd,Mxnd,Mdxd,Md,iMd,Mm,Mmx,phisets,_,_,_,lep=matA(N,dt,eps)
 
 
 uun1=0
@@ -93,7 +93,7 @@ mdata=np.zeros((Jnd,3,1+num))
 qq2=np.random.normal(0,sigma,2000*2*2*num**2)  # if Jnd=700, 800 qq2.
 qq=qq2.reshape(2000,2,2,num,num)  # 10--> ampli=3, 3--> ampli=1
 
-filename=f'./data/{equation}{eps}/train'
+filename=f'./data/{equation}{eps}/force2d'
 
 qq1=qq[:,0]+1j*qq[:,1]
 

@@ -80,7 +80,7 @@ KERNEL_SIZE = int(gparams['ks'])
 PADDING = int(3)
 cur_time = str(datetime.datetime.now()).replace(' ', 'T')
 cur_time = cur_time.replace(':','').split('.')[0].replace('-','')
-FOLDER = f'{MODEL}_{args.forcing}_epochs{EPOCHS}_{cur_time}'
+FOLDER = f'Net3D_{args.forcing}_epochs{EPOCHS}_{cur_time}'
 
 PATH = os.path.join('training', f"{EQUATION}{EPSILON}", FILE,'order1', FOLDER)
 
@@ -124,8 +124,8 @@ model = MODEL(ndt,D_in, Filters, D_out - 2, kernel_size=KERNEL_SIZE, padding=PAD
 
 # LOAD the trained model
 if args.pretrained is not None:
-    args.pretrained = 'N' + args.file.split('N')[-1] + '_' + args.equation + '_' + args.forcing
-    model.load_state_dict(torch.load(f'training/{EQUATION}{EPSILON}/{BATCH_SIZE}N23/order1/Net3D_{args.forcing}_epochs{PATH_alp}/model.pt'), strict=False)
+    args.pretrained = 'N' + args.file.split('N')[-1] + '_' + f'{EQUATION}' + '_' + args.forcing
+    model.load_state_dict(torch.load(f'training/{EQUATION}{EPSILON}/{FILE}/order1/Net3D_{args.forcing}_epochs{PATH_alp}/model.pt'), strict=False)
     model.train()
 
 # Check if CUDA is available and then use it.
@@ -160,8 +160,8 @@ print('model size: {:.3f}GiB'.format(size_all_mb))
 
 
 #KAIMING HE INIT
-
-model.apply(weights_init)
+if args.pretrained is None:
+    model.apply(weights_init)
 
 
 #INIT OPTIMIZER
@@ -258,7 +258,7 @@ dt=0.01
 
 
 
-ode_data,_, Ed,_,_,_,_,_,_,_,_,_,_,_,_,_=matA(NN,dt,EPSILON)
+ode_data,_, Ed,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_=matA(NN,dt,EPSILON)
 
 
 
@@ -269,7 +269,7 @@ ode_eye=np.zeros((NN-1,NN-1,NN-1))
 
 for jj in range(NN-1):       
             ode_data0=ode_data[jj]
-            ode_data[jj,]=np.diag(np.diag(ode_data0)**.5)
+            # ode_data[jj,]=np.diag(np.diag(ode_data0)**.5)
             
             iode_data[jj,]=np.diag(1/np.diag(ode_data0)**.5)
             ode_eye[jj,]=(iode_data[jj,]@ode_data0)@iode_data[jj,]

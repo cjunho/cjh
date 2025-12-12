@@ -32,14 +32,10 @@ def get_data(gparams, kind='train', transform_f=None):
     # input("qwe456")
     
    
-    if kind == 'test':
-        size = 100
-        file = f'{size}N{shape-1}'
-        
-    else:
-        size = int(file.split('N')[0])
+   
+    size = int(file.split('N')[0])
     # input("789")
-    # print(file)
+   
     # try:
     data = LGDataset(dt=dt,ndt=ndt,epsilon=epsilon, pickle_file=file, shape=shape, kind=kind,  forcing=forcing, transform_f=transform_f)
         

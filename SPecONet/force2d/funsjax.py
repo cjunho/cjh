@@ -235,7 +235,7 @@ def nonlinear(uu0,vv0,phi,lep,iMd,Mdxd):
 
 def matA(N,dt,eps):
     
-
+    s_diag = (4*np.arange(N+1)+6)
     x = sem.legslbndm(N+1)
 
     b=-np.ones((N+1,))
@@ -258,7 +258,8 @@ def matA(N,dt,eps):
     Mm=np.zeros((N-1,N-1))
     Mmx=np.zeros((N-1,N-1))
     phisets=np.zeros((N+1,N-1))
-    # phinsets=np.zeros((N+1,N-1))
+    phixsets=np.zeros((N+1,N-1))
+    phinsets=np.zeros((N+1,N-1))
 
 
     # phixsets=np.zeros((N+1,N-1))
@@ -266,11 +267,11 @@ def matA(N,dt,eps):
 
     for ii in range(N-1):
         phi=(lepolys[ii]- lepolys[ii+2])/(sd_diag[ii])**.5
-        # psi00=(lepolys[ii]+ bn[ii]*lepolys[ii+2])/(sn_diag[ii])**.5
+        psi00=(lepolys[ii]+ bn[ii]*lepolys[ii+2])/(sn_diag[ii])**.5
         phix=(lepolysx[ii].T-lepolysx[ii+2].T)/(sd_diag[ii])**.5
         phisets[:,ii]=phi[:,0]
-        # phinsets[:,ii]=psi00[:,0]
-        # phixsets[:,ii]=phix[:,0]
+        phinsets[:,ii]=psi00[:,0]
+        phixsets[:,ii]=phix[:,0]
         for jj in range(N-1):
             psi=(lepolys[jj]+ bn[jj]*lepolys[jj+2])/(sn_diag[jj])**.5
             Mm[jj,ii]=np.sum(psi*phi/(lepolys[N])**2)*(2/(N*(N+1)))
@@ -340,4 +341,4 @@ def matA(N,dt,eps):
     for jj in range(N-1):
             for ii in range(N-1):
                 oden_data[jj,]=oden_data[jj,]=Mn+ein[jj]*np.eye(N-1)
-    return ode_data, oden_data, Ed,En,X,Y,Mnd,Mxdd,Mxnd,Mdxd,Md,iMd,Mm,Mmx,phisets,lepolys[N]
+    return ode_data, oden_data, Ed,En,X,Y,Mnd,Mxdd,Mxnd,Mdxd,Md,iMd,Mm,Mmx,phisets,phixsets,phinsets,s_diag,lepolys[N]
