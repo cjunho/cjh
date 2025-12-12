@@ -6,7 +6,6 @@ import time
 import datetime
 import subprocess
 import os
-import LG_1d
 import argparse
 import gc
 import torch.nn as nn
@@ -17,20 +16,16 @@ from tqdm import tqdm
 from net.data_loader import *
 from net.network import *
 from sem.sem import *
-from plotting import *
 from reconstruct import *
 from data_logging import *
-from evaluate import *
-from pprint import pprint
 from funsjax import matA
 
 # EVERYONE APRECIATES A CLEAN WORKSPACE
 gc.collect()
 torch.cuda.empty_cache()
-# torch.set_default_tensor_type(torch.DoubleTensor)
+
 torch.set_default_dtype(torch.float64)
 # ARGS
-# python training.py --equation Burgers --model NetC --blocks 4 --file 10000N63 --forcing uniform --epochs 50000
 parser = argparse.ArgumentParser("SEM")
 parser.add_argument("--equation", type=str, default='ConvDiff2D', choices=['NS2d','Standard', 'test3d','Standard1', 'Burgers', 'test3d', 'Helmholtz', 'Standard2D', 'ConvDiff2D']) #, 'BurgersT' 
 parser.add_argument("--blocks", type=int, default=0)
@@ -49,21 +44,13 @@ parser.add_argument("--start", type=int, default=1)
 
 args = parser.parse_args()
 gparams = args.__dict__
-#pprint(gparams)
-
 ndt=args.ndt
-
 ORDER=args.order
 start1=args.start
-
 D_in = 2*ndt
-
 EQUATION = 'NS2d'
-
-
 EPSILON = args.eps
 MODEL = Net3D0
-
 MODEL2 = Net3Dpressure0
 
 kind=args.kind
@@ -74,19 +61,11 @@ FILE = gparams['file']
 DATASET = int(FILE.split('N')[0])
 SHAPE = int(FILE.split('N')[1]) + 1
 BLOCKS = int(gparams['blocks'])
-
-
-
 dt = gparams['dt']
 FILTERS = int(gparams['filters'])
 KERNEL_SIZE = int(gparams['ks'])
-# PADDING = (KERNEL_SIZE - 1)//2
 PADDING = int(3)
-
-
 BATCH_SIZE, Filters, D_out = int(DATASET), FILTERS, SHAPE
-# LOSS SCALE FACTORS
-
 NN=SHAPE-1
 
 
@@ -94,28 +73,19 @@ NN=SHAPE-1
 # CREATE BASIS VECTORS
 xx, lepolys, lepoly_x, lepoly_xx, phi, phi_x, phi_xx, D,aa1,bb1 = basis_vectors(D_out,EPSILON ,equation=EQUATION)
 
-# if BATCH_SIZE+1<DATASET:
-#     shuffle1=True
-# else: 
 shuffle1=False
-lg_dataset = get_data(gparams, kind, transform_f=None)
-trainloader = torch.utils.data.DataLoader(lg_dataset, batch_size=BATCH_SIZE, shuffle=shuffle1)
-
-
 NORM = False
 gparams['norm'] = False
 transform_f = None
 
+
 # LOAD DATASET
+lg_dataset = get_data(gparams, kind, transform_f=None)
+trainloader = torch.utils.data.DataLoader(lg_dataset, batch_size=BATCH_SIZE, shuffle=shuffle1)
 
-# INITIALIZE a model
 
-# lin_weight=torch.zeros((ORDER+1-start1,17496, 17496)).to(device).double()
-
-# lin_weight2=torch.zeros((ORDER+1-start1, 17496, 5832)).to(device).double()
-
+# LOAD the trained model
 lin_weight=torch.zeros((ORDER+1-start1,4840, 968)).to(device).double()
-
 lin_weight2=torch.zeros((ORDER+1-start1, 4840, 484)).to(device).double()
 
 for ii in range(start1,ORDER+1):
@@ -135,16 +105,11 @@ for ii in range(start1,ORDER+1):
     df2 = pd.read_csv(f'./training/{EQUATION}{EPSILON}/600N23/order1'+f"/call{ii}_pp.csv")
     PATH=f'Net3D_{args.forcing}_epochs'+df1['path'][0]
     PATH2=f'Net3Dpressure_{args.forcing}_epochs'+df2['path'][0]
-    # PATH2='Net3Dpressure_num444sigma5_epochs15000_20250226T042242'
     model.load_state_dict(torch.load(f'training/{EQUATION}{EPSILON}/600N23/order{ii}/'+PATH+'/model.pt'), strict=False)
     model2.load_state_dict(torch.load(f'training/{EQUATION}{EPSILON}/600N23/order{ii}/'+PATH2+'/model.pt'), strict=False)
-    # model2.load_state_dict(torch.load(f'training/ConvDiff2D1.0/1500N19/order{ii}/Net3Dpressure_num444sigma5_epochs10000_20250213T170404/model.pt'), strict=False)
+   
 
-
-
-    param_size = 0
-    r0=1
-    # net.get_parameter('layer1.0.weight')
+  
 
     for name,param in model.named_parameters():
        
@@ -155,37 +120,17 @@ for ii in range(start1,ORDER+1):
         
         if name =='fcH.weight':
            lin_weight2[0]=param.T
-# Check if CUDA is available and then use it.
 
-
-# Mxnd=np.zeros((NN-1,NN-1))
-# phisets=np.zeros((N+1,N-1))
-# phinsets=np.zeros((N+1,N-1))
-# phixsets=np.zeros((N+1,N-1))
-
-# for ii in range(NN-1):
+#Generate matrices to compute the weak formulation
 ode_data,oden_data, Ed,En,_,_,Mnd,Mxdd,Mxnd,Mdxd,Md,iMd,Mm,Mmx,phisets,phixsets,phinsets,sd_diag,lepp=matA(NN,dt,EPSILON)
-
-
-  
-
-
-
-# Mnd=  mnd2*np.eye(NN-1)+np.diag(mnd1[0:NN-3],2)+np.diag(mnd3[0:NN-3],-2)
-
-# ode_eye=np.zeros((NN-1,NN-1,NN-1))
-# ode_data=np.zeros((NN-1,NN-1,NN-1))
 iode_data=np.zeros((NN-1,NN-1,NN-1))
 ioden_data=np.zeros((NN-1,NN-1,NN-1))
 for jj in range(NN-1):
-       
-            # ode_data0=(1.5*eid[jj]/dt+EPSILON)*Md+EPSILON*eid[jj]*np.eye(NN-1)
-            # oden_data0=Mn+ein[jj]*np.eye(NN-1)
-            # iode_data[jj,]=np.linalg.solve(ode_data0,np.eye(NN-1))
-            iode_data[jj,]=np.diag(1/np.diag(ode_data[jj])**.5)
+        iode_data[jj,]=np.diag(1/np.diag(ode_data[jj])**.5)
            
-            ioden_data[jj,]=np.diag(1/np.diag(oden_data[jj])**.5)
+        ioden_data[jj,]=np.diag(1/np.diag(oden_data[jj])**.5)
 
+#Convert numpy files into torch files
 phisets=torch.from_numpy(phisets).to(device).double()
 phinsets=torch.from_numpy(phinsets).to(device).double()
 phixsets=torch.from_numpy(phixsets).to(device).double()
@@ -199,60 +144,54 @@ Md=torch.from_numpy(Md).to(device).double()
 iMd=torch.from_numpy(iMd).to(device).double()
 D=torch.from_numpy(D).to(device).double()
 t00 = time.time()
+
+#Load input data and reference solutions
 for batch_idx, sample_batch in enumerate(trainloader):
         
-        # aa= sample_batch['data_u'][:BATCH_SIZE,3:4,start1-1:ORDER].double().to(device)
         all0 = sample_batch['data_u'][:BATCH_SIZE,:3,start1-1:ORDER].double().to(device)
         udata00 = sample_batch['uex'].double().to(device)[:BATCH_SIZE,:2,start1-1:ORDER]
         fdata000 = sample_batch['f'][:BATCH_SIZE,:,start1-1:ORDER].double().to(device)
-        # fdata000 = sample_batch['f'][:BATCH_SIZE,:,0:1].double().to(device)
+      
 
-
-Y,X=np.meshgrid(xx,xx)
-
-
-       
+#input data for u      
 fdata0=torch.permute(fdata000,(2,0,1,3,4)).reshape(BATCH_SIZE*(ORDER+1-start1),2,SHAPE,SHAPE)
 
-
-
+#Mapping outputs
 a_pred0 = model(fdata0).reshape((ORDER+1-start1),BATCH_SIZE,-1)
 a_pred=(a_pred0@lin_weight).reshape((ORDER+1-start1),BATCH_SIZE,2,SHAPE-2,SHAPE-2,1)
 
-# alp=torch.permute(a_pred,(1,2,0,3,4))
-# alp111=torch.sum(pre_cond@(alp.reshape((BATCH_SIZE,2,(ORDER+1-start1),NN-1,NN-1,1))),5)
-# alp11=Ed@alp111
-# alp1=torch.transpose(Ed@torch.transpose(alp11,2,3),2,3)
-
+#Inference, alpha    
 alp1=Ed@torch.sum(iode_data@a_pred,5)
 
 
-
+#input data for Phi 
 ux=reconstructx(alp1[0,:,0:1], phisets,phixsets)
-vx=reconstructx(alp1[0,:,1:2],phixsets, phisets)
+vy=reconstructx(alp1[0,:,1:2],phixsets, phisets)
+uhat=(ux+vy).reshape(BATCH_SIZE*(ORDER+1-start1),1,SHAPE,SHAPE)
 
-uhat=(ux+vx).reshape(BATCH_SIZE*(ORDER+1-start1),1,SHAPE,SHAPE)
-
+#Mapping outputs
 a_phi0 = model2(uhat)
-# a_phi0 = model2(uhat)
-
 a_phi=a_phi0.reshape(BATCH_SIZE,1,-1)@lin_weight2
 a_phi=a_phi.reshape(BATCH_SIZE,1,SHAPE-2,SHAPE-2,1)
+
+#Inference, phi  
 a_pred1=En@torch.sum(ioden_data@(a_phi),4)
-# a_pred1=(torch.transpose(En@torch.transpose(alphi2,2,3),2,3))
 
 
 
 t00 = time.time()
 
-
+#Construct inferences
 ubar,vbar=sol(alp1[0,:,0:1],alp1[0,:,1:2],dt,a_pred1[:,0:1],Mxnd,Mnd,Md,iMd,phisets )
 
 
 print('inference time',time.time() - t00)
+
+
 ubar=ubar.detach().cpu().numpy()
 vbar=vbar.detach().cpu().numpy()
 
+#Load the previous p
 if ORDER==1:
     pp0ex=0
     pp0=0
@@ -260,7 +199,7 @@ elif ORDER>1.1:
     pp0ex=torch.load(f"training/{EQUATION}{EPSILON}/pp/ppex{ORDER-1}.pt")
     pp0=torch.load(f"training/{EQUATION}{EPSILON}/pp/pp{ORDER-1}.pt")
 
-
+#Compute p
 pexx,pexy,pex=psol(all0[:,0],all0[:,1],all0[:,2],pp0ex,phisets,phixsets,phinsets,EPSILON,D )
 pbarx,pbary,pbar=psol(alp1[0,:,0:1],alp1[0,:,1:2],a_pred1[:,0:1],pp0,phisets,phixsets,phinsets,EPSILON,D )
 
@@ -289,17 +228,15 @@ pexy=pexy.detach().cpu().numpy()
 
 
 
-
+#Relative l2 norm
 def intt(f,le):
     jj=SHAPE
     f1=((f/le)**2).reshape(BATCH_SIZE,-1)
     iit=(2/((jj-1)*jj))**2*np.sum(f1,-1)
     return iit
 
-# fdata0=fdata0.detach().cpu().numpy()
-# with open(f'sigma{WF}/force{BATCH_SIZE}_{ORDER}sigma{WF}.npy', 'wb') as data_ex:
-#             np.save(data_ex, fdata0[79-5:79+5])
-ddata='sigma5all'
+
+ddata='sigma5'
 if os.path.isdir(f'training/{EQUATION}{EPSILON}/uex{ddata}') == False: os.makedirs(f'training/{EQUATION}{EPSILON}/uex{ddata}')
 if os.path.isdir(f'training/{EQUATION}{EPSILON}/ubar{ddata}') == False: os.makedirs(f'training/{EQUATION}{EPSILON}/ubar{ddata}')
 
@@ -322,35 +259,26 @@ if ORDER%20==0:
 ul21=intt(ubar-uex,lepp)
 vl21=intt(vbar-vex,lepp)
 
-
 ul22=intt(uex,lepp)
 vl22=intt(vex,lepp)
-
 
 pxl21=intt(pbarx-pexx,lepp)
 pyl21=intt(pbary-pexy,lepp)
 
-
 pxl22=intt(pexx,lepp)
 pyl22=intt(pexy,lepp)
-
-
-
 
 ul2=(ul21/ul22)**.5
 vl2=(vl21/vl22)**.5
 
 
 pl2=((pxl21+pyl21)/(pxl22+pyl22))**.5
-# pl2=ul2
-# pexx=uex
 
-jj=BATCH_SIZE
-print('ML2u',np.max(ul2[:jj]),np.max(vl2[:jj]),np.max(pl2[:jj]))
-print('AL2u',np.mean(ul2[:jj]),np.mean(vl2[:jj]),np.mean(pl2[:jj]))
+
+
+print('ML2u',np.max(ul2),np.max(vl2),np.max(pl2))
+print('AL2u',np.mean(ul2),np.mean(vl2),np.mean(pl2))
 print('stdL2u',np.std(ul2),np.std(vl2),np.std(pl2))
-# print('rel0',ul2[0],vl2[0],wl2[0])
-# print('ML2u',ul2[0],ul2[1],ul2[2])
 
 print('max u',np.max(abs(uex)),np.max(abs(vex)),np.max(abs(pexx)))
 
@@ -377,9 +305,8 @@ with open(f'training/{EQUATION}{EPSILON}/ubar{ddata}/lp{ORDER}.npy', 'wb') as da
 
 
 import pandas as pd
-# data=pd.read_csv('call_alp.csv')
+
 newcall = {'order':[],'uL2':[],'vL2':[],'pL2':[]}
-# newcall=pd.read_csv('call_alp.csv')  
 
 
 newcall['order'].append(ORDER)

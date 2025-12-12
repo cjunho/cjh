@@ -6,7 +6,6 @@ import time
 import datetime
 import subprocess
 import os
-import LG_1d
 import argparse
 import gc
 import torch.nn as nn
@@ -17,10 +16,8 @@ from tqdm import tqdm
 from net.data_loader import *
 from net.network import *
 from sem.sem import *
-from plotting import *
 from reconstruct import *
 from data_logging import *
-from evaluate import *
 from pprint import pprint
 from funsjax import matA
 

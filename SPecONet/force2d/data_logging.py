@@ -4,8 +4,7 @@ import pandas as pd
 import pickle
 import subprocess
 import numpy as np
-from evaluate import *
-import os, json
+import os
 
 
 def record_path(path):
