@@ -136,7 +136,6 @@ log_gparams(gparams)
 
 
 #Generate matrices to compute the weak formulation
-
 _,oden_data0,_,En,_,_,_,_,_,_,_,_,Mm,Mmx,phisets,phixsets,_,_,_=matA(NN,dt,EPSILON)
 
 oden_data=np.zeros((NN-1,NN-1,NN-1))
