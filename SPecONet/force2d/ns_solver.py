@@ -13,12 +13,14 @@ parser.add_argument("--case", type=str, default='train', choices=['train', 'test
 parser.add_argument("--Nsamples", type=int)
 parser.add_argument("--Ntimes", type=int)
 parser.add_argument("--Equation", type=str, default='NS2d', choices=['NS2d'])
+parser.add_argument("--forcing", type=str, default='sigma5')
 args = parser.parse_args()
 case=args.case
 equation=args.Equation
 
 Jnd=args.Nsamples
 Ind=args.Ntimes
+forcing=args.forcing
 
 N=int(24-1)
 dt=0.01
@@ -82,7 +84,7 @@ fydata=np.zeros((Jnd,Ind,N+1,N+1))
 
 tt=dt*(np.arange(1,Ind+1).reshape(Ind,1,1))
 
-num, sigma =3,5
+num, sigma =3,int(forcing.split('a')[1])
 
 
 mdata=np.zeros((Jnd,3,1+num))

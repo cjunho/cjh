@@ -4,28 +4,26 @@ import pickle
 import time
 import os
 
-
-
-FILE='600N23'
-Equation='NS2d'
-kind='force2d'
-eps=0.1
-filename = f'./training/{Equation}{eps}/{FILE}/order1'
-
-
-
-data_path=f"data/{Equation}{eps}/{kind}"
-
+##################################################################
+#                        Setting parameters                      #
+##################################################################
+FILE='600N23' # the number of training samples (600) and the number of nodal points-1 (24-1) 
+Equation='NS2d' #a governing equation
+kind='force2d'  # a type of input data
+eps=0.1         # viscosity
+filename = f'./training/{Equation}{eps}/{FILE}/order1' #a path to save result data
+data_path=f"data/{Equation}{eps}/{kind}"               # a path to save input data
+forcing='sigma5' # setting standard deviation (sigam=5) to randomly generate input samples                    
    
 time0 = time.time()
 
-forcing='sigma5'
+
 
 if os.path.isdir(data_path) == False: 
    os.makedirs(data_path)
    try:
-       subprocess.run(f'python ns_solver.py --case train --Nsamples 600 --Ntimes 10 --Equation {Equation}', shell=True)
-       subprocess.run(f'python ns_solver.py --case test --Nsamples 100 --Ntimes 10 --Equation {Equation}', shell=True)
+       subprocess.run(f'python ns_solver.py --case train --Nsamples 600 --Ntimes 10 --Equation {Equation} --forcing {forcing}', shell=True)
+       subprocess.run(f'python ns_solver.py --case test --Nsamples 100 --Ntimes 10 --Equation {Equation} --forcing {forcing}', shell=True)
        print("Script executed successfully.")
        
    except subprocess.CalledProcessError:
