@@ -340,5 +340,6 @@ def matA(N,dt,eps):
     oden_data=np.zeros((N-1,N-1,N-1))
     for jj in range(N-1):
             for ii in range(N-1):
-                oden_data[jj,]=oden_data[jj,]=Mn+ein[jj]*np.eye(N-1)
+                oden_data[jj,]=Mn+ein[jj]*np.eye(N-1)
+
     return ode_data, oden_data, Ed,En,X,Y,Mnd,Mxdd,Mxnd,Mdxd,Md,iMd,Mm,Mmx,phisets,phixsets,phinsets,s_diag,lepolys[N]
