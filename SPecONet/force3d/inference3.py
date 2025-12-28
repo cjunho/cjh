@@ -330,6 +330,8 @@ print('stdL2u',np.std(ul2),np.std(vl2),np.std(wl2),np.std(pl2))
 
 print('max u',np.max(abs(uex)),np.max(abs(vex)),np.max(abs(wex)))
 ddata='sigma5'
+if os.path.isdir(f'training/{EQUATION}{EPSILON}/uex{ddata}') == False: os.makedirs(f'training/{EQUATION}{EPSILON}/uex{ddata}')
+
 
 with open(f'training/{EQUATION}{EPSILON}/uex{ddata}/uex{ORDER}.npy', 'wb') as data_ex:
             np.save(data_ex, ul22)
