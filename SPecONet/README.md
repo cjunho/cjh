@@ -6,6 +6,7 @@ First of all, to run the codes in this folders, there are requirements about pyt
 The network is designed to infer solutions of Navier Stokes equations for given given input functions as follow. 
 ## Types of inputs
 - the foloder named "force2d" : to train SPecOnet for 2D forcing functions as input data.
+- the foloder named "force3d" : to train SPecOnet for 3D forcing functions as input data.
 
 ## Reference
 A data free neural operator enabling fast inference of 2D and 3D Navier Stokes equations
