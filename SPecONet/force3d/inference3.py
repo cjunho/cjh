@@ -25,7 +25,6 @@ torch.cuda.empty_cache()
 # torch.set_default_tensor_type(torch.DoubleTensor)
 torch.set_default_dtype(torch.float64)
 # ARGS
-# python training.py --equation Burgers --model NetC --blocks 4 --file 10000N63 --forcing uniform --epochs 50000
 parser = argparse.ArgumentParser("SEM")
 parser.add_argument("--equation", type=str, default='NS3d', choices=['Standard','Standard1', 'Burgers', 'test3d', 'Helmholtz', 'Standard2D', 'NS3d']) #, 'BurgersT' 
 parser.add_argument("--blocks", type=int, default=0)
@@ -105,8 +104,6 @@ transform_f = None
 # INITIALIZE a model
 lg_dataset = get_data(gparams, kind, transform_f=transform_f)
 trainloader = torch.utils.data.DataLoader(lg_dataset, batch_size=BATCH_SIZE, shuffle=shuffle1)
-# lg_dataset = get_data(gparams, kind='validate', transform_f=transform_f)
-# validateloader = torch.utils.data.DataLoader(lg_dataset, batch_size=BATCH_SIZE, shuffle=True)
 
 lin_weight=torch.zeros((ORDER+1-start1,17496, 17496)).to(device).double()
 
@@ -231,50 +228,6 @@ a_pred1=cont*(torch.transpose(En@torch.transpose(a_pred11,3,4),3,4))
 t00 = time.time()
 
 
-# a_phi0 = model2(fdata00).reshape((ORDER+1-start1),BATCH_SIZE,-1)
-
-# print('input size',a_pred0.shape)
-# print('input size',a_phi0.shape)
-
-
-
-
-
-
-
-# all0=all0.detach().cpu().numpy()
-
-# with open('data100.npy', 'wb') as data_ex:
-#             np.save(data_ex, all0)
-# input('dsfds')
-
-# alp=torch.permute(a_pred,(1,2,0,3,4,5))
-# alp111=torch.sum(pre_cond@(alp.reshape((BATCH_SIZE,3,ORDER+1-start1,NN-1,NN-1,NN-1,1))),6)
-# alp11=Ed@alp111
-# alp1=torch.transpose(Ed@torch.transpose(alp11,3,4),3,4)
-
-
-# print(a_pred111.shape)
-# input('dafad')
-
-
-
-
-
-
-
-
-# # a_pred111=phi_combine(alp1[:,0],alp1[:,1],alp1[:,2],dt, N,oden_data,En,Mm,Mmx,BATCH_SIZE,ORDER+1-start1)
-
-
-
-# err=abs(a_pred1-all0[:,3])
-# print(torch.max(err))
-# input('sdfa')
-""""""
-# a_pred1=all0[:,3:]
-""""""
-
 
 ubar,vbar,wbar=sol(alp1[:,0],alp1[:,1],alp1[:,2],dt,a_pred1[:,0],Mxnd,Mnd,Md,iMd,phisets )
 
@@ -304,20 +257,6 @@ wex=udata00[:,2]
 
 
 
-# with open('alp01.npy', 'wb') as data_ex:
-#             np.save(data_ex, alp01)
-
-# with open('alp02.npy', 'wb') as data_ex:
-#             np.save(data_ex, alp02)
-
-""""""
-# ubar=reconstruct(alp1[:,0,],phisets)
-# vbar=reconstruct(alp1[:,1,],phisets)
-# wbar=reconstruct(alp1[:,2,],phisets)
-
-# uex=reconstruct(all0[:,0,],phisets)
-# vex=reconstruct(all0[:,1,],phisets)
-# wex=reconstruct(all0[:,2,],phisets)
 """"""
 print(ubar.shape)
 
@@ -339,13 +278,7 @@ pexx=pexx.detach().cpu().numpy()
 pexy=pexy.detach().cpu().numpy()
 pexz=pexz.detach().cpu().numpy()
 
-# with open('ubar.npy', 'wb') as data_ex:
-#             np.save(data_ex, ubar[:10,0])
 
-# with open('uex.npy', 'wb') as data_ex:
-#             np.save(data_ex, uex[:10,0])
-
-# input('dsffd')
 
 lep0=lep.detach().cpu().numpy()
 lep=(lep0*lep0.T).reshape(1,1,SHAPE,SHAPE,1)*(lep0.reshape(1,1,1,1,SHAPE))
@@ -359,13 +292,6 @@ def intt(f,le):
 
 
 
-# ul21=np.sum((ubar-uex).reshape(BATCH_SIZE,-1)**2,-1)
-# vl21=np.sum((vbar-vex).reshape(BATCH_SIZE,-1)**2,-1)
-# wl21=np.sum((wbar-wex).reshape(BATCH_SIZE,-1)**2,-1)
-
-# ul22=np.sum(uex.reshape(BATCH_SIZE,-1)**2,-1)
-# vl22=np.sum(vex.reshape(BATCH_SIZE,-1)**2,-1)
-# wl22=np.sum(wex.reshape(BATCH_SIZE,-1)**2,-1)
 
 ul21=intt(ubar-uex,lep)
 vl21=intt(vbar-vex,lep)
@@ -394,39 +320,40 @@ pl2=((pxl21+pyl21+pzl21)/(pxl22+pyl22+pzl22))**.5
 
 
 
-# kkk=abs(ul2-np.mean(ul2))
-# kkk1=np.where(np.min(kkk)==kkk)[0][0]
-# kkk1=np.where(np.min(kkk)==kkk)
-# kkk1=int(79)
 kkk1=range(3)
 print(kkk1,ul2[kkk1],vl2[kkk1],wl2[kkk1],pl2[kkk1])
 jj=BATCH_SIZE
 print('ML2u',np.max(ul2[:jj]),np.max(vl2[:jj]),np.max(wl2[:jj]),np.max(pl2))
 print('AL2u',np.mean(ul2[:jj]),np.mean(vl2[:jj]),np.mean(wl2[:jj]),np.mean(pl2))
 print('stdL2u',np.std(ul2),np.std(vl2),np.std(wl2),np.std(pl2))
-# print('rel0',ul2[0],vl2[0],wl2[0])
-# print('ML2u',ul2[0],ul2[1],ul2[2])
+
 
 print('max u',np.max(abs(uex)),np.max(abs(vex)),np.max(abs(wex)))
+ddata='sigma5'
+
+with open(f'training/{EQUATION}{EPSILON}/uex{ddata}/uex{ORDER}.npy', 'wb') as data_ex:
+            np.save(data_ex, ul22)
+            
+with open(f'training/{EQUATION}{EPSILON}/uex{ddata}/vex{ORDER}.npy', 'wb') as data_ex:
+            np.save(data_ex, vl22)
+with open(f'training/{EQUATION}{EPSILON}/uex{ddata}/wex{ORDER}.npy', 'wb') as data_ex:
+            np.save(data_ex, wl22)
 
 
+with open(f'training/{EQUATION}{EPSILON}/uex{ddata}/pex{ORDER}.npy', 'wb') as data_ex:
+            np.save(data_ex, (pxl22+pyl22+pzl22))
+
+with open(f'training/{EQUATION}{EPSILON}/ubar{ddata}/lu{ORDER}.npy', 'wb') as data_ex:
+            np.save(data_ex, ul21)
+with open(f'training/{EQUATION}{EPSILON}/ubar{ddata}/lv{ORDER}.npy', 'wb') as data_ex:
+            np.save(data_ex, vl21)
+  with open(f'training/{EQUATION}{EPSILON}/ubar{ddata}/lw{ORDER}.npy', 'wb') as data_ex:
+            np.save(data_ex, wl21)          
+
+with open(f'training/{EQUATION}{EPSILON}/ubar{ddata}/lp{ORDER}.npy', 'wb') as data_ex:
+            np.save(data_ex, (pxl21+pyl21+pzl21)) 
 
 
-# fdata=a_pred1.detach().cpu().numpy()
-
-# with open(f'training/NS3d1.0/ubar/ubar{ORDER}.npy', 'wb') as data_ex:
-#             np.save(data_ex, ubar[kkk1])
-# with open(f'training/NS3d1.0/ubar/vbar{ORDER}.npy', 'wb') as data_ex:
-#             np.save(data_ex, vbar[kkk1])
-# with open(f'training/NS3d1.0/ubar/wbar{ORDER}.npy', 'wb') as data_ex:
-#             np.save(data_ex, wbar[kkk1])
-
-# with open(f'training/NS3d1.0/uex/uex{ORDER}.npy', 'wb') as data_ex:
-#             np.save(data_ex, uex[kkk1])
-# with open(f'training/NS3d1.0/uex/vex{ORDER}.npy', 'wb') as data_ex:
-#             np.save(data_ex, vex[kkk1])
-# with open(f'training/NS3d1.0/uex/wex{ORDER}.npy', 'wb') as data_ex:
-#             np.save(data_ex, wex[kkk1])
 
 import pandas as pd
 # data=pd.read_csv('call_alp.csv')
