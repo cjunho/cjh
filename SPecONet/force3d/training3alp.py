@@ -123,14 +123,7 @@ device = get_device()
 gparams['device'] = device
 
 # SEND TO GPU (or CPU)
-# model0.to(device).double()
-# modelp.to(device).double()
 model.to(device).double()
-# www1=np.load('neww200.npy')
-# www=torch.from_numpy(www1).contiguous().to(device).double()
-
-# with torch.no_grad():
-#     model.fcH.weight = torch.nn.parameter.Parameter(www)
 
 
 param_size = 0
@@ -168,9 +161,6 @@ losses = {'loss_train':[]}
 gparams['path'] = PATH
 log_gparams(gparams)
 
-# for parameter in model.parameters():
-#     print(parameter)
-# print(sum(p.numel() for p in model.parameters()))
 
 dt=0.01
 ode_data0,oden_data0, Ed,_,_,_,_,Mnd,Mxdd,Mxnd,Mdxd,Md,iMd,Mm,Mmx,phisets,_,_,sd_diag,lep=matA(NN,dt,EPSILON)
@@ -238,8 +228,7 @@ def closure(fdata1,cf,cu1,cv1,cw1,cFx01,cFy01,cFz01):
     # print('222',torch.cuda.memory_allocated()/1024**3)
     if torch.is_grad_enabled():
         optimizer.zero_grad()
-    # print('333',torch.cuda.memory_allocated()/1024**3)
-    # f0=torch.reshape(fdata,(1,1,NN-1,NN-1,NN-1) ).to(device).double()
+    
     a_pred = model(fdata1)
 
     
@@ -251,7 +240,6 @@ def closure(fdata1,cf,cu1,cv1,cw1,cFx01,cFy01,cFz01):
     cFy=cf[:,ndt:2*ndt]
     cFz=cf[:,2*ndt:3*ndt]
     
-    # al_unext,al_vnext,al_wnext,exfx,exfy,exfz,phial,Pexfx = weak_form0(EPSILON,al_upre,al_vpre,al_wpre,cfx0,cfy0,cfz0,cFx,cFy,cFz,dt, NN,ode_eye,oden_eye,pre_cond,pre_condn, a_pred,Mxnd,Mnd,Md,Mxdd,Mdxd,Ed,En,Mm,Mmx )
     al_unext,al_vnext,al_wnext,exfx,exfy,exfz = weak_form1(EPSILON,cu0,cv0,cw0,cu1,cv1,cw1,cuu0,cvv0,cww0,cuu1,cvv1,cww1,cFx01,cFy01,cFz01,cFx,cFy,cFz,dt, NN,ode_eye,pre_cond, a_pred,Mxnd,Mnd,Md,Mxdd,Mdxd,Ed,Mm,Mmx )
    
     lossUx=torch.sum((al_unext-exfx)**2)
@@ -270,15 +258,10 @@ def closure(fdata1,cf,cu1,cv1,cw1,cFx01,cFy01,cFz01):
     
     
     #
-    # print('555',torch.cuda.memory_allocated()/1024**3)
+    
     if loss.requires_grad:
         loss.backward()
-    # print(f[0,0,:,4])
-    # print(a_pred[0,0,:,4])
-    # print(u_pred[0,0,:,4])
-    # input('dfgsfd')
-    # input('dsfgdsfg')
-    # print('666',torch.cuda.memory_allocated()/1024**3)
+    
     return  loss, a_pred1
 
 #
@@ -292,59 +275,19 @@ time0 = time.time()
 print(torch.cuda.memory_allocated()/1024**3)
 
 for batch_idx, sample_batch in enumerate(trainloader):
-        # all000 = sample_batch['data_u'][:BATCH_SIZE,:,ORDER-3:ORDER-2].double().to(device).reshape((4*BATCH_SIZE,ndt,SHAPE-2,SHAPE-2,SHAPE-2))
-        # all00 = sample_batch['data_u'][:BATCH_SIZE,:,ORDER-2:ORDER-1].double().to(device).reshape((4*BATCH_SIZE,ndt,SHAPE-2,SHAPE-2,SHAPE-2))
-        # all0 = sample_batch['data_u'][:BATCH_SIZE,:,ORDER-1:ORDER].double().to(device).reshape((BATCH_SIZE,4,ndt,SHAPE-2,SHAPE-2,SHAPE-2))
-        # fdata0 = sample_batch['f'][:BATCH_SIZE,0::3].double().to(device)
         fdata = sample_batch['f'][:BATCH_SIZE,:,ORDER-1].double().to(device)
-        # cf00 = sample_batch['cf0'][:200,:,1:2].double().to(device)   
+        
         cf1 = sample_batch['cf'][:BATCH_SIZE,:,ORDER-1].double().to(device)[:,:3*ndt,]
 # print(all0.shape)
 print(fdata.shape)
 # print(cf00.shape)
 print(cf1.shape)
 
-# print(all0[1,0,0,0,:10])
-# print(fdata[0,1,0,0,:10])
-# print(cf1[0,1,0,0,:10])
-# input('kkkk')
 
-# alp=model0(fdata0)
-# alphi=modelp(fdata0)
-
-# del model0, modelp,fdata0
-
-# r0=0
-# for name,param in model0.named_parameters():
-#     # print(name,r0,param.nelement())
-#     print(name,r0,param.shape)
-#     param_size += param.nelement() * param.element_size()
-#     r0+=1
-   
-    
-
-# size_all_mb = (param_size ) / 1024**3
-# print(param_size,buffer_size)
-
-# print('model size: {:.3f}GiB'.format(size_all_mb))
-
-# alp111=torch.sum(pre_cond@(alp.reshape((3*200,1,NN-1,NN-1,NN-1,1))),5)
-# alp11=Ed@alp111
-# alp1=torch.transpose(Ed@torch.transpose(alp11,2,3),2,3)
-
-# alphi111=torch.sum(pre_condn@(alphi.reshape((200,1,NN-1,NN-1,NN-1,1))),5)
-# alphi11=En@alphi111
-# alphi1=torch.transpose(En@torch.transpose(alphi11,2,3),2,3)
 
 alp1=torch.load(PATH_prev+'/alpha.pt').detach().to(device).double()
 
 alphi1=torch.load(PATH_prev+'/alphi.pt').detach().to(device).double()
-
-# alp1=all00[0:4*BATCH_SIZE:4,0:ndt,]
-# alphi1=all00[3:4*BATCH_SIZE:4,0:ndt,]
-
-# cu11,cv11,cw11,cFx011,cFy011,cFz011,_,_,_=weak_combine(EPSILON,alp1[:3*BATCH_SIZE:3,:ndt,],alp1[1:3*BATCH_SIZE:3,:ndt,],alp1[2:3*BATCH_SIZE:3,:ndt,]\
-#                                                        ,dt, NN,alphi1,Mxnd,Mnd,Md,Mxdd,Mdxd,Mm,Mmx,iMd,phisets,lep,sd_diag )
 
 
 
@@ -365,9 +308,6 @@ if ORDER==2:
     cFx0=0
     cFy0=0
     cFz0=0
-    # cu11,cv11,cw11,cFx011,cFy011,cFz011,_,_,_=weak_combine(EPSILON,alp1[0:3*BATCH_SIZE:3,0:ndt,],2*alp1[1:3*BATCH_SIZE:3,0:ndt,],alp1[2:3*BATCH_SIZE:3,0:ndt,]\
-    #                                                     ,cu0,cv0,cw0,dt, NN,alphi1,Mxnd,Mnd,Md,Mxdd,Mdxd,Mm,Mmx,iMd,phisets,lep,sd_diag )
-    
     cu11,cv11,cw11,cFx011,cFy011,cFz011,cuu1,cvv1,cww1=weak_combine(EPSILON,alp1[:,0,0:ndt,],alp1[:,1,0:ndt,],alp1[:,2,0:ndt,]\
                                                         ,cFx0,cFy0,cFz0,dt, NN,alphi1[:BATCH_SIZE,0:ndt,],Mxnd,Mnd,Md,Mxdd,Mdxd,Mm,Mmx,iMd,phisets,lep,sd_diag )
     
@@ -375,9 +315,7 @@ else:
     cu0=torch.load(PATH_prev+'/cu0.pt').detach().to(device).double()
     cv0=torch.load(PATH_prev+'/cv0.pt').detach().to(device).double()
     cw0=torch.load(PATH_prev+'/cw0.pt').detach().to(device).double()
-    # cuu0=0
-    # cvv0=0
-    # cww0=0
+   
     cuu0=torch.load(PATH_prev+'/cuu0.pt').detach().to(device).double()
     cvv0=torch.load(PATH_prev+'/cvv0.pt').detach().to(device).double()
     cww0=torch.load(PATH_prev+'/cww0.pt').detach().to(device).double()
@@ -388,11 +326,6 @@ else:
     cu11,cv11,cw11,cFx011,cFy011,cFz011,cuu1,cvv1,cww1=weak_combine(EPSILON,alp1[:,0,0:ndt,],alp1[:,1,0:ndt,],alp1[:,2,0:ndt,]\
                                                         ,cFx0,cFy0,cFz0,dt, NN,alphi1[:BATCH_SIZE,0:ndt,],Mxnd,Mnd,Md,Mxdd,Mdxd,Mm,Mmx,iMd,phisets,lep,sd_diag )
     
-# cu0,cv0,cw0,cFx001,cFy001,cFz001,_,_,_=weak_combine(EPSILON,all000[0:4*BATCH_SIZE:4,0:ndt,],all000[1:4*BATCH_SIZE:4,0:ndt,],all000[2:4*BATCH_SIZE:4,0:ndt,]\
-#                                                        ,0,0,0,dt, NN,all000[3:4*BATCH_SIZE:4,0:ndt,],Mxnd,Mnd,Md,Mxdd,Mdxd,Mm,Mmx,iMd,phisets,lep,sd_diag )
-# del all000
-# cu11,cv11,cw11,cFx011,cFy011,cFz011,_,_,_=weak_combine(EPSILON,all00[0:4*BATCH_SIZE:4,0:ndt,],all00[1:4*BATCH_SIZE:4,0:ndt,],all00[2:4*BATCH_SIZE:4,0:ndt,]\
-                                                       # ,cFx001,cFy001,cFz001,dt, NN,all00[3:4*BATCH_SIZE:4,0:ndt,],Mxnd,Mnd,Md,Mxdd,Mdxd,Mm,Mmx,iMd,phisets,lep,sd_diag )
 
 torch.save(cu11, PATH + '/cu0.pt')
 torch.save(cv11, PATH + '/cv0.pt')
@@ -406,17 +339,7 @@ torch.save(cFz011, PATH + '/cFz0.pt')
 torch.save(cuu1, PATH + '/cuu0.pt')
 torch.save(cvv1, PATH + '/cvv0.pt')
 torch.save(cww1, PATH + '/cww0.pt')
-# cw11=cu11.detach().cpu().numpy()
 
-
-
-# err_alu=abs(alp1[0:3*BATCH_SIZE:3,:ndt,]-all00[0:4*BATCH_SIZE:4,0:ndt,])+abs(alp1[1:3*BATCH_SIZE:3,:ndt,]-all00[1:4*BATCH_SIZE:4,0:ndt,])+abs(alp1[2:3*BATCH_SIZE:3,:ndt,]-all00[2:4*BATCH_SIZE:4,0:ndt,])
-
-# err_p=abs(alphi1[0:BATCH_SIZE,:ndt,]-all00[3:4*BATCH_SIZE:4,0:ndt,])
-
-# print(torch.max(err_alu))
-
-# print(torch.max(err_p))
 
 del alp1,alphi1
 
@@ -429,14 +352,10 @@ rr=0
 for epoch in tqdm(range(1, EPOCHS+1)):
         
         loss,a_pred = closure(fdata,cf1,cu11,cv11,cw11,cFx011,cFy011,cFz011)
-        # print(torch.cuda.memory_summary())
-        # print(torch.cuda.memory_allocated()/1024**3)
+        
         optimizer.step(loss.item)
         
-        
-       # optimizer.step()
-        # print(torch.cuda.memory_allocated()/1024**3)
-        # input('ggg')
+       
         
          
         loss_train = np.round(float(loss.item()), 12)
@@ -448,18 +367,7 @@ for epoch in tqdm(range(1, EPOCHS+1)):
         if epoch % int(2) == 0:
             
             losses = log_loss(losses, loss_train)
-        #SAVE test data
-        # if epoch % int(100)==0:
-        #         loss_u,loss_u1,  loss,u_pred = closure(dt,aa1,bb1,  test_f, test_u,xx)
-        #         u_save1=np.reshape(u_pred.detach().cpu().numpy(),(D_out,))
-        #         u_test_save.append(u_save1)
-        #scheduler.step()
-        # if loss<30:
-        #     break
-# u_test_save.append(np.reshape(dd[:,0][700][:,1],(D_out,))) 
-# u_test_save.append(np.reshape(xx,(D_out,)))            
-# with open(PATH+"/u_test.pkl", "wb") as fp:   #Pickling
-#     pickle.dump(u_test_save, fp)
+       
 
 torch.save(model.state_dict(), PATH + '/model.pt')
 
@@ -486,8 +394,7 @@ gparams['losses'] = losses
 
 log_path(PATH)
 
-# loss_plot(gparams)
-#values = model_stats(PATH, kind='validate', gparams=gparams)
+
 log_gparams(gparams)
 
 import pandas as pd

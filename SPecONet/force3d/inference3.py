@@ -331,7 +331,7 @@ print('stdL2u',np.std(ul2),np.std(vl2),np.std(wl2),np.std(pl2))
 print('max u',np.max(abs(uex)),np.max(abs(vex)),np.max(abs(wex)))
 ddata='sigma5'
 if os.path.isdir(f'training/{EQUATION}{EPSILON}/uex{ddata}') == False: os.makedirs(f'training/{EQUATION}{EPSILON}/uex{ddata}')
-
+if os.path.isdir(f'training/{EQUATION}{EPSILON}/ubar{ddata}') == False: os.makedirs(f'training/{EQUATION}{EPSILON}/ubar{ddata}')
 
 with open(f'training/{EQUATION}{EPSILON}/uex{ddata}/uex{ORDER}.npy', 'wb') as data_ex:
             np.save(data_ex, ul22)
@@ -349,7 +349,7 @@ with open(f'training/{EQUATION}{EPSILON}/ubar{ddata}/lu{ORDER}.npy', 'wb') as da
             np.save(data_ex, ul21)
 with open(f'training/{EQUATION}{EPSILON}/ubar{ddata}/lv{ORDER}.npy', 'wb') as data_ex:
             np.save(data_ex, vl21)
-  with open(f'training/{EQUATION}{EPSILON}/ubar{ddata}/lw{ORDER}.npy', 'wb') as data_ex:
+with open(f'training/{EQUATION}{EPSILON}/ubar{ddata}/lw{ORDER}.npy', 'wb') as data_ex:
             np.save(data_ex, wl21)          
 
 with open(f'training/{EQUATION}{EPSILON}/ubar{ddata}/lp{ORDER}.npy', 'wb') as data_ex:
